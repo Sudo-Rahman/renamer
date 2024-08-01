@@ -3,6 +3,7 @@ import {type FileInfo, stat} from "@tauri-apps/plugin-fs";
 export class RenamerFile {
     path: string;
     name: string;
+    newname: string;
     children: RenamerFile[];
     parent: RenamerFile | null;
     private fileInfo?: FileInfo;
@@ -10,6 +11,7 @@ export class RenamerFile {
     constructor(path: string) {
         this.path = path;
         this.name = path.split("/").pop() || "";
+        this.newname = this.name;
         this.children = [];
         this.parent = null;
     }

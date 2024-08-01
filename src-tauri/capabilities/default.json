@@ -6,7 +6,7 @@
     "main"
   ],
   "permissions": [
-    "path:default",
+    "path:allow-join",
     "event:default",
     "window:default",
     "app:default",
@@ -16,6 +16,19 @@
     "tray:default",
     "shell:allow-open",
     "fs:allow-stat",
+    "fs:allow-read-dir",
+    "fs:allow-read-file",
+    {
+      "identifier": "fs:read-dirs",
+      "allow": [
+        {
+          "path": "$HOME/*",
+          "recursive": true
+        }
+      ]
+    },
+    "fs:allow-read",
+    "fs:allow-write",
     "dialog:default",
     "dialog:default"
   ]
