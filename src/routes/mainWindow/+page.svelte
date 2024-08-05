@@ -7,7 +7,7 @@
     import * as Table from "$lib/components/ui/table";
     import {files} from "$models";
     import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
-    import FileTable from "$lib/components/FileTable.svelte";
+    import FileTable from "$lib/components/FileTable/FileTable.svelte";
     import InputsLeftComponents from "$lib/components/InputsLeftComponents.svelte";
     import Menubar from "$lib/components/MenuBar.svelte";
 
@@ -40,23 +40,9 @@
             <Resizable.Handle withHandle/>
             <Resizable.Pane class="p-2">
                 <ScrollArea class="h-full">
-                    <Table.Root>
-                        <Table.Caption>Files to rename</Table.Caption>
-                        <Table.Header>
-                            <Table.Row class="hover:bg-transparent">
-                                <Table.Head>Filename</Table.Head>
-                                <Table.Head>New Filename</Table.Head>
-                            </Table.Row>
-                        </Table.Header>
-                        <Table.Body class="select-text">
-                            {#each $files as file}
-                                <Table.Row>
-                                    <Table.Cell class="rounded-l-full text-xs w-1/2 pl-4">{file.name}</Table.Cell>
-                                    <Table.Cell class="rounded-r-full text-xs pr-4">{file.newname}</Table.Cell>
-                                </Table.Row>
-                            {/each}
-                        </Table.Body>
-                    </Table.Root>
+
+                    <FileTable bind:files={$files}/>
+
                 </ScrollArea>
             </Resizable.Pane>
         </Resizable.PaneGroup>
