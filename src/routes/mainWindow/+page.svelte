@@ -5,32 +5,17 @@
     import {Separator} from "$lib/components/ui/separator";
     import {onMount} from "svelte";
     import * as Table from "$lib/components/ui/table";
-    import {files} from "$models";
+    import {files, getFilesFromFileDialog} from "$models";
     import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
     import FileTable from "$lib/components/FileTable/FileTable.svelte";
     import InputsLeftComponents from "$lib/components/InputsLeftComponents.svelte";
     import Menubar from "$lib/components/MenuBar.svelte";
 
-
-    onMount(() => {
-        const handleKeyDown = (event: KeyboardEvent) => {
-            if ((event.metaKey || event.ctrlKey) && event.key === 'n') {
-                event.preventDefault();
-                goto('/');
-            }
-        };
-
-        document.addEventListener('keydown', handleKeyDown);
-
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-        };
-    });
 </script>
 
 <div class="flex flex-col h-screen overflow-hidden">
 
-    <Menubar bind:files={$files} class="flex w-full px-4 py-2"/>
+    <Menubar bind:files={$files} class="w-full px-4 py-2"/>
     <Separator/>
     <div class="flex-grow overflow-hidden">
         <Resizable.PaneGroup direction="horizontal" class="h-full">

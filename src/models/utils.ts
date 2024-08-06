@@ -1,6 +1,5 @@
 import {RenamerFile} from '$models';
 import {message, open} from '@tauri-apps/plugin-dialog';
-import {BaseDirectory, readDir} from '@tauri-apps/plugin-fs';
 import {goto} from "$app/navigation";
 import {invoke} from "@tauri-apps/api/core";
 

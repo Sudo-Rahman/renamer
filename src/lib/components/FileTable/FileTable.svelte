@@ -1,51 +1,36 @@
 <!-- MainComponent.svelte -->
 <script lang="ts">
     import FileItem from "$lib/components/FileTable/FileItem.svelte";
-    import { RenamerFile } from "$models";
+    import {RenamerFile} from "$models";
     import * as Resizable from "$lib/components/ui/resizable";
-    import { onMount } from 'svelte';
-    import { size } from './store.js';
+    import {onMount} from 'svelte';
+    import {size} from './store.js';
 
     export let files: RenamerFile[] = [];
 
-    let column1: HTMLElement;
-    let column2: HTMLElement;
-
-    function updateWidths() {
-        size.update(s => ({
-            col1: column1?.offsetWidth || 0,
-            col2: column2?.offsetWidth || 0,
-        }));
+    function updateSize(newSize: number, _: number | undefined) {
+        size.set({
+            col1: newSize,
+            col2: 100 - newSize
+        });
     }
 
-    onMount(() => {
-        const resizeObserver = new ResizeObserver(() => {
-            updateWidths();
-        });
-
-        if (column1) resizeObserver.observe(column1);
-        if (column2) resizeObserver.observe(column2);
-
-        return () => {
-            resizeObserver.disconnect();
-        };
-    });
 </script>
 
 <div class="{$$props.class}">
-    <div class="flex w-full flex-col pt-3">
-        <Resizable.PaneGroup direction="horizontal" class="gap-2 text-center">
-            <Resizable.Pane minSize={15} defaultSize={50}>
-                <div bind:this={column1} class="line-clamp-1">Name</div>
+    <div class="flex w-full flex-col px-1 pt-3">
+        <Resizable.PaneGroup direction="horizontal" class="text-center">
+            <Resizable.Pane minSize={15} defaultSize={50} onResize={updateSize} class="line-clamp-1 ml-5">
+                Name
             </Resizable.Pane>
             <Resizable.Handle withHandle/>
-            <Resizable.Pane minSize={15} defaultSize={50}>
-                <div bind:this={column2} class="line-clamp-1">New Name</div>
+            <Resizable.Pane minSize={15} defaultSize={50} class="line-clamp-1 ">
+                New Name
             </Resizable.Pane>
         </Resizable.PaneGroup>
 
         {#each files as file, i }
-            <FileItem {file} class="{i%2 ? 'bg-accent': ''} rounded-md"/>
+            <FileItem {file} class="{i%2 ? 'bg-accent': ''}"/>
         {/each}
     </div>
 </div>

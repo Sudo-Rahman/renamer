@@ -6,6 +6,7 @@ export class RenamerFile {
     newname: string;
     children: RenamerFile[];
     parent: RenamerFile | null;
+    checked: boolean = true;
     private fileInfo?: FileInfo;
 
     constructor(path: string) {
@@ -16,13 +17,57 @@ export class RenamerFile {
         this.parent = null;
     }
 
-    async getFileInfo(): Promise<FileInfo> {
+    public async getFileInfo(): Promise<FileInfo> {
         if (this.fileInfo) {
             return this.fileInfo;
         }
         this.fileInfo = await stat(this.path);
         return this.fileInfo;
     }
+
+    public getFormatedBirthDate(): string {
+        const date = new Date(this.fileInfo?.birthtime || '');
+
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const seconds = date.getSeconds().toString().padStart(2, '0');
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+
+    public getFormatedModDate(): string {
+        const date = new Date(this.fileInfo?.mtime || '');
+
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const seconds = date.getSeconds().toString().padStart(2, '0');
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+
+    public getFileInfoSync(): FileInfo | undefined {
+        return this.fileInfo;
+    }
+
+    public getStringSize(): string {
+        const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        let size = this.fileInfo?.size || 0;
+        let unitIndex = 0;
+
+        while (size >= 1024 && unitIndex < units.length - 1) {
+            size /= 1024;
+            unitIndex++;
+        }
+
+        return `${size.toFixed(2)} ${units[unitIndex]}`;
+    }
+
 
     public getExtension(): string {
         return this.name.split(".").pop() || "";
