@@ -2,6 +2,7 @@ import {RenamerFile} from '$models';
 import {message, open} from '@tauri-apps/plugin-dialog';
 import {goto} from "$app/navigation";
 import {invoke} from "@tauri-apps/api/core";
+import {rename} from "@tauri-apps/plugin-fs"
 
 export async function getFilesFromFileDialog(type: "Files" | "Folder" = "Files"): Promise<RenamerFile[]> {
 
@@ -22,7 +23,7 @@ export async function getFilesFromFileDialog(type: "Files" | "Folder" = "Files")
                 files = newFiles.sort((a, b) => a.name.localeCompare(b.name));
                 await goto('/mainWindow');
             }
-        } else if(type === "Folder") {
+        } else if (type === "Folder") {
             const folder = await open({
                 directory: true,
                 multiple: false,
@@ -36,7 +37,7 @@ export async function getFilesFromFileDialog(type: "Files" | "Folder" = "Files")
                 async function fetchFiles() {
                     try {
                         // call the function to list files in the directory
-                        tmp_files = await invoke('list_files_in_directory', { dir: folder });
+                        tmp_files = await invoke('list_files_in_directory', {dir: folder});
                         tmp_files.forEach(
                             (file) => {
                                 files.push(new RenamerFile(file));
@@ -66,4 +67,8 @@ export async function getFilesFromFileDialog(type: "Files" | "Folder" = "Files")
     }
 
     return files
+}
+
+export async function renameFile(file: RenamerFile): Promise<void> {
+    await rename(file.path, `${file.getDirectory()}/${file.newname}`);
 }

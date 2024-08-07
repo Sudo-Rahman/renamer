@@ -25,8 +25,15 @@ export class RenamerFile {
         return this.fileInfo;
     }
 
+    public getDirectory(): string {
+        return this.path.split("/").slice(0, -1).join("/");
+    }
+
     public getFormatedBirthDate(): string {
-        const date = new Date(this.fileInfo?.birthtime || '');
+        if (!this.fileInfo || !this.fileInfo?.birthtime) {
+            return "";
+        }
+        const date = this.fileInfo?.birthtime;
 
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -39,8 +46,10 @@ export class RenamerFile {
     }
 
     public getFormatedModDate(): string {
-        const date = new Date(this.fileInfo?.mtime || '');
-
+        if (!this.fileInfo || !this.fileInfo?.mtime) {
+            return "";
+        }
+        const date = this.fileInfo?.mtime;
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const day = date.getDate().toString().padStart(2, '0');

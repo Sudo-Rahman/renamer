@@ -7,9 +7,9 @@
     import * as Table from "$lib/components/ui/table";
     import {files, getFilesFromFileDialog} from "$models";
     import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
-    import FileTable from "$lib/components/FileTable/FileTable.svelte";
-    import InputsLeftComponents from "$lib/components/InputsLeftComponents.svelte";
+    import FileTable from "$lib/components/fileTable/FileTable.svelte";
     import Menubar from "$lib/components/MenuBar.svelte";
+    import FormattersComponent from "$lib/components/FormattersComponent.svelte";
 
 </script>
 
@@ -19,8 +19,8 @@
     <Separator/>
     <div class="flex-grow overflow-hidden">
         <Resizable.PaneGroup direction="horizontal" class="h-full">
-            <Resizable.Pane class="p-2" minSize={15} maxSize={25}>
-                <InputsLeftComponents/>
+            <Resizable.Pane class="p-2" minSize={20} maxSize={25}>
+                <FormattersComponent/>
             </Resizable.Pane>
             <Resizable.Handle withHandle/>
             <Resizable.Pane class="p-2">

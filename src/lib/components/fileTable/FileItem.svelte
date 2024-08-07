@@ -8,10 +8,9 @@
     import type {FileInfo} from "@tauri-apps/plugin-fs";
 
     export let file: RenamerFile;
-    let fileInfo: FileInfo;
 
     onMount(async () => {
-        fileInfo = await file.getFileInfo();
+        await file.getFileInfo();
     });
 
     let hover = false;
@@ -27,7 +26,7 @@
                 <div class="flex space-x-3 items-center" style="width: {$size.col1}%;">
                     <span class="line-clamp-1">{file.name}</span>
                 </div>
-                <span class="line-clamp-1 pr-2 {file.checked ? '' : ''}"
+                <span class="line-clamp-1 pr-2 {file.checked ? 'text-start' : 'text-center'}"
                       style="width: {$size.col2}%;">{file.checked ? file.newname : '------------'}</span>
             </Popover.Trigger>
         </div>

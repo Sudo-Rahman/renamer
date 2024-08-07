@@ -1,6 +1,6 @@
 <!-- MainComponent.svelte -->
 <script lang="ts">
-    import FileItem from "$lib/components/FileTable/FileItem.svelte";
+    import FileItem from "$lib/components/fileTable/FileItem.svelte";
     import {RenamerFile} from "$models";
     import * as Resizable from "$lib/components/ui/resizable";
     import {onMount} from 'svelte';
