@@ -4,6 +4,7 @@ import {goto} from "$app/navigation";
 import {invoke} from "@tauri-apps/api/core";
 import {rename} from "@tauri-apps/plugin-fs"
 
+
 export async function getFilesFromFileDialog(type: "Files" | "Folder" = "Files"): Promise<RenamerFile[]> {
 
     let files: RenamerFile[] = [];
@@ -70,5 +71,17 @@ export async function getFilesFromFileDialog(type: "Files" | "Folder" = "Files")
 }
 
 export async function renameFile(file: RenamerFile): Promise<void> {
-    await rename(file.path, `${file.getDirectory()}/${file.newname}`);
+    try {
+        // {path: file.path, new_name: `${file.getDirectory()}/${file.newname}`}
+        await invoke('rename_files', {fileInfos : [{path: "regwetr", new_path: "regwetr"}]}).then(
+            (res) => {
+                console.log(res);
+            }
+        );
+    }catch (err){
+        await message(err, {
+            title: "Error",
+            kind: "error",
+        });
+    }
 }

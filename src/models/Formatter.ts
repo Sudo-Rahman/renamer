@@ -1,16 +1,14 @@
-// interface for renaming files
+import { v7 as uuidv7 } from 'uuid';
 export abstract class Formatter {
 
-    abstract format(): string;
+    abstract format(fileName : string): string;
 
     id: string;
 
+    hide: boolean = false;
+
     private generateUUID() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random() * 16 | 0,
-                v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
+        return uuidv7();
     }
 
     protected constructor() {
@@ -21,9 +19,10 @@ export abstract class Formatter {
 export class FormatterList {
     private formatters: Formatter[] = [];
 
-    addFormatter(formatter: Formatter): Formatter {
-        this.formatters.push(formatter);
-        return formatter;
+    createFormatter<T extends Formatter>(formatter: new () => T): T {
+        const newFormatter = new formatter();
+        this.formatters.push(newFormatter);
+        return newFormatter;
     }
 
     removeFormatter(formatter: Formatter): void {
@@ -34,8 +33,8 @@ export class FormatterList {
         return this.formatters.find((f) => f.id === id);
     }
 
-    format(): string {
-        return this.formatters.map((f) => f.format()).join("");
+    format(fileName : string): string {
+        return this.formatters.map((f) => f.format(fileName)).join("");
     }
 }
 
@@ -45,6 +44,7 @@ export class NumberFormatter extends Formatter {
     }
 
     set start(value: number) {
+        console.log(value);
         this._start = value;
     }
 
@@ -56,20 +56,12 @@ export class NumberFormatter extends Formatter {
         this._step = value;
     }
 
-    get textBefore(): string {
-        return this._textBefore;
+    get text(): string {
+        return this._text;
     }
 
-    set textBefore(value: string) {
-        this._textBefore = value;
-    }
-
-    get textAfter(): string {
-        return this._textAfter;
-    }
-
-    set textAfter(value: string) {
-        this._textAfter = value;
+    set text(value: string) {
+        this._text = value;
     }
 
     get fill(): { length: number; char: string } {
@@ -82,8 +74,7 @@ export class NumberFormatter extends Formatter {
 
     private _start: number;
     private _step: number;
-    private _textBefore: string;
-    private _textAfter: string;
+    private _text: string;
     private _fill: {
         length: number,
         char: string
@@ -93,17 +84,42 @@ export class NumberFormatter extends Formatter {
         super();
         this._start = 1;
         this._step = 1;
-        this._textBefore = "";
-        this._textAfter = "";
+        this._text = "";
         this._fill = {
             length: 0,
             char: "0"
         }
     }
 
-    format(): string {
-        let formatted = `${this._textBefore}${this._start.toString().padStart(this._fill.length, this._fill.char)}${this._textAfter}`;
-        this._start += this._step;
+    format(fileName : string): string {
+        let formatted: string;
+        if (this.text.length > 0) {
+            formatted = `${this._text.replace("{%}", this.start.toString().padStart(this._fill.length, this._fill.char))}`;
+        } else {
+            formatted = this.start.toString().padStart(this._fill.length, this._fill.char);
+        }
+        this.start = +this._start + +this._step;
         return formatted;
+    }
+}
+
+export class ExtensionFormatter extends Formatter {
+    get extension(): string {
+        return this._extension;
+    }
+
+    set extension(value: string) {
+        this._extension = value;
+    }
+
+    private _extension: string;
+
+    constructor() {
+        super();
+        this._extension = "";
+    }
+
+    format(fileName : string): string {
+        return this.extension;
     }
 }

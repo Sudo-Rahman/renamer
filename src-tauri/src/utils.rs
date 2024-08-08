@@ -22,3 +22,29 @@ pub fn list_files_in_directory(dir: String) -> Result<Vec<String>, String> {
         Err("The provided path is not a directory".to_string())
     }
 }
+
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct FileRenameInfo<'a> {
+    path: &'a str,
+    new_path: &'a str,
+}
+
+#[tauri::command]
+pub fn rename_files(file_infos: Vec<FileRenameInfo<'_>>) -> Result<Vec<&str>, String> {
+    eprintln!("Renaming files: {:?}", file_infos);
+    let mut errors = Vec::new();
+
+    for FileRenameInfo { path, new_path } in file_infos {
+        match fs::rename(path, new_path) {
+            Ok(_) => {}
+            Err(err) => {
+                errors.push(path);
+                eprintln!("Error renaming file {}: {}", path, err);
+            }
+        }
+    }
+
+    Ok(errors)
+}

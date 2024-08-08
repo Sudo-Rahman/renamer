@@ -1,11 +1,14 @@
 <script>
     import "../app.css";
-    import { ModeWatcher } from "mode-watcher";
+    import {ModeWatcher} from "mode-watcher";
+    import {Toaster} from "$lib/components/ui/sonner";
+
 </script>
 
-<svelte:window on:scroll|preventDefault />
+<svelte:window on:scroll|preventDefault/>
 
-<body class="w-full h-screen select-none">
-<ModeWatcher />
+<div class="w-full h-screen select-none">
+<Toaster/>
+<ModeWatcher/>
 <slot/>
-</body>
+</div>

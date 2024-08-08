@@ -2,14 +2,13 @@
     import {files} from "$models";
     import {Input} from "$lib/components/ui/input/index.js";
     import {Label} from "$lib/components/ui/label/index.js";
-    import NumerFormatter from "$lib/components/stringFormatterComponents/NumerFormatter.svelte";
+    import NumerFormatter from "$lib/components/formatterComponents/NumberFormatter.svelte";
     import {formatters} from "$models";
 
     $: {
         $files.forEach(file => {
-            file.newname = $formatters.format();
+            file.newname = $formatters.format(file.name);
         });
-        console.log($formatters);
         files.set($files);
     }
 </script>
