@@ -1,12 +1,8 @@
 import {RenamerFile} from '$models';
 import {message, open} from '@tauri-apps/plugin-dialog';
-import {goto} from "$app/navigation";
 import {invoke} from "@tauri-apps/api/core";
-import {rename} from "@tauri-apps/plugin-fs"
-
 
 export async function getFilesFromFileDialog(type: "Files" | "Folder" = "Files"): Promise<RenamerFile[]> {
-
     let files: RenamerFile[] = [];
 
     try {
@@ -16,13 +12,19 @@ export async function getFilesFromFileDialog(type: "Files" | "Folder" = "Files")
             });
 
             if (files_tmp) {
-                let newFiles = await Promise.all(files_tmp.map(async (file) => {
-                    return new RenamerFile(
-                        file.path
-                    );
-                }));
-                files = newFiles.sort((a, b) => a.name.localeCompare(b.name));
-                await goto('/mainWindow');
+                const paths = files_tmp.map(
+                    (file) => {
+                        return file.path;
+                    }
+                );
+                let tmp_files: any[] = await invoke('files_from_vec', {files: paths})
+                tmp_files.forEach(
+                    (file) => {
+                        files.push(new RenamerFile(file));
+                    }
+                );
+
+                files = files.sort((a, b) => a.name.localeCompare(b.name));
             }
         } else if (type === "Folder") {
             const folder = await open({
@@ -32,31 +34,17 @@ export async function getFilesFromFileDialog(type: "Files" | "Folder" = "Files")
 
             if (folder) {
 
-                let tmp_files: string[] = [];
-                let error: string | null = null;
+                let tmp_files: any[] = [];
 
-                async function fetchFiles() {
-                    try {
-                        // call the function to list files in the directory
-                        tmp_files = await invoke('list_files_in_directory', {dir: folder});
-                        tmp_files.forEach(
-                            (file) => {
-                                files.push(new RenamerFile(file));
-                            }
-                        );
-                        error = null;
-                    } catch (err) {
-                        error = err as string;
-                        console.error(err);
-                        await message(error, {
-                            title: "Error",
-                            kind: "error",
-                        });
+                // call the function to list files in the directory
+                tmp_files = await invoke('list_files_in_directory', {dir: folder});
+                tmp_files.forEach(
+                    (file) => {
+                        files.push(new RenamerFile(file));
                     }
-                }
+                );
 
-                await fetchFiles();
-                await goto('/mainWindow');
+                files = files.sort((a, b) => a.name.localeCompare(b.name));
             }
         }
     } catch (err) {
@@ -66,19 +54,18 @@ export async function getFilesFromFileDialog(type: "Files" | "Folder" = "Files")
             kind: "error",
         });
     }
-
     return files
 }
 
 export async function renameFile(file: RenamerFile): Promise<void> {
     try {
         // {path: file.path, new_name: `${file.getDirectory()}/${file.newname}`}
-        await invoke('rename_files', {fileInfos : [{path: "regwetr", new_path: "regwetr"}]}).then(
+        await invoke('rename_files', {fileInfos: [{path: "regwetr", new_path: "regwetr"}]}).then(
             (res) => {
                 console.log(res);
             }
         );
-    }catch (err){
+    } catch (err) {
         await message(err, {
             title: "Error",
             kind: "error",

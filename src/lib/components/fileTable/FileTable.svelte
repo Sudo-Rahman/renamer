@@ -1,12 +1,12 @@
 <!-- MainComponent.svelte -->
 <script lang="ts">
     import FileItem from "$lib/components/fileTable/FileItem.svelte";
-    import {RenamerFile} from "$models";
+    import {formatters, RenamerFile} from "$models";
     import * as Resizable from "$lib/components/ui/resizable";
     import {onMount} from 'svelte';
     import {size} from './store.js';
 
-    export let files: RenamerFile[] = [];
+    let files: RenamerFile[] = [];
 
     function updateSize(newSize: number, _: number | undefined) {
         size.set({
@@ -14,6 +14,10 @@
             col2: 100 - newSize
         });
     }
+
+    $formatters.onFormattedSignal.connect((_files) => {
+       files = _files;
+    });
 
 </script>
 

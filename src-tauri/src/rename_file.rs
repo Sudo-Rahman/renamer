@@ -1,0 +1,42 @@
+use std::time::{SystemTime, UNIX_EPOCH};
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct RenameFile {
+    path: String,
+    name: String,
+    size: u64,
+    creation_date: u64,
+    last_modified_date: u64,
+}
+
+impl RenameFile {
+    // Méthode pour créer une nouvelle instance de RenameFile
+    pub(crate) fn new(path: String) -> std::io::Result<Self> {
+        let metadata = std::fs::metadata(&path)?;
+        let name = std::path::Path::new(&path)
+            .file_name()
+            .and_then(|os_str| os_str.to_str())
+            .unwrap_or("")
+            .to_string();
+
+        let size = metadata.len();
+        let creation_date = Self::system_time_to_unix(metadata.created().unwrap_or(SystemTime::UNIX_EPOCH));
+        let last_modified_date = Self::system_time_to_unix(metadata.modified().unwrap_or(SystemTime::UNIX_EPOCH));
+
+        Ok(Self {
+            path,
+            name,
+            size,
+            creation_date,
+            last_modified_date,
+        })
+    }
+
+    // Méthode pour convertir SystemTime en u64 (timestamp Unix en secondes)
+    fn system_time_to_unix(time: SystemTime) -> u64 {
+        time.duration_since(UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_secs()
+    }
+}

@@ -5,15 +5,20 @@
     import {Play} from 'lucide-svelte';
     import {Button} from '$lib/components/ui/button';
     import {toast} from "svelte-sonner";
+    import {Separator} from "$lib/components/ui/menubar";
 
 
     export let files: RenamerFile[] = [];
 
-    onMount(() => {
-        const handleKeyDown = (event: KeyboardEvent) => {
+    onMount(async () => {
+        const handleKeyDown = async (event: KeyboardEvent) => {
+            if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key === 'n') {
+                event.preventDefault();
+                await getFolder();
+            }
             if ((event.metaKey || event.ctrlKey) && event.key === 'n') {
                 event.preventDefault();
-                getFilesFromFileDialog("Files");
+                await getFiles();
             }
         };
 
@@ -23,6 +28,14 @@
             document.removeEventListener('keydown', handleKeyDown);
         };
     });
+
+    async function getFolder() {
+        files = await getFilesFromFileDialog("Folder");
+    }
+
+    async function getFiles() {
+        files = await getFilesFromFileDialog("Files");
+    }
 
     async function renameFiles() {
         console.log(files);
@@ -39,13 +52,17 @@
             <Menubar.Menu>
                 <Menubar.Trigger>File</Menubar.Trigger>
                 <Menubar.Content>
-                    <Menubar.Item on:click={async () => {files = await getFilesFromFileDialog()}}>
+                    <Menubar.Item>
+                        Settings
+                    </Menubar.Item>
+                    <Menubar.Separator/>
+                    <Menubar.Item on:click={getFiles}>
                         Import Files
                         <Menubar.Shortcut>⌘N</Menubar.Shortcut>
                     </Menubar.Item>
-                    <Menubar.Item on:click={async () => {files = await getFilesFromFileDialog('Folder')}}>
-                        From directory
-                        <Menubar.Shortcut>⌘⇧N</Menubar.Shortcut>
+                    <Menubar.Item on:click={getFolder}>
+                        Import from directory
+                        <Menubar.Shortcut class="ml-2">⇧⌘N</Menubar.Shortcut>
                     </Menubar.Item>
                 </Menubar.Content>
             </Menubar.Menu>

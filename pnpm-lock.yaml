@@ -20,12 +20,18 @@ importers:
       '@tauri-apps/plugin-shell':
         specifier: '>=2.0.0-beta.0'
         version: 2.0.0-beta.8
+      '@types/dateformat':
+        specifier: ^5.0.2
+        version: 5.0.2
       bits-ui:
         specifier: ^0.21.12
         version: 0.21.12(svelte@4.2.18)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      dateformat:
+        specifier: ^5.0.3
+        version: 5.0.3
       lucide-svelte:
         specifier: ^0.417.0
         version: 0.417.0(svelte@4.2.18)
@@ -493,6 +499,9 @@ packages:
   '@types/cookie@0.6.0':
     resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
 
+  '@types/dateformat@5.0.2':
+    resolution: {integrity: sha512-M95hNBMa/hnwErH+a+VOD/sYgTmo15OTYTM2Hr52/e0OdOuY+Crag+kd3/ioZrhg0WGbl9Sm3hR7UU+MH6rfOw==}
+
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
 
@@ -626,6 +635,10 @@ packages:
     resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
     engines: {node: '>=4'}
     hasBin: true
+
+  dateformat@5.0.3:
+    resolution: {integrity: sha512-Kvr6HmPXUMerlLcLF+Pwq3K7apHpYmGDVqrxcDasBg86UcKeTSNWbEzU8bwdXnxnR44FtMhJAxI4Bov6Y/KUfA==}
+    engines: {node: '>=12.20'}
 
   debug@4.3.6:
     resolution: {integrity: sha512-O/09Bd4Z1fBrU4VzkhFqVgpPzaGbw6Sm9FEkBT1A/YBXQFGuuSxa1dN2nxgxS34JmKXqYx8CZAwEVoJFImUXIg==}
@@ -1585,6 +1598,8 @@ snapshots:
 
   '@types/cookie@0.6.0': {}
 
+  '@types/dateformat@5.0.2': {}
+
   '@types/estree@1.0.5': {}
 
   '@types/pug@2.0.10': {}
@@ -1711,6 +1726,8 @@ snapshots:
       source-map-js: 1.2.0
 
   cssesc@3.0.0: {}
+
+  dateformat@5.0.3: {}
 
   debug@4.3.6:
     dependencies:

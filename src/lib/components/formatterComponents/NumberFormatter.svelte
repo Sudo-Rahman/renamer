@@ -10,11 +10,12 @@
 
     let formatter = $formatters.createFormatter(NumberFormatter);
 
-    let start = 0;
+    let start = 1;
     let step = 1;
     let text = '';
     let fill = 0;
     let fillChar = '0';
+    let reRender = {};
 
     $: {
         formatter.start = start;
@@ -25,7 +26,7 @@
             char: fillChar,
             length: fill
         };
-        formatters.set($formatters);
+        $formatters.format();
     }
 
 
@@ -33,8 +34,8 @@
 
 
 <Accordion.Root>
-    <Accordion.Item value="item-{formatter.id}">
-        <Accordion.Trigger class="w-full hover:no-underline flex justify-center">
+    <Accordion.Item value="item-{formatter.id}" class="border-none">
+        <Accordion.Trigger class="w-full hover:no-underline pt-0 pb-2 flex justify-center">
             Number
         </Accordion.Trigger>
 
@@ -85,6 +86,7 @@
                 </div>
 
             </div>
+
         </Accordion.Content>
     </Accordion.Item>
 </Accordion.Root>

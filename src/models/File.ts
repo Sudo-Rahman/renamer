@@ -1,39 +1,59 @@
-import {type FileInfo, stat} from "@tauri-apps/plugin-fs";
-
 export class RenamerFile {
-    path: string;
-    name: string;
+    get path(): string {
+        return this._path;
+    }
+
+    get name(): string {
+        return this._name;
+    }
+
+    get size(): number {
+        return this._size;
+    }
+
+    get creationDate(): Date {
+        return this._creationDate;
+    }
+
+    get modificationDate(): Date {
+        return this._modificationDate;
+    }
+
+    private readonly _path: string;
+    private readonly _name: string;
     newname: string;
-    children: RenamerFile[];
-    parent: RenamerFile | null;
-    checked: boolean = true;
-    private fileInfo?: FileInfo;
+    checked: boolean;
+    private readonly _size: number;
+    private readonly _creationDate: Date;
+    private readonly _modificationDate: Date;
 
-    constructor(path: string) {
-        this.path = path;
-        this.name = path.split("/").pop() || "";
-        this.newname = this.name;
-        this.children = [];
-        this.parent = null;
+
+    constructor(params: {
+        path: string,
+        name: string,
+        size: number,
+        creation_date: number,
+        last_modified_date: number
+    }) {
+        this._path = params.path;
+        this._name = params.name;
+        this._size = params.size;
+        this._creationDate = new Date(params.creation_date* 1000);
+        this._modificationDate = new Date(params.last_modified_date* 1000);
+        this.newname = this._name;
+        this.checked = true;
     }
 
-    public async getFileInfo(): Promise<FileInfo> {
-        if (this.fileInfo) {
-            return this.fileInfo;
-        }
-        this.fileInfo = await stat(this.path);
-        return this.fileInfo;
-    }
 
     public getDirectory(): string {
         return this.path.split("/").slice(0, -1).join("/");
     }
 
     public getFormatedBirthDate(): string {
-        if (!this.fileInfo || !this.fileInfo?.birthtime) {
+        if (!this._creationDate) {
             return "";
         }
-        const date = this.fileInfo?.birthtime;
+        const date = this._creationDate;
 
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -46,10 +66,10 @@ export class RenamerFile {
     }
 
     public getFormatedModDate(): string {
-        if (!this.fileInfo || !this.fileInfo?.mtime) {
+        if (!this._modificationDate) {
             return "";
         }
-        const date = this.fileInfo?.mtime;
+        const date = this._modificationDate;
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0');
         const day = date.getDate().toString().padStart(2, '0');
@@ -60,13 +80,9 @@ export class RenamerFile {
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
 
-    public getFileInfoSync(): FileInfo | undefined {
-        return this.fileInfo;
-    }
-
     public getStringSize(): string {
         const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-        let size = this.fileInfo?.size || 0;
+        let size = this._size || 0;
         let unitIndex = 0;
 
         while (size >= 1024 && unitIndex < units.length - 1) {
@@ -80,20 +96,6 @@ export class RenamerFile {
 
     public getExtension(): string {
         return this.name.split(".").pop() || "";
-    }
-
-    public addChild(child: RenamerFile): void {
-        this.children.push(child);
-        child.parent = this;
-    }
-
-    public removeChild(child: RenamerFile): void {
-        this.children = this.children.filter((c) => c !== child);
-        child.parent = null;
-    }
-
-    public getFullPath(): string {
-        return this.parent ? `${this.parent.getFullPath()}/${this.name}` : this.name;
     }
 
 }

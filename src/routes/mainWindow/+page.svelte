@@ -1,11 +1,8 @@
 <script lang="ts">
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
     import * as Resizable from "$lib/components/ui/resizable";
-    import {goto} from "$app/navigation";
     import {Separator} from "$lib/components/ui/separator";
-    import {onMount} from "svelte";
-    import * as Table from "$lib/components/ui/table";
-    import {files, getFilesFromFileDialog} from "$models";
+    import {files} from "$models";
     import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
     import FileTable from "$lib/components/fileTable/FileTable.svelte";
     import Menubar from "$lib/components/MenuBar.svelte";
@@ -26,7 +23,7 @@
             <Resizable.Pane class="p-2">
                 <ScrollArea class="h-full">
 
-                    <FileTable bind:files={$files}/>
+                    <FileTable/>
 
                 </ScrollArea>
             </Resizable.Pane>

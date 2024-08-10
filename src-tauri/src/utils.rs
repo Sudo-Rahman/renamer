@@ -1,8 +1,9 @@
 use std::fs;
 use std::path::{Path};
+use crate::rename_file::RenameFile;
 
 #[tauri::command]
-pub fn list_files_in_directory(dir: String) -> Result<Vec<String>, String> {
+pub fn list_files_in_directory(dir: String) -> Result<Vec<RenameFile>, String> {
     let path = Path::new(&dir);
 
     if path.is_dir() {
@@ -12,8 +13,9 @@ pub fn list_files_in_directory(dir: String) -> Result<Vec<String>, String> {
             let path = entry.path();
 
             if path.is_file() {
-                if let Some(path_str) = path.to_str() {
-                    files.push(path_str.to_string());
+                match RenameFile::new(path.to_string_lossy().to_string()) {
+                    Ok(file) => files.push(file),
+                    Err(err) => eprintln!("Error reading file metadata: {}", err),
                 }
             }
         }
@@ -21,6 +23,19 @@ pub fn list_files_in_directory(dir: String) -> Result<Vec<String>, String> {
     } else {
         Err("The provided path is not a directory".to_string())
     }
+}
+
+
+#[tauri::command]
+pub fn files_from_vec(files: Vec<String>) -> Result<Vec<RenameFile>, String> {
+    let mut files_vec = Vec::new();
+    for file in files {
+        match RenameFile::new(file) {
+            Ok(file) => files_vec.push(file),
+            Err(err) => eprintln!("Error reading file metadata: {}", err),
+        }
+    }
+    Ok(files_vec)
 }
 
 use serde::{Deserialize, Serialize};

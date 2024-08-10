@@ -9,10 +9,6 @@
 
     export let file: RenamerFile;
 
-    onMount(async () => {
-        await file.getFileInfo();
-    });
-
     let hover = false;
 </script>
 

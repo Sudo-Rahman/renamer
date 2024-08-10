@@ -4,19 +4,19 @@
     import {Label} from "$lib/components/ui/label/index.js";
     import NumerFormatter from "$lib/components/formatterComponents/NumberFormatter.svelte";
     import {formatters} from "$models";
+    import ExtensionFormatter from "$lib/components/formatterComponents/ExtensionFormatter.svelte";
+    import BirthDateFormatter from "$lib/components/formatterComponents/BirthDateFormatter.svelte";
 
-    $: {
-        $files.forEach(file => {
-            file.newname = $formatters.format(file.name);
-        });
-        files.set($files);
-    }
 </script>
 
 <div class="{$$props.class}">
-    <div class="flex w-full  flex-col pt-3">
+    <div class="grid gap-3 mt-1.5">
 
         <NumerFormatter/>
+
+        <BirthDateFormatter/>
+
+        <ExtensionFormatter/>
 
     </div>
 </div>
