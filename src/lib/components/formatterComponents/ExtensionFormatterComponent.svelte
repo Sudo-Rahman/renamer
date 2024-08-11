@@ -7,7 +7,7 @@
     import {slide} from "svelte/transition";
 
 
-    let formatter = $formatters.createFormatter(ExtensionFormatter);
+    export let formatter:ExtensionFormatter;
 
 
     let customExt = false;

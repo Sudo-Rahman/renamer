@@ -21,7 +21,7 @@
         const dropListen = await listen('tauri://drag-drop', async (event: any) => {
             if (dragActive) {
                 const droppedFiles = event.payload.paths as string[];
-                let new_files = [];
+                let new_files: RenamerFile[] = [];
 
                 let tmp_files: any[] = await invoke('files_from_vec', {files: droppedFiles})
                 tmp_files.forEach(
@@ -30,7 +30,7 @@
                     }
                 );
 
-                new_files = tmp_files.sort((a, b) => a.name.localeCompare(b.name));
+                new_files = new_files.sort((a, b) => a.name.localeCompare(b.name));
                 $files = new_files;
                 dragActive = false;
                 await goto('/mainWindow');
@@ -65,12 +65,13 @@
     });
 </script>
 
-<button type="button" on:click={async ()=>{$files = await getFilesFromFileDialog("Folder"); await goto('/mainWindow');}}
-        class="flex p-10 h-[200px] w-[350px] items-center justify-center rounded-md border-2 border-dashed text-sm"
-        class:bg-secondary={dragActive}
-        class:border-primary={dragActive}
-        on:dragover={handleDragOver}
-        on:dragleave={handleDragLeave}>
-    Click here to select a
-    directory or drag and drop files
-</button>
+<div id="dropzone"
+     class="flex p-10 h-[200px] w-[350px] items-center justify-center rounded-md border-2 border-dashed text-sm"
+     class:bg-primary={dragActive}
+     class:border-secondary={dragActive}
+     on:dragover={handleDragOver}
+     on:dragleave={handleDragLeave}>
+    <button class="h-full w-full" type="button" on:click={async ()=>{$files = await getFilesFromFileDialog("Folder"); await goto('/mainWindow');}}>Click here to select a
+        directory or drag and drop files
+    </button>
+</div>

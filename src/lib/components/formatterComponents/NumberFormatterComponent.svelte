@@ -8,7 +8,7 @@
     import {Info} from 'lucide-svelte';
 
 
-    let formatter = $formatters.createFormatter(NumberFormatter);
+    export let formatter:NumberFormatter;
 
     let start = 1;
     let step = 1;

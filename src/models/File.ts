@@ -98,4 +98,8 @@ export class RenamerFile {
         return this.name.split(".").pop() || "";
     }
 
+    public getNameWithoutExtension(): string {
+        return this.name.split(".").slice(0, -1).join(".");
+    }
+
 }
