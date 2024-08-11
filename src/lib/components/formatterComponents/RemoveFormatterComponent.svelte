@@ -6,18 +6,18 @@
     import {formatters, RemoveFormatter} from "$models";
     import * as RadioGroup from "$lib/components/ui/radio-group";
     import {Button} from "$lib/components/ui/button";
-    import { slide } from 'svelte/transition';
+    import {slide} from 'svelte/transition';
     import {Plus, X, GripVertical} from "lucide-svelte";
     import {type DndEvent, dndzone, type Item} from "svelte-dnd-action";
     import {quintOut} from "svelte/easing";
 
-    export let formatter:RemoveFormatter;
+    export let formatter: RemoveFormatter;
 
     let inputs: Item[] = [];
 
 
-    let dropTargetStyle : any = {
-        "border": "none"
+    let dropTargetStyle: any = {
+        // "border": "none"
     };
 
     function newInput() {
@@ -43,19 +43,31 @@
 
 </script>
 
-<Accordion.Root>
+<Accordion.Root id={formatter.id}>
     <Accordion.Item value="item-{formatter.id}" class="border-none">
-        <Accordion.Trigger class="w-full hover:no-underline flex pt-0 pb-2 justify-center">
-            Remove custom characters
-        </Accordion.Trigger>
+
+        <div class="flex h-6 mb-1 w-full items-center relative">
+            <Accordion.Trigger class="w-full hover:no-underline py-0 flex items-center h-full justify-center absolute inset-0">
+                Remove custom characters
+            </Accordion.Trigger>
+
+            <div class="ml-auto z-0">
+                <Button variant="outline" class="w-6 h-6 p-0"
+                        on:click={() => $formatters.removeFormatter(formatter.id)}>
+                    <X size="16px"/>
+                </Button>
+            </div>
+        </div>
+
         <Accordion.Content>
-            <div class="flex flex-col space-y-2 pl-2 pt-2 w-full">
+            <div class="flex flex-col space-y-2 pt-2 w-full">
                 <div use:dndzone={{items: inputs,dropTargetStyle}} on:consider={handleDndConsider}
                      on:finalize={handleDndFinalize}>
                     {#each inputs as input (input.id)}
-                        <div transition:slide={{duration: 150, easing : quintOut, delay : 0}} class="flex items-center space-x-2 mb-2">
+                        <div transition:slide={{duration: 150, easing : quintOut, delay : 0}}
+                             class="flex items-center space-x-2 mb-2">
                             <div class="cursor-move">
-                                <GripVertical class="h-5 w-5 text-gray-400"/>
+                                <GripVertical class="h-5 w-5"/>
                             </div>
                             <Input
                                     type="text"
@@ -64,7 +76,7 @@
                                     class="w-full"
                             />
                             <div>
-                                <Button class="h-7 w-7 flex justify-center items-center p-1 active:bg-primary/50"
+                                <Button class="h-6 w-6 flex justify-center items-center p-1 active:bg-primary/50"
                                         variant="outline"
                                         on:click={() => removeInput(input.id)}>
                                     <X/>
@@ -76,7 +88,7 @@
                 </div>
 
                 <div class="flex justify-center items-center w-full">
-                    <Button class="h-10 w-10 rounded-full p-0 active:bg-primary/50" on:click={newInput}>
+                    <Button variant="ghost" class="h-10 w-10 rounded-full p-0 active:bg-primary/50" on:click={newInput}>
                         <Plus/>
                     </Button>
                 </div>

@@ -71,12 +71,18 @@ export class FormatterList {
         }
         const newFormatter = new formatter();
         this._formatters.splice(-1, 0, newFormatter);
+        this.format();
         this.onListChangedSignal.emit(this._formatters);
         return newFormatter;
     }
 
-    removeFormatter(formatter: Formatter): void {
-        this._formatters = this._formatters.filter((f) => f !== formatter);
+    removeFormatter(id : string): void {
+        const index = this._formatters.findIndex((f) => f.id === id);
+        if (index === -1) {
+            return;
+        }
+        this._formatters.splice(index, 1);
+        this.format();
         this.onListChangedSignal.emit(this._formatters);
     }
 
@@ -88,7 +94,8 @@ export class FormatterList {
         this._renamerFiles.filter(file => {
             return file.checked;
         }).forEach((file) => {
-            file.newname = "";
+            if(this._formatters.length > 1) file.newname = "";
+            else file.newname = file.getNameWithoutExtension();
             this._formatters.forEach(f => {
                 f.format(file);
             });
@@ -197,7 +204,7 @@ export class ExtensionFormatter extends Formatter {
 
     format(file: RenamerFile): void {
         let formatted: string;
-        if (!this._customeExt) {
+        if (!this._customeExt || this.hide ) {
             formatted = `.${file.getExtension()}`;
         } else {
             formatted = `.${this.extension}`;
