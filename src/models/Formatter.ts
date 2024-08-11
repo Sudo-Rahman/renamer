@@ -9,8 +9,6 @@ export abstract class Formatter {
 
     id: string;
 
-    hide: boolean = false;
-
     protected constructor() {
         this.id = uuidv7();
     }
@@ -48,9 +46,6 @@ export class FormatterList {
 
     constructor(files: RenamerFile[]) {
         this._renamerFiles = files;
-        const extensionFormatter = new ExtensionFormatter();
-        extensionFormatter.hide = true;
-        this._formatters.push(extensionFormatter);
     }
 
     public updateFiles(files: RenamerFile[]) {
@@ -64,13 +59,11 @@ export class FormatterList {
 
     createFormatter<T extends Formatter>(formatter: new () => T): T {
         // check if the formatter is an extension formatter
-        if (formatter as any === ExtensionFormatter) {
-            const extFormatter = this._formatters.at(this._formatters.length - 1) as T;
-            extFormatter.hide = false;
-            return extFormatter;
+        if (formatter as any === ExtensionFormatter && this._formatters.some((f) => f instanceof ExtensionFormatter)) {
+            return this._formatters.at(this._formatters.length - 1) as T;
         }
         const newFormatter = new formatter();
-        this._formatters.splice(-1, 0, newFormatter);
+        this._formatters.push(newFormatter);
         this.format();
         this.onListChangedSignal.emit(this._formatters);
         return newFormatter;
@@ -94,8 +87,8 @@ export class FormatterList {
         this._renamerFiles.filter(file => {
             return file.checked;
         }).forEach((file) => {
-            if(this._formatters.length > 1) file.newname = "";
-            else file.newname = file.getNameWithoutExtension();
+            if(this._formatters.length > 0) file.newname = "";
+            else file.newname = file.name;
             this._formatters.forEach(f => {
                 f.format(file);
             });
@@ -204,7 +197,7 @@ export class ExtensionFormatter extends Formatter {
 
     format(file: RenamerFile): void {
         let formatted: string;
-        if (!this._customeExt || this.hide ) {
+        if (!this._customeExt) {
             formatted = `.${file.getExtension()}`;
         } else {
             formatted = `.${this.extension}`;

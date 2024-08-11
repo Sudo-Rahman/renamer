@@ -37,7 +37,7 @@
         formatterComponents.sort((a, b) => {
             const indexA = $formatters.formatters.findIndex(f => f.id === a.id);
             const indexB = $formatters.formatters.findIndex(f => f.id === b.id);
-            return indexA - indexB;
+            return indexA + indexB;
         });
         formatterComponents.forEach(component => formatterDiv.appendChild(component));
     }
@@ -87,11 +87,6 @@
         }
     }
 
-    function removeFormatter(id: string) {
-        $formatters.removeFormatter(id);
-        formatterIds = formatterIds.filter(i => i !== id);
-    }
-
     $formatters.onListChangedSignal.connect(list => {
         formatterIds.forEach(id => {
             let formatter = list.find(f => f.id === id);
@@ -106,7 +101,7 @@
 
 <div class="{$$props.class} w-full h-full">
     <ScrollArea class="grid gap-1 h-full" orientation="vertical">
-        
+
         <Label class="justify-center flex w-full text-xl font-bold">Formatters</Label>
         <Separator class="w-full my-2"/>
 

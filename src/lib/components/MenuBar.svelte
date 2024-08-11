@@ -5,7 +5,6 @@
     import {Play} from 'lucide-svelte';
     import {Button} from '$lib/components/ui/button';
     import {toast} from "svelte-sonner";
-    import {Separator} from "$lib/components/ui/menubar";
 
 
     export let files: RenamerFile[] = [];
@@ -15,10 +14,12 @@
             if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key === 'n') {
                 event.preventDefault();
                 await getFolder();
+                return;
             }
             if ((event.metaKey || event.ctrlKey) && event.key === 'n') {
                 event.preventDefault();
                 await getFiles();
+                return;
             }
         };
 
