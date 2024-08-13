@@ -1,10 +1,12 @@
 <script lang="ts">
     import * as Menubar from "$lib/components/ui/menubar";
-    import {getFilesFromFileDialog, renameFile, RenamerFile} from "$models";
+    import {getFilesFromFileDialog, options, renameFile, RenamerFile} from "$models";
     import {onMount} from "svelte";
     import {Play} from 'lucide-svelte';
     import {Button} from '$lib/components/ui/button';
     import {toast} from "svelte-sonner";
+    import {Label} from "$lib/components/ui/label";
+    import {Checkbox} from "$lib/components/ui/checkbox";
 
 
     export let files: RenamerFile[] = [];
@@ -65,6 +67,17 @@
                         Import from directory
                         <Menubar.Shortcut class="ml-2">⇧⌘N</Menubar.Shortcut>
                     </Menubar.Item>
+                </Menubar.Content>
+            </Menubar.Menu>
+            <Menubar.Menu>
+                <Menubar.Trigger>Options</Menubar.Trigger>
+                <Menubar.Content>
+                    <Menubar.Label>
+                        <div class="flex justify-around space-x-2 w-full items-center">
+                            <Label>Space between formatters</Label>
+                            <Checkbox bind:checked={$options.spaceBetweenFormatters}/>
+                        </div>
+                    </Menubar.Label>
                 </Menubar.Content>
             </Menubar.Menu>
         </Menubar.Root>

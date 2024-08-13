@@ -7,6 +7,8 @@
     import FileTable from "$lib/components/fileTable/FileTable.svelte";
     import Menubar from "$lib/components/MenuBar.svelte";
     import FormattersComponent from "$lib/components/FormattersComponent.svelte";
+    import DataTable from "$lib/components/fileTable/DataTable.svelte";
+
 
 </script>
 
@@ -23,7 +25,10 @@
             <Resizable.Pane class="p-2">
                 <ScrollArea class="h-full">
 
-                    <FileTable/>
+
+                    {#key $files}
+                        <DataTable filesList={$files}/>
+                    {/key}
 
                 </ScrollArea>
             </Resizable.Pane>

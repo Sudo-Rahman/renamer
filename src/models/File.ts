@@ -21,8 +21,8 @@ export class RenamerFile {
 
     private readonly _path: string;
     private readonly _name: string;
-    newname: string;
-    checked: boolean;
+    newName: string;
+    selected: boolean;
     private readonly _size: number;
     private readonly _creationDate: Date;
     private readonly _modificationDate: Date;
@@ -40,8 +40,8 @@ export class RenamerFile {
         this._size = params.size;
         this._creationDate = new Date(params.creation_date* 1000);
         this._modificationDate = new Date(params.last_modified_date* 1000);
-        this.newname = this._name;
-        this.checked = true;
+        this.newName = this._name;
+        this.selected = true;
     }
 
 
@@ -81,8 +81,11 @@ export class RenamerFile {
     }
 
     public getStringSize(): string {
+        return RenamerFile.getStringSize(this.size);
+    }
+
+    public static getStringSize(size: number): string {
         const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-        let size = this._size || 0;
         let unitIndex = 0;
 
         while (size >= 1024 && unitIndex < units.length - 1) {

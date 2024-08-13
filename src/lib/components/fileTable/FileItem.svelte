@@ -17,13 +17,13 @@
     <Popover.Root>
         <div class="flex py-1.5 hover:bg-primary hover:rounded-[10px]"
              on:mouseleave={() => hover = false} on:mouseenter={() => hover = true}>
-            <Checkbox class="mx-2 {hover ? 'border-accent' : ''} rounded" bind:checked={file.checked}/>
+            <Checkbox class="mx-2 {hover ? 'border-accent' : ''} rounded" bind:checked={file.selected}/>
             <Popover.Trigger class="flex w-full space-x-2 text-xs hover:cursor-pointer">
                 <div class="flex space-x-3 items-center" style="width: {$size.col1}%;">
                     <span class="line-clamp-1">{file.name}</span>
                 </div>
-                <span class="line-clamp-1 pr-2 {file.checked ? 'text-start' : 'text-center'}"
-                      style="width: {$size.col2}%;">{file.checked ? file.newname : '------------'}</span>
+                <span class="line-clamp-1 pr-2 {file.selected ? 'text-start' : 'text-center'}"
+                      style="width: {$size.col2}%;">{file.selected ? file.newName : '------------'}</span>
             </Popover.Trigger>
         </div>
         <Popover.Content>

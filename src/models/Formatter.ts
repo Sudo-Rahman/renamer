@@ -85,10 +85,10 @@ export class FormatterList {
 
     format(): void {
         this._renamerFiles.filter(file => {
-            return file.checked;
+            return file.selected;
         }).forEach((file) => {
-            if(this._formatters.length > 0) file.newname = "";
-            else file.newname = file.name;
+            if(this._formatters.length > 0) file.newName = "";
+            else file.newName = file.name;
             this._formatters.forEach(f => {
                 f.format(file);
             });
@@ -165,7 +165,7 @@ export class NumberFormatter extends Formatter {
             formatted = this.start.toString().padStart(this._fill.length, this._fill.char);
         }
         this._start = +this._start + +this._step;
-        file.newname += formatted;
+        file.newName += formatted;
     }
 }
 
@@ -202,7 +202,7 @@ export class ExtensionFormatter extends Formatter {
         } else {
             formatted = `.${this.extension}`;
         }
-        file.newname += formatted;
+        file.newName += formatted;
     }
 }
 
@@ -235,7 +235,7 @@ export class CreationDateFormatter extends Formatter {
     private _dateFormat: string;
 
     format(file: RenamerFile): void {
-        file.newname += dateFormat(file.creationDate, this._dateFormat);
+        file.newName += dateFormat(file.creationDate, this._dateFormat);
     }
 }
 
@@ -291,7 +291,7 @@ export class CasesFormatter extends Formatter {
 
     format(file: RenamerFile): void {
         let formatted: string;
-        let text = this._mode === 0 ? file.getNameWithoutExtension() : String(file.newname);
+        let text = this._mode === 0 ? file.getNameWithoutExtension() : String(file.newName);
         switch (this._case) {
             case "lowercase":
                 formatted = text.toLowerCase();
@@ -320,7 +320,7 @@ export class CasesFormatter extends Formatter {
         if (this._removeSpaces) {
             formatted = formatted.replace(/\s/g, "");
         }
-        file.newname = formatted;
+        file.newName = formatted;
     }
 }
 
@@ -343,11 +343,11 @@ export class RemoveFormatter extends Formatter {
     }
 
     format(file: RenamerFile): void {
-        let text = file.newname;
-        console.log(file.newname);
+        let text = file.newName;
+        console.log(file.newName);
         this._texts.forEach((t) => {
             text = text.replaceAll(t, "")
         });
-        file.newname = text;
+        file.newName = text;
     }
 }

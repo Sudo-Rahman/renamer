@@ -9,3 +9,7 @@ export const formatters = writable(new FormatterList([]));
 files.subscribe((value) => {
     get(formatters).updateFiles(value);
 });
+
+export const options = writable({
+    spaceBetweenFormatters: false,
+});
