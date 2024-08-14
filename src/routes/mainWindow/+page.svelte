@@ -4,10 +4,9 @@
     import {Separator} from "$lib/components/ui/separator";
     import {files} from "$models";
     import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
-    import FileTable from "$lib/components/fileTable/FileTable.svelte";
     import Menubar from "$lib/components/MenuBar.svelte";
     import FormattersComponent from "$lib/components/FormattersComponent.svelte";
-    import DataTable from "$lib/components/fileTable/DataTable.svelte";
+    import DataTable from "$lib/components/fileTable/data-table.svelte";
 
 
 </script>
