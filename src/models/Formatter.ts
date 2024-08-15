@@ -332,3 +332,80 @@ export class RemoveFormatter extends Formatter {
         file.newName = text;
     }
 }
+
+
+export class OriginalFileName extends Formatter {
+    get withExtension(): boolean {
+        return this._withExtension;
+    }
+
+    set withExtension(value: boolean) {
+        this._withExtension = value;
+    }
+
+
+    private _withExtension: boolean;
+
+    constructor() {
+        super();
+        this._withExtension = true;
+    }
+
+    format(file: RenamerFile): void {
+        file.newName = this._withExtension ? file.name : file.getNameWithoutExtension();
+    }
+}
+
+
+export class RegexFormatter extends Formatter {
+    get regex(): string {
+        return this._regex;
+    }
+
+    set regex(value: string) {
+        this._regex = value;
+    }
+
+    get replace(): string {
+        return this._replace;
+    }
+
+    set replace(value: string) {
+        this._replace = value;
+    }
+
+    private _regex: string;
+    private _replace: string;
+
+    constructor() {
+        super();
+        this._regex = "";
+        this._replace = "";
+    }
+
+    format(file: RenamerFile): void {
+        file.newName = file.newName.replace(new RegExp(this._regex, "g"), this._replace);
+    }
+}
+
+export class BasicTextFormatter extends Formatter {
+    get text(): string {
+        return this._text;
+    }
+
+    set text(value: string) {
+        this._text = value;
+    }
+
+    private _text: string;
+
+    constructor() {
+        super();
+        this._text = "";
+    }
+
+    format(file: RenamerFile): void {
+        file.newName += this._text;
+    }
+
+}

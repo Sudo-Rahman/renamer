@@ -1,6 +1,18 @@
 import {Signal} from "$models/Signal";
 
 export class RenamerFile {
+    get uuid(): string {
+        return this._uuid;
+    }
+
+    get status(): "OK" | "Error" | "Renamed" {
+        return this._status;
+    }
+
+    set status(value: "OK" | "Error" | "Renamed") {
+        this._status = value;
+        this.onStatusChanged.emit(value);
+    }
     get path(): string {
         return this._path;
     }
@@ -21,17 +33,21 @@ export class RenamerFile {
         return this._modificationDate;
     }
 
+    private readonly _uuid: string = "";
     private readonly _path: string;
     private readonly _name: string;
     newName: string;
     onNewNameChanged: Signal<string>;
+    onStatusChanged: Signal<string>;
     selected: boolean;
     private readonly _size: number;
     private readonly _creationDate: Date;
     private readonly _modificationDate: Date;
+    private _status : "OK" | "Error" | "Success";
 
 
     constructor(params: {
+        uuid: string,
         path: string,
         name: string,
         size: number,
@@ -46,6 +62,9 @@ export class RenamerFile {
         this.newName = this._name;
         this.selected = true;
         this.onNewNameChanged = new Signal<string>();
+        this.onStatusChanged = new Signal<string>();
+        this._uuid = params.uuid;
+        this._status = "Success";
     }
 
 

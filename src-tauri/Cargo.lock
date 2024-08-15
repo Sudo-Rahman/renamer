@@ -2899,6 +2899,7 @@ dependencies = [
  "tauri-plugin-fs",
  "tauri-plugin-os",
  "tauri-plugin-shell",
+ "uuid",
 ]
 
 [[package]]

@@ -16,6 +16,7 @@
     import DataTablePagination from "./data-table-pagination.svelte";
     import DatatableToolbar from "./data-table-toolbar.svelte";
     import DatatableNewName from "./data-table-new-name.svelte";
+    import DatatableStatus from "./data-table-status.svelte";
 
     export let filesList: RenamerFile[] = [];
 
@@ -72,6 +73,15 @@
 
                 return createRender(DataTableCheckbox, {
                     checked: isSelected,
+                });
+            },
+        }),
+        table.column({
+            accessor: "status",
+            header: "Status",
+            cell: ({row}) => {
+                return createRender(DatatableStatus, {
+                    file:  row.original,
                 });
             },
         }),
@@ -134,7 +144,7 @@
                         <Table.Row >
                             {#each headerRow.cells as cell (cell.id)}
                                 <Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
-                                    <Table.Head {...attrs}>
+                                    <Table.Head {...attrs} class="text-center">
                                         {#if cell.id === "name" || cell.id === "newName" || cell.id === "size" || cell.id === "modificationDate"}
                                             <Button variant="ghost" on:click={props.sort.toggle}>
                                                 <Render of={cell.render()}/>
@@ -158,7 +168,7 @@
                                 data-state={$selectedDataIds[row.id] && "selected"}>
                             {#each row.cells as cell (cell.id)}
                                 <Subscribe attrs={cell.attrs()} let:attrs>
-                                    <Table.Cell {...attrs}>
+                                    <Table.Cell {...attrs} >
                                         <Render of={cell.render()}/>
                                     </Table.Cell>
                                 </Subscribe>

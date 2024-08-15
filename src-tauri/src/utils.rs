@@ -48,7 +48,6 @@ pub struct FileRenameInfo<'a> {
 
 #[tauri::command]
 pub fn rename_files(file_infos: Vec<FileRenameInfo<'_>>) -> Result<Vec<&str>, String> {
-    eprintln!("Renaming files: {:?}", file_infos);
     let mut errors = Vec::new();
 
     for FileRenameInfo { path, new_path } in file_infos {
