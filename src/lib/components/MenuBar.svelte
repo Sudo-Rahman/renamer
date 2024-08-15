@@ -1,6 +1,6 @@
 <script lang="ts">
     import * as Menubar from "$lib/components/ui/menubar";
-    import {getFilesFromFileDialog, options, renameFile, RenamerFile} from "$models";
+    import {getFilesFromFileDialog, options, renameFiles, RenamerFile} from "$models";
     import {onMount} from "svelte";
     import {Play} from 'lucide-svelte';
     import {Button} from '$lib/components/ui/button';
@@ -40,10 +40,9 @@
         files = await getFilesFromFileDialog("Files");
     }
 
-    async function renameFiles() {
-        console.log(files);
+    async function onRenameFiles() {
         toast("Renaming files");
-        await renameFile(files.at(0));
+        await renameFiles(files);
     }
 
 </script>
@@ -83,7 +82,7 @@
         </Menubar.Root>
 
         <div class="flex w-full justify-end">
-            <Button variant="outline" size="icon" class="h-9 w-10 active:bg-primary" on:click={renameFiles}>
+            <Button variant="outline" size="icon" class="h-9 w-10 active:bg-primary" on:click={onRenameFiles}>
                 <Play/>
             </Button>
         </div>

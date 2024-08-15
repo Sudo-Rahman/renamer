@@ -18,12 +18,16 @@
         });
     }
 
-    const hidableCols = ["size"];
+
+    hiddenColumnIds.set(["size","modificationDate"]);
+
+    const hidableCols = ["size","modificationDate"];
+
 </script>
 
 <DropdownMenu.Root>
     <DropdownMenu.Trigger asChild let:builder>
-        <Button variant="outline" size="sm" class="ml-auto hidden h-8 lg:flex" builders={[builder]}>
+        <Button variant="outline" size="sm" class="ml-auto opacity-0 pointer-events-none h-8 lg:opacity-100 flex lg:pointer-events-auto transition-all duration-300 ease-in-out" builders={[builder]}>
             <MixerHorizontal class="mr-2 h-4 w-4" />
             View
         </Button>

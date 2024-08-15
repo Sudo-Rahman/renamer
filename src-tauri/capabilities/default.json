@@ -6,14 +6,14 @@
     "main"
   ],
   "permissions": [
-    "path:allow-join",
-    "event:default",
-    "window:default",
-    "app:default",
-    "image:default",
-    "resources:default",
-    "menu:default",
-    "tray:default",
+    "core:window:default",
+    "core:path:allow-join",
+    "core:path:default",
+    "core:app:default",
+    "core:image:default",
+    "core:resources:default",
+    "core:menu:default",
+    "core:tray:default",
     "shell:allow-open",
     "fs:allow-stat",
     "fs:allow-read-dir",
@@ -21,8 +21,15 @@
     "fs:allow-read-file",
     "fs:allow-read",
     "fs:allow-write",
-    "window:allow-start-dragging",
+    "core:window:allow-start-dragging",
     "dialog:default",
-    "dialog:default"
+    "shell:default",
+    "os:default",
+    "core:event:default",
+    "core:window:allow-close",
+    "core:window:allow-minimize",
+    "core:window:allow-maximize",
+    "core:window:allow-start-dragging",
+    "core:window:allow-toggle-maximize"
   ]
 }

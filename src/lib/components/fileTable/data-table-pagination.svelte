@@ -27,25 +27,25 @@
         <div class="flex items-center space-x-2">
             <p class="text-sm font-medium">Rows per page</p>
             <Select.Root
-                    onSelectedChange={(selected) => pageSize.set(Number(selected?.value))}
+                    onSelectedChange={(selected) => pageSize.set(selected?.value)}
                     selected={{ value: get(pageSize), label: get(pageSize).toString() }}
             >
                 <Select.Trigger class="h-8 w-[70px]">
                     <Select.Value placeholder="Select page size" />
                 </Select.Trigger>
                 <Select.Content>
-                    <Select.Item value="10">10</Select.Item>
-                    <Select.Item value="20">20</Select.Item>
-                    <Select.Item value="30">30</Select.Item>
-                    <Select.Item value="50">50</Select.Item>
-                    <Select.Item value="100">100</Select.Item>
+                    <Select.Item value={10}>10</Select.Item>
+                    <Select.Item value={20}>20</Select.Item>
+                    <Select.Item value={30}>30</Select.Item>
+                    <Select.Item value={50}>50</Select.Item>
+                    <Select.Item value={100}>100</Select.Item>
                 </Select.Content>
             </Select.Root>
         </div>
         <div class="flex w-[100px] items-center justify-center text-sm font-medium">
             Page {$pageIndex + 1} of {$pageCount}
         </div>
-        <div class="flex items-center space-x-2">
+        <div class="flex items-center space-x-2 transition-all duration-300 ease-in-out">
             <Button
                     variant="outline"
                     class="hidden h-8 w-8 p-0 lg:flex"

@@ -1,6 +1,7 @@
 import {v7 as uuidv7} from 'uuid';
 import {type RenamerFile} from "$models/File";
 import dateFormat from "dateformat";
+import {Signal} from "$models/Signal";
 
 
 export abstract class Formatter {
@@ -14,27 +15,6 @@ export abstract class Formatter {
     }
 
     finish(): void {
-    }
-}
-
-type Listener<T> = (value: T) => void;
-
-class Signal<T> {
-    private listeners: Listener<T>[] = [];
-
-    public connect(listener: Listener<T>): void {
-        this.listeners.push(listener);
-    }
-
-    public disconnect(listener: Listener<T>): void {
-        const index = this.listeners.indexOf(listener);
-        if (index > -1) {
-            this.listeners.splice(index, 1);
-        }
-    }
-
-    public emit(value: T): void {
-        this.listeners.forEach(listener => listener(value));
     }
 }
 
@@ -92,9 +72,10 @@ export class FormatterList {
             this._formatters.forEach(f => {
                 f.format(file);
             });
+            file.onNewNameChanged.emit(file.newName);
         });
-        this.onFormattedSignal.emit(this._renamerFiles);
         this._formatters.forEach((f) => f.finish());
+        this.onFormattedSignal.emit(this._renamerFiles);
     }
 }
 

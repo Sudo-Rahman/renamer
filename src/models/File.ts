@@ -1,3 +1,5 @@
+import {Signal} from "$models/Signal";
+
 export class RenamerFile {
     get path(): string {
         return this._path;
@@ -22,6 +24,7 @@ export class RenamerFile {
     private readonly _path: string;
     private readonly _name: string;
     newName: string;
+    onNewNameChanged: Signal<string>;
     selected: boolean;
     private readonly _size: number;
     private readonly _creationDate: Date;
@@ -42,6 +45,7 @@ export class RenamerFile {
         this._modificationDate = new Date(params.last_modified_date* 1000);
         this.newName = this._name;
         this.selected = true;
+        this.onNewNameChanged = new Signal<string>();
     }
 
 
@@ -98,7 +102,10 @@ export class RenamerFile {
 
 
     public getExtension(): string {
-        return this.name.split(".").pop() || "";
+        if(this.name.includes(".")){
+            return this.name.split(".").pop() || "";
+        }
+        return "";
     }
 
     public getNameWithoutExtension(): string {

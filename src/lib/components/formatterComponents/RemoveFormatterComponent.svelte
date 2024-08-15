@@ -40,9 +40,9 @@
 </script>
 
 <Accordion.Root id={formatter.id}>
-    <Accordion.Item value="item-{formatter.id}">
-        <div class="flex h-6 mb-1 w-full items-center relative">
-            <Accordion.Trigger class="w-full hover:no-underline py-0 flex items-center h-full justify-center absolute inset-0">
+    <Accordion.Item value="item-{formatter.id}" class="border-none">
+        <div class="flex h-fit mb-1 w-full items-center relative">
+            <Accordion.Trigger class="w-full hover:no-underline py-0  flex items-center h-full justify-center absolute inset-0">
                 Remove custom characters
             </Accordion.Trigger>
 

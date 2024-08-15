@@ -1,6 +1,6 @@
 <script lang="ts">
     import {createRender, createTable, Render, Subscribe} from "svelte-headless-table";
-    import {readable} from "svelte/store";
+    import {readable, writable} from "svelte/store";
     import * as Table from "$lib/components/ui/table";
     import {RenamerFile} from "$models";
     import {Button} from "$lib/components/ui/button";
@@ -15,10 +15,11 @@
     import DataTableCheckbox from "./data-table-checkbox.svelte";
     import DataTablePagination from "./data-table-pagination.svelte";
     import DatatableToolbar from "./data-table-toolbar.svelte";
+    import DatatableNewName from "./data-table-new-name.svelte";
 
     export let filesList: RenamerFile[] = [];
 
-    const table = createTable(readable(filesList), {
+    const table = createTable(writable(filesList), {
         page: addPagination({
             initialPageSize: 20 // ou le nombre de lignes que vous souhaitez afficher par page
         }),
@@ -81,12 +82,24 @@
         table.column({
             accessor: "newName",
             header: "New Name",
+            cell: ({row}, {pluginStates}) => {
+                return createRender(DatatableNewName, {
+                    file:  row.original,
+                });
+            },
         }),
         table.column({
             accessor: "size",
             header: "Size",
             cell: ({value}) => {
                 return RenamerFile.getStringSize(value)
+            },
+        }),
+        table.column({
+            accessor: "modificationDate",
+            header: "Modification Date",
+            cell: ({value}) => {
+                return value.toLocaleString();
             },
         }),
     ]);
@@ -98,6 +111,7 @@
 
     const {hiddenColumnIds} = pluginStates.hide;
     const {selectedDataIds} = pluginStates.select;
+    pluginStates.select.allPageRowsSelected.set(true);
 
     const ids = flatColumns.map((col) => col.id);
     let hideForId = Object.fromEntries(ids.map((id) => [id, true]));
@@ -108,7 +122,7 @@
 
 </script>
 
-<div class="grid mx-2 gap-2">
+<div class="grid m-2 gap-2">
 
     <DatatableToolbar {tableModel}/>
 
@@ -121,7 +135,7 @@
                             {#each headerRow.cells as cell (cell.id)}
                                 <Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
                                     <Table.Head {...attrs}>
-                                        {#if cell.id === "name" || cell.id === "newName" || cell.id === "size"}
+                                        {#if cell.id === "name" || cell.id === "newName" || cell.id === "size" || cell.id === "modificationDate"}
                                             <Button variant="ghost" on:click={props.sort.toggle}>
                                                 <Render of={cell.render()}/>
                                                 <ArrowUpDown class={"ml-2 h-4 w-4"}/>

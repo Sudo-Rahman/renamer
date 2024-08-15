@@ -57,18 +57,19 @@ export async function getFilesFromFileDialog(type: "Files" | "Folder" = "Files")
     return files
 }
 
-export async function renameFile(file: RenamerFile): Promise<void> {
-    try {
-        // {path: file.path, new_name: `${file.getDirectory()}/${file.newname}`}
-        await invoke('rename_files', {fileInfos: [{path: "regwetr", new_path: "regwetr"}]}).then(
-            (res) => {
-                console.log(res);
+
+export async function renameFiles(files: RenamerFile[]): Promise<void> {
+    const fileInfos = files.map(
+        (file) => {
+            return {path: file.path, new_path: `${file.getDirectory()}/${file.newName}`}
+        }
+    );
+
+    await invoke('rename_files', {fileInfos: fileInfos}).then(
+        (res) => {
+            if (res && res.length > 0) {
+                throw new Error(res);
             }
-        );
-    } catch (err) {
-        await message(err, {
-            title: "Error",
-            kind: "error",
-        });
-    }
+        }
+    );
 }

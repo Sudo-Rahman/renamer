@@ -21,7 +21,7 @@
     <div class="flex flex-1 items-center space-x-2">
         <Input
                 placeholder="Filter files..."
-                class="h-9 w-[150px] lg:w-[250px]"
+                class="h-9 w-[150px] lg:w-[250px] transition-all duration-300 ease-in-out"
                 type="search"
                 bind:value={$filterValue}
         />
