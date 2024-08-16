@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {Check, X} from "lucide-svelte";
+    import {Check, X,Minus} from "lucide-svelte";
     import {RenamerFile} from "$models";
     import {Button} from "$lib/components/ui/button";
     import * as Popover from "$lib/components/ui/popover";
@@ -19,14 +19,14 @@
 
 <div class="flex w-full justify-center items-center">
     <Popover.Root>
-        <Popover.Trigger>
-            <Button variant="ghost" class="p-0 w-7 rounded h-7">
+        <Popover.Trigger class="w-7 h-7 p-0">
+            <Button variant="ghost" class="p-0 w-7 h-7 rounded">
                 {#if status === "Error"}
                     <X class="stroke-red-700"/>
                 {:else if status === "Success"}
                     <Check class="stroke-green-700"/>
                 {:else}
-                    --
+                    <Minus/>
                 {/if}
             </Button>
         </Popover.Trigger>
