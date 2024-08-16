@@ -12,7 +12,7 @@
 	let className: $$Props["class"] = undefined;
 	export { className as class };
 	export let orientation = "vertical";
-	export let scrollbarXClasses: string = "hidden";
+	export let scrollbarXClasses: string = "";
 	export let scrollbarYClasses: string = "hidden";
 </script>
 

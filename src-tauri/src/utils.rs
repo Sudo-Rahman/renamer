@@ -3,7 +3,7 @@ use std::path::{Path};
 use crate::rename_file::RenameFile;
 
 #[tauri::command]
-pub fn list_files_in_directory(dir: String) -> Result<Vec<RenameFile>, String> {
+pub async fn list_files_in_directory(dir: String) -> Result<Vec<RenameFile>, String> {
     let path = Path::new(&dir);
 
     if path.is_dir() {
@@ -41,24 +41,74 @@ pub fn files_from_vec(files: Vec<String>) -> Result<Vec<RenameFile>, String> {
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
-pub struct FileRenameInfo<'a> {
-    path: &'a str,
-    new_path: &'a str,
+pub struct FileRenameInfo {
+    path: String,
+    new_path: String,
+    uuid: String, // ou un autre type de données
 }
 
 #[tauri::command]
-pub fn rename_files(file_infos: Vec<FileRenameInfo<'_>>) -> Result<Vec<&str>, String> {
+pub async fn rename_files(file_infos: Vec<FileRenameInfo>) -> Result<Vec<String>, String> {
     let mut errors = Vec::new();
 
-    for FileRenameInfo { path, new_path } in file_infos {
+    for FileRenameInfo { path, new_path, uuid } in &file_infos {
         match fs::rename(path, new_path) {
             Ok(_) => {}
             Err(err) => {
-                errors.push(path);
+                errors.push(path.clone());
                 eprintln!("Error renaming file {}: {}", path, err);
             }
         }
     }
 
     Ok(errors)
+}
+
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct FileStatus {
+    uuid: String,  // ou le type approprié pour uuid
+    error: String,
+}
+
+// check file name is unique in the directory
+#[tauri::command]
+pub async fn check_files_names(files: Vec<FileRenameInfo>) -> Result<Vec<FileStatus>, String> {
+    let mut files_vec = Vec::new();
+    let mut files_in_dir = Vec::new();
+    let dir = Path::new(&files.first().unwrap().path).parent().unwrap();
+    
+    if dir.is_dir() {
+        for entry in fs::read_dir(dir).map_err(|e| e.to_string())? {
+            let entry = entry.map_err(|e| e.to_string())?;
+            let path = entry.path();
+
+            if path.is_file() {
+                match Path::new(&path).file_name() {
+                    Some(file_name) => files_in_dir.push(file_name.to_string_lossy().to_string()),
+                    None => eprintln!("Error reading file name: {}", path.to_string_lossy().to_string()),
+                }
+            }
+        }
+    } else {
+        return Err("The provided path is not a directory".to_string());
+    }
+    
+    for FileRenameInfo { path, new_path, uuid } in &files {
+        if files_in_dir.contains(&new_path.to_string()) {
+            files_vec.push(FileStatus {uuid :(*uuid).parse().unwrap(), error: "File name already exists in the directory".to_string()});
+        }
+    }
+
+    // compare the files names between them
+    for FileRenameInfo { path, new_path, uuid } in &files {
+        for FileRenameInfo { path: path2, new_path: new_path2, uuid: uuid2 } in &files {
+            if *new_path == *new_path2 && *uuid != *uuid2 {
+                files_vec.push(FileStatus {uuid : (*uuid).parse().unwrap(), error: "File name already exists in the list".to_string()});
+                break;
+            }
+        }
+    }
+
+    Ok(files_vec)
 }

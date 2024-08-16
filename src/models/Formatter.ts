@@ -2,6 +2,7 @@ import {v7 as uuidv7} from 'uuid';
 import {type RenamerFile} from "$models/File";
 import dateFormat from "dateformat";
 import {Signal} from "$models/Signal";
+import {invoke} from "@tauri-apps/api/core";
 
 
 export abstract class Formatter {
@@ -23,9 +24,25 @@ export class FormatterList {
     private _renamerFiles: RenamerFile[] = [];
     public onFormattedSignal = new Signal<RenamerFile[]>();
     public onListChangedSignal = new Signal<Formatter[]>();
+    private _timer : any;
 
     constructor(files: RenamerFile[]) {
         this._renamerFiles = files;
+    }
+
+    private launchTimeout(func: () => void) {
+        let counter = 0;
+        if (this._timer) {
+            clearInterval(this._timer);
+        }
+        this._timer = setInterval(() => {
+            counter++;
+            if (counter === 10) {
+                clearInterval(this._timer);
+                func();
+            }
+        }, 100);
+
     }
 
     public updateFiles(files: RenamerFile[]) {
@@ -49,7 +66,7 @@ export class FormatterList {
         return newFormatter;
     }
 
-    removeFormatter(id : string): void {
+    removeFormatter(id: string): void {
         const index = this._formatters.findIndex((f) => f.id === id);
         if (index === -1) {
             return;
@@ -64,10 +81,11 @@ export class FormatterList {
     }
 
     format(): void {
+        if (this._renamerFiles.length === 0) return;
         this._renamerFiles.filter(file => {
             return file.selected;
         }).forEach((file) => {
-            if(this._formatters.length > 0) file.newName = "";
+            if (this._formatters.length > 0) file.newName = "";
             else file.newName = file.name;
             this._formatters.forEach(f => {
                 f.format(file);
@@ -76,6 +94,32 @@ export class FormatterList {
         });
         this._formatters.forEach((f) => f.finish());
         this.onFormattedSignal.emit(this._renamerFiles);
+        this.launchTimeout(() => {
+            let files = this._renamerFiles.map((file) => {
+                return {
+                    path: file.path,
+                    new_path: `${file.getDirectory()}/${file.newName}`,
+                    uuid: file.uuid
+                }
+            });
+            invoke("check_files_names", {files: files}).then((res) => {
+                if(res){
+                    (res as any).forEach((file : any) => {
+                        const f = this._renamerFiles.find((f) => f.uuid === file.uuid);
+                        if (f) {
+                            f.statusMessage = file.error;
+                            f.status = "Error";
+                        }
+                    });
+                    this._renamerFiles.forEach((f) => {
+                        if((res as any).find((file : any) => file.uuid === f.uuid) === undefined){
+                            f.statusMessage = "";
+                            f.status = "None";
+                        }
+                    });
+                }
+            });
+        })
     }
 }
 
@@ -334,7 +378,7 @@ export class RemoveFormatter extends Formatter {
 }
 
 
-export class OriginalFileName extends Formatter {
+export class OriginalFileNameFormatter extends Formatter {
     get withExtension(): boolean {
         return this._withExtension;
     }
@@ -352,12 +396,36 @@ export class OriginalFileName extends Formatter {
     }
 
     format(file: RenamerFile): void {
-        file.newName = this._withExtension ? file.name : file.getNameWithoutExtension();
+        file.newName += this._withExtension ? file.name : file.getNameWithoutExtension();
     }
 }
 
 
 export class RegexFormatter extends Formatter {
+    get all(): boolean {
+        return this._all;
+    }
+
+    set all(value: boolean) {
+        this._all = value;
+    }
+
+    get startPos(): number {
+        return this._startPos;
+    }
+
+    set startPos(value: number) {
+        this._startPos = value;
+    }
+
+    get endPos(): number {
+        return this._endPos;
+    }
+
+    set endPos(value: number) {
+        this._endPos = value;
+    }
+
     get regex(): string {
         return this._regex;
     }
@@ -376,16 +444,37 @@ export class RegexFormatter extends Formatter {
 
     private _regex: string;
     private _replace: string;
+    private _all: boolean;
+    private _startPos: number
+    private _endPos: number;
 
     constructor() {
         super();
         this._regex = "";
         this._replace = "";
+        this._all = true;
+        this._startPos = 0;
+        this._endPos = 0;
     }
 
     format(file: RenamerFile): void {
-        file.newName = file.newName.replace(new RegExp(this._regex, "g"), this._replace);
+        // Si 'all' est true, appliquer la regex à tout le nom de fichier
+        if (this._all) {
+            file.newName = file.newName.replace(new RegExp(this._regex, "g"), this._replace);
+        } else {
+            // Extraire la partie du nom de fichier entre startPos et endPos
+            const prefix = file.newName.slice(0, this._startPos);
+            const suffix = file.newName.slice(this._endPos);
+            const target = file.newName.slice(this._startPos, this._endPos);
+
+            // Appliquer la regex seulement sur cette sous-chaîne
+            const replacedTarget = target.replace(new RegExp(this._regex, "g"), this._replace);
+
+            // Combiner les parties pour former le nouveau nom de fichier
+            file.newName = prefix + replacedTarget + suffix;
+        }
     }
+
 }
 
 export class BasicTextFormatter extends Formatter {

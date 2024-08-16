@@ -6,4 +6,6 @@
 
 </script>
 
+<div class="flex items-center justify-center">
 <Checkbox class="rounded" bind:checked={$checked}/>
+</div>

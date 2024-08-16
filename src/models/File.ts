@@ -1,15 +1,30 @@
 import {Signal} from "$models/Signal";
+import {size} from "$lib/components/fileTable/store";
 
 export class RenamerFile {
+    get newName(): string {
+        return this._newName;
+    }
+
+    set newName(value: string) {
+        this._newName = value;
+    }
+    get statusMessage(): string {
+        return this._statusMessage;
+    }
+
+    set statusMessage(value: string) {
+        this._statusMessage = value;
+    }
     get uuid(): string {
         return this._uuid;
     }
 
-    get status(): "OK" | "Error" | "Renamed" {
+    get status(): "None" | "Error" | "Success" {
         return this._status;
     }
 
-    set status(value: "OK" | "Error" | "Renamed") {
+    set status(value: "None" | "Error" | "Success") {
         this._status = value;
         this.onStatusChanged.emit(value);
     }
@@ -36,14 +51,15 @@ export class RenamerFile {
     private readonly _uuid: string = "";
     private readonly _path: string;
     private readonly _name: string;
-    newName: string;
+    private _newName: string;
     onNewNameChanged: Signal<string>;
     onStatusChanged: Signal<string>;
     selected: boolean;
     private readonly _size: number;
     private readonly _creationDate: Date;
     private readonly _modificationDate: Date;
-    private _status : "OK" | "Error" | "Success";
+    private _status : "None" | "Error" | "Success";
+    private _statusMessage : string;
 
 
     constructor(params: {
@@ -59,12 +75,13 @@ export class RenamerFile {
         this._size = params.size;
         this._creationDate = new Date(params.creation_date* 1000);
         this._modificationDate = new Date(params.last_modified_date* 1000);
-        this.newName = this._name;
+        this._newName = this._name;
         this.selected = true;
         this.onNewNameChanged = new Signal<string>();
         this.onStatusChanged = new Signal<string>();
         this._uuid = params.uuid;
-        this._status = "Success";
+        this._status = "None";
+        this._statusMessage = "";
     }
 
 

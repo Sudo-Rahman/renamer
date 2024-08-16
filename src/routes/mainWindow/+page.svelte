@@ -17,13 +17,12 @@
     <Separator/>
     <div class="flex-grow overflow-hidden">
         <Resizable.PaneGroup direction="horizontal" class="h-full">
-            <Resizable.Pane class="p-2" minSize={20} maxSize={25}>
+            <Resizable.Pane class="p-2" minSize={15} maxSize={30}>
                 <FormattersComponent/>
             </Resizable.Pane>
             <Resizable.Handle withHandle/>
             <Resizable.Pane class="p-2">
-                <ScrollArea class="h-full">
-
+                <ScrollArea class="h-full" orientation="both">
 
                     {#key $files}
                         <DataTable filesList={$files}/>

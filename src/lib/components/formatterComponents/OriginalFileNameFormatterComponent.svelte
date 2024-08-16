@@ -3,21 +3,19 @@
     import {Label} from "$lib/components/ui/label/index.js";
     import {Switch} from "$lib/components/ui/switch/index.js";
     import {Input} from "$lib/components/ui/input/index.js";
-    import {ExtensionFormatter, formatters} from "$models";
+    import {formatters, OriginalFileNameFormatter} from "$models";
     import {slide} from "svelte/transition";
     import {Button} from "$lib/components/ui/button";
     import {X} from "lucide-svelte";
 
 
-    export let formatter:ExtensionFormatter;
+    export let formatter:OriginalFileNameFormatter;
 
 
-    let customExt = false;
-    let customExtension = '';
+    let withExtension = formatter.withExtension;
 
     $: {
-        formatter.customeExt = customExt;
-        formatter.extension = customExtension;
+        formatter.withExtension = withExtension;
         $formatters.format();
     }
 
@@ -28,7 +26,7 @@
 
         <div class="flex h-6 mb-1 w-full items-center relative">
             <Accordion.Trigger class="w-full hover:no-underline py-0 flex items-center h-full justify-center absolute inset-0">
-                Extension
+                Original File Name
             </Accordion.Trigger>
 
             <div class="ml-auto z-0">
@@ -40,23 +38,9 @@
         </div>
 
         <Accordion.Content>
-
-            <div class="flex flex-col w-full space-y-4 px-1">
-
-                <div class="flex items-center space-x-2">
-                    <Switch id="custom-ext" bind:checked={customExt}/>
-                    <Label for="custom-ext">{customExt ? 'Custom extension' : 'File extension'}</Label>
-                </div>
-
-                {#if customExt}
-
-                    <div transition:slide class="grid w-full items-center gap-1.5">
-                        <Label class="pl-1" for="ext">Extension</Label>
-                        <Input type="text" id="ext" placeholder="png" bind:value={customExtension}/>
-                    </div>
-
-                {/if}
-
+            <div class="flex items-center">
+                <Label class="w-1/3">With Extension</Label>
+                <Switch bind:checked={withExtension}/>
             </div>
         </Accordion.Content>
     </Accordion.Item>

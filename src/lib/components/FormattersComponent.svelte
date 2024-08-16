@@ -5,7 +5,7 @@
         RemoveFormatter,
         Formatter,
         NumberFormatter,
-        ExtensionFormatter
+        ExtensionFormatter, OriginalFileNameFormatter, BasicTextFormatter, RegexFormatter
     } from "$models";
     import {formatters} from "$models";
     import {Button} from "$lib/components/ui/button";
@@ -20,7 +20,10 @@
     import CasesFormatterComponent from "$lib/components/formatterComponents/CasesFormatterComponent.svelte";
     import RemoveFormatterComponent from "$lib/components/formatterComponents/RemoveFormatterComponent.svelte";
     import ExtensionFormatterComponent from "$lib/components/formatterComponents/ExtensionFormatterComponent.svelte";
-
+    import OriginalFileNameFormatterComponent
+        from "$lib/components/formatterComponents/OriginalFileNameFormatterComponent.svelte";
+    import BasicTextFormatterComponent from "$lib/components/formatterComponents/BasicTextFormatterComponent.svelte";
+    import RegexFormatterComponent from "$lib/components/formatterComponents/RegexFormatterComponent.svelte";
 
     let formatterDiv: HTMLElement;
     let formatterIds: string[] = [];
@@ -84,6 +87,30 @@
                     }
                 });
                 break;
+            case OriginalFileNameFormatter:
+                new OriginalFileNameFormatterComponent({
+                    target: formatterDiv,
+                    props: {
+                        formatter: formatter as OriginalFileNameFormatter
+                    }
+                });
+                break;
+            case BasicTextFormatter:
+                new BasicTextFormatterComponent({
+                    target: formatterDiv,
+                    props: {
+                        formatter: formatter as BasicTextFormatter
+                    }
+                });
+                break;
+            case RegexFormatter:
+                new RegexFormatterComponent({
+                    target: formatterDiv,
+                    props: {
+                        formatter: formatter as RegexFormatter
+                    }
+                });
+                break;
         }
     }
 
@@ -100,12 +127,12 @@
 </script>
 
 <div class="{$$props.class} w-full h-full">
-    <ScrollArea class="grid gap-1 h-full" orientation="vertical">
+    <ScrollArea class="grid gap-1 h-full" orientation="horizontal">
 
         <Label class="justify-center flex w-full text-xl font-bold">Formatters</Label>
         <Separator class="w-full my-2"/>
 
-        <div bind:this={formatterDiv} class="grid gap-2 my-1"/>
+        <div bind:this={formatterDiv} class="flex flex-col min-w-60 space-y-2 p-1"/>
 
         <div class="flex justify-center items-center w-full">
             <DropdownMenu.Root>
@@ -127,6 +154,11 @@
                         </DropdownMenu.Item>
                         <DropdownMenu.Item on:click={()=> addFormatter(ExtensionFormatter)}>Extension
                         </DropdownMenu.Item>
+                        <DropdownMenu.Item on:click={()=> addFormatter(OriginalFileNameFormatter)}>Original file name
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item on:click={()=> addFormatter(BasicTextFormatter)}>Basic text
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item on:click={()=> addFormatter(RegexFormatter)}>Regular expression</DropdownMenu.Item>
                     </DropdownMenu.Group>
                 </DropdownMenu.Content>
             </DropdownMenu.Root>

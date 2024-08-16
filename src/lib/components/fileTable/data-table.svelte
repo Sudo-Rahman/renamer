@@ -2,7 +2,7 @@
     import {createRender, createTable, Render, Subscribe} from "svelte-headless-table";
     import {readable, writable} from "svelte/store";
     import * as Table from "$lib/components/ui/table";
-    import {RenamerFile} from "$models";
+    import {formatters, RenamerFile} from "$models";
     import {Button} from "$lib/components/ui/button";
     import {
         addPagination,
@@ -57,6 +57,7 @@
                             }
                         );
                     });
+                    $formatters.format();
                 });
 
                 return createRender(DataTableCheckbox, {
@@ -69,6 +70,7 @@
 
                 isSelected.subscribe((value) => {
                     row.original.selected = value;
+                    $formatters.format();
                 });
 
                 return createRender(DataTableCheckbox, {
@@ -121,7 +123,7 @@
 
     const {hiddenColumnIds} = pluginStates.hide;
     const {selectedDataIds} = pluginStates.select;
-    pluginStates.select.allPageRowsSelected.set(true);
+    pluginStates.select.allRowsSelected.set(true);
 
     const ids = flatColumns.map((col) => col.id);
     let hideForId = Object.fromEntries(ids.map((id) => [id, true]));
@@ -132,7 +134,7 @@
 
 </script>
 
-<div class="grid m-2 gap-2">
+<div class="flex flex-col ml-2 pb-4 space-y-2 min-w-[60rem]">
 
     <DatatableToolbar {tableModel}/>
 
@@ -163,12 +165,12 @@
             <Table.Body {...$tableBodyAttrs}>
                 {#each $pageRows as row (row.id)}
                     <Subscribe rowAttrs={row.attrs()} let:rowAttrs>
-                        <Table.Row
+                        <Table.Row class="select-text"
                                 {...rowAttrs}
                                 data-state={$selectedDataIds[row.id] && "selected"}>
                             {#each row.cells as cell (cell.id)}
                                 <Subscribe attrs={cell.attrs()} let:attrs>
-                                    <Table.Cell {...attrs} >
+                                    <Table.Cell {...attrs}>
                                         <Render of={cell.render()}/>
                                     </Table.Cell>
                                 </Subscribe>

@@ -53,7 +53,7 @@
 
             <div class="flex flex-col w-full space-y-4 px-1">
 
-                <div class="grid w-full max-w-sm items-center gap-1.5">
+                <div class="grid w-full items-center gap-1.5">
                     <div class="flex space-x-1 items-center">
                         <Label class="pl-1" for="start">Text</Label>
                         <Popover.Root>
@@ -65,10 +65,10 @@
                             </Popover.Content>
                         </Popover.Root>
                     </div>
-                    <Input type="text" id="start" bind:value={text}/>
+                    <Input type="text" class="w-full" id="start" bind:value={text}/>
                 </div>
 
-                <div class="grid w-full max-w-sm items-center gap-1.5">
+                <div class="grid w-full items-center gap-1.5">
                     <div class="flex space-x-1 items-center">
                         <Label class="pl-1" for="number">Number</Label>
                         <Popover.Root>

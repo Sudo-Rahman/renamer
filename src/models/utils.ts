@@ -61,7 +61,7 @@ export async function getFilesFromFileDialog(type: "Files" | "Folder" = "Files")
 export async function renameFiles(files: RenamerFile[]): Promise<void> {
     const fileInfos = files.map(
         (file) => {
-            return {path: file.path, new_path: `${file.getDirectory()}/${file.newName}`}
+            return {path: file.path, new_path: `${file.getDirectory()}/${file.newName}`, uuid: file.uuid}
         }
     );
 
