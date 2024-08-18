@@ -51,7 +51,7 @@ pub struct FileRenameInfo {
 pub async fn rename_files(file_infos: Vec<FileRenameInfo>) -> Result<Vec<String>, String> {
     let mut errors = Vec::new();
 
-    for FileRenameInfo { path, new_path, uuid } in &file_infos {
+    for FileRenameInfo { path, new_path,.. } in &file_infos {
         match fs::rename(path, new_path) {
             Ok(_) => {}
             Err(err) => {
@@ -94,15 +94,15 @@ pub async fn check_files_names(files: Vec<FileRenameInfo>) -> Result<Vec<FileSta
         return Err("The provided path is not a directory".to_string());
     }
     
-    for FileRenameInfo { path, new_path, uuid } in &files {
+    for FileRenameInfo { new_path, uuid, .. } in &files {
         if files_in_dir.contains(&new_path.to_string()) {
             files_vec.push(FileStatus {uuid :(*uuid).parse().unwrap(), error: "File name already exists in the directory".to_string()});
         }
     }
 
     // compare the files names between them
-    for FileRenameInfo { path, new_path, uuid } in &files {
-        for FileRenameInfo { path: path2, new_path: new_path2, uuid: uuid2 } in &files {
+    for FileRenameInfo { new_path, uuid, .. } in &files {
+        for FileRenameInfo {new_path: new_path2, uuid: uuid2, ..} in &files {
             if *new_path == *new_path2 && *uuid != *uuid2 {
                 files_vec.push(FileStatus {uuid : (*uuid).parse().unwrap(), error: "File name already exists in the list".to_string()});
                 break;

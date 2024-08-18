@@ -83,7 +83,7 @@
             header: "Status",
             cell: ({row}) => {
                 return createRender(DatatableStatus, {
-                    file:  row.original,
+                    file: row.original,
                 });
             },
         }),
@@ -96,7 +96,7 @@
             header: "New Name",
             cell: ({row}, {pluginStates}) => {
                 return createRender(DatatableNewName, {
-                    file:  row.original,
+                    file: row.original,
                 });
             },
         }),
@@ -132,9 +132,28 @@
         .filter(([, hide]) => !hide)
         .map(([id]) => id);
 
+    pluginStates.sort.sortKeys.subscribe(
+        (value) => {
+            filesList.sort((a : RenamerFile, b : RenamerFile) => {
+                for (const sortKey of value) {
+                    const {id, order} = sortKey;
+                    const aValue = a[id];
+                    const bValue = b[id];
+                    if (aValue < bValue) {
+                        return order === "asc" ? -1 : 1;
+                    }
+                    if (aValue > bValue) {
+                        return order === "asc" ? 1 : -1;
+                    }
+                }
+                return 0;
+            });
+        }
+    );
+
 </script>
 
-<div class="flex flex-col ml-2 pb-4 space-y-2 min-w-[60rem]">
+<div class="flex flex-col ml-2 pb-4 pt-1 space-y-2 min-w-[64rem]">
 
     <DatatableToolbar {tableModel}/>
 
@@ -143,7 +162,7 @@
             <Table.Header>
                 {#each $headerRows as headerRow}
                     <Subscribe rowAttrs={headerRow.attrs()}>
-                        <Table.Row >
+                        <Table.Row>
                             {#each headerRow.cells as cell (cell.id)}
                                 <Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
                                     <Table.Head {...attrs} class="text-center">
@@ -165,12 +184,12 @@
             <Table.Body {...$tableBodyAttrs}>
                 {#each $pageRows as row (row.id)}
                     <Subscribe rowAttrs={row.attrs()} let:rowAttrs>
-                        <Table.Row class="select-text"
-                                {...rowAttrs}
-                                data-state={$selectedDataIds[row.id] && "selected"}>
+                        <Table.Row
+                                   {...rowAttrs}
+                                   data-state={$selectedDataIds[row.id] && "selected"}>
                             {#each row.cells as cell (cell.id)}
                                 <Subscribe attrs={cell.attrs()} let:attrs>
-                                    <Table.Cell {...attrs}>
+                                    <Table.Cell {...attrs} class="select-text">
                                         <Render of={cell.render()}/>
                                     </Table.Cell>
                                 </Subscribe>

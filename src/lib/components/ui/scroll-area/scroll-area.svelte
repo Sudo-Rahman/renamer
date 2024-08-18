@@ -7,6 +7,7 @@
 		orientation?: "vertical" | "horizontal" | "both";
 		scrollbarXClasses?: string;
 		scrollbarYClasses?: string;
+		viewportRef?: HTMLDivElement;
 	};
 
 	let className: $$Props["class"] = undefined;
@@ -14,19 +15,22 @@
 	export let orientation = "vertical";
 	export let scrollbarXClasses: string = "";
 	export let scrollbarYClasses: string = "hidden";
+	export let viewportRef: HTMLDivElement = null;
+
+
 </script>
 
 <ScrollAreaPrimitive.Root {...$$restProps} class={cn("relative overflow-hidden", className)}>
-	<ScrollAreaPrimitive.Viewport class="h-full w-full rounded-[inherit]">
-		<ScrollAreaPrimitive.Content>
+	<ScrollAreaPrimitive.Viewport class="h-full w-full rounded-[inherit]" bind:el={viewportRef}>
+		<ScrollAreaPrimitive.Content class="flex-col" style="min-width: 100%">
 			<slot />
 		</ScrollAreaPrimitive.Content>
 	</ScrollAreaPrimitive.Viewport>
 	{#if orientation === "vertical" || orientation === "both"}
-		<Scrollbar orientation="vertical" class={scrollbarYClasses} />
+		<Scrollbar orientation="vertical" class={scrollbarYClasses}/>
 	{/if}
 	{#if orientation === "horizontal" || orientation === "both"}
-		<Scrollbar orientation="horizontal" class={scrollbarXClasses} />
+		<Scrollbar orientation="horizontal" class={scrollbarXClasses}/>
 	{/if}
 	<ScrollAreaPrimitive.Corner />
 </ScrollAreaPrimitive.Root>

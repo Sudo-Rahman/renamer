@@ -82,20 +82,26 @@ export class FormatterList {
 
     format(): void {
         if (this._renamerFiles.length === 0) return;
-        this._renamerFiles.filter(file => {
-            return file.selected;
-        }).forEach((file) => {
-            if (this._formatters.length > 0) file.newName = "";
-            else file.newName = file.name;
-            this._formatters.forEach(f => {
-                f.format(file);
-            });
+        this._renamerFiles.forEach((file) => {
+            if (!file.selected) {
+                file.newName = file.name;
+            }else{
+                if (this._formatters.length > 0) file.newName = "";
+                else file.newName = file.name;
+                this._formatters.forEach(f => {
+                    f.format(file);
+                });
+            }
             file.onNewNameChanged.emit(file.newName);
         });
         this._formatters.forEach((f) => f.finish());
         this.onFormattedSignal.emit(this._renamerFiles);
         this.launchTimeout(() => {
-            let files = this._renamerFiles.map((file) => {
+            let files = this._renamerFiles.filter(
+                (file) => {
+                    return file.selected;
+                }
+            ).map((file) => {
                 return {
                     path: file.path,
                     new_path: `${file.getDirectory()}/${file.newName}`,

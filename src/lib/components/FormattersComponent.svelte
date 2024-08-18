@@ -127,42 +127,46 @@
 </script>
 
 <div class="{$$props.class} w-full h-full">
-    <ScrollArea class="grid gap-1 h-full" orientation="horizontal">
+    <ScrollArea class="h-full w-full" orientation="both">
 
-        <Label class="justify-center flex w-full text-xl font-bold">Formatters</Label>
-        <Separator class="w-full my-2"/>
+        <div class="flex-col space-y-2 h-full w-full min-w-60">
 
-        <div bind:this={formatterDiv} class="flex flex-col min-w-60 space-y-2 p-1"/>
+            <Label class="justify-center flex w-full text-xl font-bold">Formatters</Label>
+            <Separator class="w-full my-2"/>
 
-        <div class="flex justify-center items-center w-full">
-            <DropdownMenu.Root>
-                <DropdownMenu.Trigger>
-                    <Button class="h-10 w-10 rounded-full p-0 active:bg-primary/50">
-                        <Plus/>
-                    </Button>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content>
-                    <DropdownMenu.Group>
-                        <DropdownMenu.Label>Add formatter</DropdownMenu.Label>
-                        <DropdownMenu.Separator/>
-                        <DropdownMenu.Item on:click={()=> addFormatter(NumberFormatter)}>Number</DropdownMenu.Item>
-                        <DropdownMenu.Item on:click={()=> addFormatter(CreationDateFormatter)}>File creation date
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item on:click={()=> addFormatter(CasesFormatter)}>Case convention
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item on:click={()=> addFormatter(RemoveFormatter)}>Remove expression
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item on:click={()=> addFormatter(ExtensionFormatter)}>Extension
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item on:click={()=> addFormatter(OriginalFileNameFormatter)}>Original file name
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item on:click={()=> addFormatter(BasicTextFormatter)}>Basic text
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item on:click={()=> addFormatter(RegexFormatter)}>Regular expression</DropdownMenu.Item>
-                    </DropdownMenu.Group>
-                </DropdownMenu.Content>
-            </DropdownMenu.Root>
+            <div bind:this={formatterDiv} class="flex flex-col min-w-10 space-y-2 p-1"/>
+
+            <div class="flex justify-center items-center w-full pb-3">
+                <DropdownMenu.Root>
+                    <DropdownMenu.Trigger>
+                        <Button class="h-10 w-10 rounded-full p-0 active:bg-primary/50">
+                            <Plus/>
+                        </Button>
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Content>
+                        <DropdownMenu.Group>
+                            <DropdownMenu.Label>Add formatter</DropdownMenu.Label>
+                            <DropdownMenu.Separator/>
+                            <DropdownMenu.Item on:click={()=> addFormatter(NumberFormatter)}>Number</DropdownMenu.Item>
+                            <DropdownMenu.Item on:click={()=> addFormatter(CreationDateFormatter)}>File creation date
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item on:click={()=> addFormatter(CasesFormatter)}>Case convention
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item on:click={()=> addFormatter(RemoveFormatter)}>Remove expression
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item on:click={()=> addFormatter(ExtensionFormatter)}>Extension
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item on:click={()=> addFormatter(OriginalFileNameFormatter)}>Original file
+                                name
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item on:click={()=> addFormatter(BasicTextFormatter)}>Basic text
+                            </DropdownMenu.Item>
+                            <DropdownMenu.Item on:click={()=> addFormatter(RegexFormatter)}>Regular expression
+                            </DropdownMenu.Item>
+                        </DropdownMenu.Group>
+                    </DropdownMenu.Content>
+                </DropdownMenu.Root>
+            </div>
         </div>
-
     </ScrollArea>
 </div>

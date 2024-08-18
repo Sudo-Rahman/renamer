@@ -7,7 +7,7 @@
 
 <svelte:window on:scroll|preventDefault/>
 
-<div class="w-full h-screen select-none">
+<div class="w-full h-screen select-none" spellcheck="false">
 <Toaster/>
 <ModeWatcher/>
 <slot/>
