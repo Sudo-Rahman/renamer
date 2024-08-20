@@ -43,7 +43,7 @@
 
             <div class="flex flex-col w-full space-y-4 px-1">
 
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center space-x-3">
                     <Switch id="custom-ext" bind:checked={customExt}/>
                     <Label for="custom-ext">{customExt ? 'Custom extension' : 'File extension'}</Label>
                 </div>

@@ -62,9 +62,9 @@
                            placeholder="insert your replace string" bind:value={replace}/>
                 </div>
 
-                <div class="flex w-full items-center gap-1.5">
-                    <Label class="pl-1">Replace all occurrences</Label>
+                <div class="flex w-full items-center space-x-3">
                     <Switch bind:checked={all}/>
+                    <Label>Replace all occurrences</Label>
                 </div>
 
                 {#if all}

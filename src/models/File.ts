@@ -36,6 +36,10 @@ export class RenamerFile {
         return this._name;
     }
 
+    set name(value: string) {
+        this._name = value;
+    }
+
     get size(): number {
         return this._size;
     }
@@ -50,10 +54,11 @@ export class RenamerFile {
 
     private readonly _uuid: string = "";
     private readonly _path: string;
-    private readonly _name: string;
+    private _name: string;
     private _newName: string;
     onNewNameChanged: Signal<string>;
     onStatusChanged: Signal<string>;
+    onRenamed: Signal<void>;
     selected: boolean;
     private readonly _size: number;
     private readonly _creationDate: Date;
@@ -79,6 +84,7 @@ export class RenamerFile {
         this.selected = true;
         this.onNewNameChanged = new Signal<string>();
         this.onStatusChanged = new Signal<string>();
+        this.onRenamed = new Signal<void>();
         this._uuid = params.uuid;
         this._status = "None";
         this._statusMessage = "";

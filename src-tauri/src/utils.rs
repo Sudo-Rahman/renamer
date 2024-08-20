@@ -1,6 +1,8 @@
 use std::fs;
 use std::path::{Path};
 use crate::rename_file::RenameFile;
+use sys_locale::get_locale;
+
 
 #[tauri::command]
 pub async fn list_files_in_directory(dir: String) -> Result<Vec<RenameFile>, String> {
@@ -47,21 +49,30 @@ pub struct FileRenameInfo {
     uuid: String, // ou un autre type de données
 }
 
-#[tauri::command]
-pub async fn rename_files(file_infos: Vec<FileRenameInfo>) -> Result<Vec<String>, String> {
-    let mut errors = Vec::new();
+#[derive(Debug, Deserialize, Serialize)]
+pub struct RenameStatus {
+    status : bool,
+    error : String,
+    uuid: String, // ou un autre type de données
+}
 
-    for FileRenameInfo { path, new_path,.. } in &file_infos {
+#[tauri::command]
+pub async fn rename_files(file_infos: Vec<FileRenameInfo>) -> Result<Vec<RenameStatus>, String> {
+    let mut vec = Vec::new();
+
+    for FileRenameInfo { path, new_path,uuid } in &file_infos {
         match fs::rename(path, new_path) {
-            Ok(_) => {}
+            Ok(_) => {
+                vec.push(RenameStatus {status: true, error: "".to_string(), uuid: uuid.to_string()});
+            }
             Err(err) => {
-                errors.push(path.clone());
+                vec.push(RenameStatus {status: false, error: err.to_string(), uuid: uuid.to_string()});
                 eprintln!("Error renaming file {}: {}", path, err);
             }
         }
     }
 
-    Ok(errors)
+    Ok(vec)
 }
 
 
@@ -74,26 +85,28 @@ pub struct FileStatus {
 // check file name is unique in the directory
 #[tauri::command]
 pub async fn check_files_names(files: Vec<FileRenameInfo>) -> Result<Vec<FileStatus>, String> {
+
+    if files.is_empty() {
+        return Err("No files provided".to_string());
+    }
+
     let mut files_vec = Vec::new();
     let mut files_in_dir = Vec::new();
     let dir = Path::new(&files.first().unwrap().path).parent().unwrap();
-    
+
     if dir.is_dir() {
         for entry in fs::read_dir(dir).map_err(|e| e.to_string())? {
             let entry = entry.map_err(|e| e.to_string())?;
             let path = entry.path();
 
             if path.is_file() {
-                match Path::new(&path).file_name() {
-                    Some(file_name) => files_in_dir.push(file_name.to_string_lossy().to_string()),
-                    None => eprintln!("Error reading file name: {}", path.to_string_lossy().to_string()),
-                }
+                files_in_dir.push(path.to_string_lossy().to_string());
             }
         }
     } else {
         return Err("The provided path is not a directory".to_string());
     }
-    
+
     for FileRenameInfo { new_path, uuid, .. } in &files {
         if files_in_dir.contains(&new_path.to_string()) {
             files_vec.push(FileStatus {uuid :(*uuid).parse().unwrap(), error: "File name already exists in the directory".to_string()});
@@ -111,4 +124,9 @@ pub async fn check_files_names(files: Vec<FileRenameInfo>) -> Result<Vec<FileSta
     }
 
     Ok(files_vec)
+}
+
+pub fn get_system_language() -> String {
+    let current_locale = get_locale().unwrap_or_else(|| String::from("en-US"));
+    current_locale
 }

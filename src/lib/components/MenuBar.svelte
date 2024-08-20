@@ -1,12 +1,13 @@
 <script lang="ts">
     import * as Menubar from "$lib/components/ui/menubar";
-    import {getFilesFromFileDialog, options, renameFiles, RenamerFile} from "$models";
+    import {formatters, getFilesFromFileDialog, options, renamable, RenamerFile} from "$models";
     import {onMount} from "svelte";
     import {Play} from 'lucide-svelte';
     import {Button} from '$lib/components/ui/button';
     import {toast} from "svelte-sonner";
     import {Label} from "$lib/components/ui/label";
     import {Checkbox} from "$lib/components/ui/checkbox";
+    import CircularProgress from "$lib/components/CircularProgress.svelte";
 
 
     export let files: RenamerFile[] = [];
@@ -41,8 +42,15 @@
     }
 
     async function onRenameFiles() {
-        toast("Renaming files");
-        await renameFiles(files);
+        $formatters.renameFiles().then(
+            () => {
+                toast("Files renamed successfully", {type: "success"});
+            },
+            (error) => {
+                toast("Error renaming files", {type: "error"});
+                console.error(error);
+            }
+        );
     }
 
 </script>
@@ -82,7 +90,7 @@
         </Menubar.Root>
 
         <div class="flex w-full justify-end">
-            <Button variant="outline" size="icon" class="h-9 w-10 active:bg-primary" on:click={onRenameFiles}>
+            <Button variant="outline" size="icon" class="h-9 w-10 active:bg-primary" on:click={onRenameFiles} disabled="{!($renamable)}">
                 <Play/>
             </Button>
         </div>

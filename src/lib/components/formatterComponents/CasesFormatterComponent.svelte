@@ -46,7 +46,7 @@
 
         <Accordion.Content>
 
-            <div class="flex flex-col space-y-4 pl-2">
+            <div class="flex flex-col space-y-4">
 
                 <div class="flex items-center space-x-3">
                     <Switch bind:checked={checked}/>

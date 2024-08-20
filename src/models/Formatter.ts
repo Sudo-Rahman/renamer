@@ -3,6 +3,8 @@ import {type RenamerFile} from "$models/File";
 import dateFormat from "dateformat";
 import {Signal} from "$models/Signal";
 import {invoke} from "@tauri-apps/api/core";
+import {renamable} from "$models/store";
+import {get} from "svelte/store";
 
 
 export abstract class Formatter {
@@ -63,6 +65,9 @@ export class FormatterList {
         this._formatters.push(newFormatter);
         this.format();
         this.onListChangedSignal.emit(this._formatters);
+        this.launchTimeout(() => {
+            this.checkFilesNames();
+        });
         return newFormatter;
     }
 
@@ -74,6 +79,9 @@ export class FormatterList {
         this._formatters.splice(index, 1);
         this.format();
         this.onListChangedSignal.emit(this._formatters);
+        this.launchTimeout(() => {
+            this.checkFilesNames();
+        });
     }
 
     getFormatter(id: string): Formatter | undefined {
@@ -82,6 +90,7 @@ export class FormatterList {
 
     format(): void {
         if (this._renamerFiles.length === 0) return;
+        renamable.set(false);
         this._renamerFiles.forEach((file) => {
             if (!file.selected) {
                 file.newName = file.name;
@@ -97,35 +106,73 @@ export class FormatterList {
         this._formatters.forEach((f) => f.finish());
         this.onFormattedSignal.emit(this._renamerFiles);
         this.launchTimeout(() => {
-            let files = this._renamerFiles.filter(
-                (file) => {
-                    return file.selected;
-                }
-            ).map((file) => {
-                return {
-                    path: file.path,
-                    new_path: `${file.getDirectory()}/${file.newName}`,
-                    uuid: file.uuid
-                }
-            });
-            invoke("check_files_names", {files: files}).then((res) => {
-                if(res){
-                    (res as any).forEach((file : any) => {
+            this.checkFilesNames();
+        })
+    }
+
+    private checkFilesNames() {
+
+        let files = this._renamerFiles.filter(
+            (file) => {
+                return file.selected;
+            }
+        ).map((file) => {
+            return {
+                path: file.path,
+                new_path: `${file.getDirectory()}/${file.newName}`,
+                uuid: file.uuid
+            }
+        });
+        invoke("check_files_names", {files: files}).then((res) => {
+            if(res){
+                (res as any).forEach((file : any) => {
+                    const f = this._renamerFiles.find((f) => f.uuid === file.uuid);
+                    if (f) {
+                        f.statusMessage = file.error;
+                        f.status = "Error";
+                    }
+                });
+                this._renamerFiles.forEach((f) => {
+                    if((res as any).find((file : any) => file.uuid === f.uuid) === undefined){
+                        f.statusMessage = "";
+                        f.status = "None";
+                    }
+                });
+                renamable.set(res.length <= 0);
+            }
+        });
+    }
+
+    async renameFiles(): Promise<void> {
+
+        if (get(renamable)) {
+            throw new Error("Some files have errors");
+        }
+
+        const fileInfos = this._renamerFiles.map(
+            (file) => {
+                return {path: file.path, new_path: `${file.getDirectory()}/${file.newName}`, uuid: file.uuid}
+            }
+        );
+
+        await invoke('rename_files', {fileInfos: fileInfos}).then(
+            (res) => {
+                if (res && res.length > 0) {
+                    (res as {    status : boolean, error : string, uuid: string}[]).forEach((file) => {
                         const f = this._renamerFiles.find((f) => f.uuid === file.uuid);
                         if (f) {
                             f.statusMessage = file.error;
-                            f.status = "Error";
-                        }
-                    });
-                    this._renamerFiles.forEach((f) => {
-                        if((res as any).find((file : any) => file.uuid === f.uuid) === undefined){
-                            f.statusMessage = "";
-                            f.status = "None";
+                            f.status = file.status ? "Success" : "Error";
+                            if(file.status){
+                                f.name = f.newName;
+                                f.onRenamed.emit();
+                            }
                         }
                     });
                 }
-            });
-        })
+                this.format();
+            }
+        );
     }
 }
 

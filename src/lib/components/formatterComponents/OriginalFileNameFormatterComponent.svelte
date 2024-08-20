@@ -38,9 +38,9 @@
         </div>
 
         <Accordion.Content>
-            <div class="flex items-center">
-                <Label class="w-1/3">With Extension</Label>
+            <div class="flex items-center space-x-3">
                 <Switch bind:checked={withExtension}/>
+                <Label>With Extension</Label>
             </div>
         </Accordion.Content>
     </Accordion.Item>

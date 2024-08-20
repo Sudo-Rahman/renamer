@@ -13,3 +13,5 @@ files.subscribe((value) => {
 export const options = writable({
     spaceBetweenFormatters: false,
 });
+
+export const renamable = writable<boolean>(false);

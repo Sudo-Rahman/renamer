@@ -4,6 +4,8 @@
     import {onMount} from 'svelte';
     import {files, getFilesFromFileDialog, RenamerFile} from '$models';
     import {invoke} from "@tauri-apps/api/core";
+    import { t} from '$lib/translations';
+
 
     let dragActive = false;
 
@@ -71,7 +73,7 @@
      class:border-secondary={dragActive}
      on:dragover={handleDragOver}
      on:dragleave={handleDragLeave}>
-    <button class="h-full w-full" type="button" on:click={async ()=>{$files = await getFilesFromFileDialog("Folder"); await goto('/mainWindow');}}>Click here to select a
-        directory or drag and drop files
+    <button class="h-full w-full" type="button" on:click={async ()=>{$files = await getFilesFromFileDialog("Folder"); await goto('/mainWindow');}}>
+        {$t('drag_drop_zone')}
     </button>
 </div>
