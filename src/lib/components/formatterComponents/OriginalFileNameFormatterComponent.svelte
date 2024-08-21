@@ -7,7 +7,7 @@
     import {slide} from "svelte/transition";
     import {Button} from "$lib/components/ui/button";
     import {X} from "lucide-svelte";
-
+    import {t} from "$lib/translations";
 
     export let formatter:OriginalFileNameFormatter;
 
@@ -26,7 +26,7 @@
 
         <div class="flex h-6 mb-1 w-full items-center relative">
             <Accordion.Trigger class="w-full hover:no-underline py-0 flex items-center h-full justify-center absolute inset-0">
-                Original File Name
+                {$t('formatter.file_name.title')}
             </Accordion.Trigger>
 
             <div class="ml-auto z-0">
@@ -40,7 +40,7 @@
         <Accordion.Content>
             <div class="flex items-center space-x-3">
                 <Switch bind:checked={withExtension}/>
-                <Label>With Extension</Label>
+                <Label> {withExtension ? $t('formatter.file_name.switch_on') : $t('formatter.file_name.switch_off') }</Label>
             </div>
         </Accordion.Content>
     </Accordion.Item>

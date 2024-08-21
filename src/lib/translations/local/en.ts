@@ -21,7 +21,8 @@ export const en = {
             size: "Size",
             mode_date: "Modified Date",
         },
-        viewOptions: {
+        view_options: {
+            btn : "View",
             title: "Toggle Columns",
         }
     },
@@ -34,30 +35,28 @@ export const en = {
         }
     },
     formatter : {
-        add_btn : {
-            title : "Add Formatter"
-        },
+        add_btn : "Add Formatter",
         panel : {
             title : "Formatters",
         },
         number : {
             title : "Number",
-            input1 : {
+            text_input : {
                 label : "Text",
                 info : "Optional text, respect the format : text{%}text"
             },
-            input2 : {
+            number_input : {
                 label : "Number",
                 info : "First is start number, second is step, third is fill char, fourth is number of fill chars"
             },
         },
         regex : {
             title : "Regex",
-            input1 : {
+            regex_input : {
                 label : "Regex",
                 placeholder: "Insert regex pattern",
             },
-            input2 : {
+            replace_input : {
                 label : "Replacement",
                 placeholder: "Insert replacement pattern",
             },
@@ -66,11 +65,13 @@ export const en = {
             end_pos : "End Position",
         },
         remove : {
-            title : "Remove Characters",
+            title : "Remove text",
+            input_placeholder : "Insert text to remove",
         },
         file_name : {
             title : "Original Name",
-            switch: "With Extension",
+            switch_on: "With Extension",
+            switch_off: "Without Extension"
         },
         case : {
             title : "Case",
@@ -79,8 +80,8 @@ export const en = {
                 on_formatted_name: "Apply On Formatted Name",
             },
             space_switch: {
-                space: "Leave Space",
-                no_space: "Remove Space",
+                space: "Leave Spaces",
+                no_space: "Remove Spaces",
             },
             lowercase: "lowercase",
             uppercase: "UPPERCASE",
@@ -102,6 +103,10 @@ export const en = {
             switch  : {
                 file : "Original extension",
                 custom : "Custom extension",
+            },
+            input : {
+                label : "Extension",
+                placeholder: "Insert extension",
             }
         },
         creation_date : {

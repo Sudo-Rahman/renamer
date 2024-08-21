@@ -21,7 +21,8 @@ export const fr = {
             size: "Taille",
             mode_date: "Date de modification",
         },
-        viewOptions: {
+        view_options: {
+            btn : "Vue",
             title: "Basculer les colonnes",
         }
     },
@@ -34,30 +35,28 @@ export const fr = {
         }
     },
     formatter : {
-        add_btn : {
-            title : "Ajouter un formateur"
-        },
+        add_btn : "Ajouter un formateur",
         panel : {
             title : "Formateurs",
         },
         number : {
-            title : "Numéro",
-            input1 : {
+            title : "Nombre",
+            text_input : {
                 label : "Texte",
                 info : "Texte facultatif, respecter le format : texte{%}texte"
             },
-            input2 : {
-                label : "Numéro",
-                info : "Le premier est le numéro de départ, le deuxième est le pas, le troisième est le caractère de remplissage, le quatrième est le nombre de caractères de remplissage"
+            number_input : {
+                label : "Nombre",
+                info : "Le premier est le nombre de départ, le deuxième est le pas, le troisième est le caractère de remplissage, le quatrième est le nombre de caractères de remplissage"
             },
         },
         regex : {
             title : "Regex",
-            input1 : {
+            regex_input : {
                 label : "Regex",
                 placeholder: "Insérer le motif regex",
             },
-            input2 : {
+            replace_input : {
                 label : "Remplacement",
                 placeholder: "Insérer le motif de remplacement",
             },
@@ -66,11 +65,13 @@ export const fr = {
             end_pos : "Position de fin",
         },
         remove : {
-            title : "Supprimer les caractères",
+            title : "Suppression de texte",
+            input_placeholder : "Insérer le texte à supprimer",
         },
         file_name : {
             title : "Nom d'origine",
-            switch: "Avec l'extension",
+            switch_on: "Avec l'extension",
+            switch_off: "Sans l'extension"
         },
         case : {
             title : "Casse",
@@ -79,19 +80,19 @@ export const fr = {
                 on_formatted_name: "Appliquer sur le nom formaté",
             },
             space_switch: {
-                space: "Laisser l'espace",
-                no_space: "Supprimer l'espace",
+                space: "Laisser les espaces",
+                no_space: "Supprimer les espaces",
             },
             lowercase: "minuscules",
             uppercase: "MAJUSCULES",
-            title_case: "Majuscule au Début",
+            title_case: "Titre",
             pascal_case: "PascalCase",
             camel_case: "camelCase",
             snake_case: "snake_case",
             kebab_case: "kebab-case",
         },
         basic_text : {
-            title : "Texte de base",
+            title : "Texte",
             input1 : {
                 label : "Texte",
                 placeholder: "Insérer le texte",
@@ -102,6 +103,10 @@ export const fr = {
             switch  : {
                 file : "Extension d'origine",
                 custom : "Extension personnalisée",
+            },
+            input : {
+                label : "Extension",
+                placeholder: "Insérer l'extension",
             }
         },
         creation_date : {

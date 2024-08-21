@@ -321,12 +321,12 @@ export class CasesFormatter extends Formatter {
 
     public static readonly Cases: string[] = [
         "lowercase",
-        "UPPERCASE",
-        "Title Case",
-        "camelCase",
-        "PascalCase",
-        "kebab-case",
+        "uppercase",
+        "title_case",
+        "pascal_case",
+        "camel_case",
         "snake_case",
+        "kebab_case",
     ];
 
     get case(): string {
@@ -374,19 +374,19 @@ export class CasesFormatter extends Formatter {
             case "lowercase":
                 formatted = text.toLowerCase();
                 break;
-            case "UPPERCASE":
+            case "uppercase":
                 formatted = text.toUpperCase();
                 break;
-            case "Title Case":
+            case "title_case":
                 formatted = text.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
                 break;
-            case "camelCase":
+            case "camel_case":
                 formatted = text.replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => index === 0 ? word.toLowerCase() : word.toUpperCase());
                 break;
-            case "PascalCase":
+            case "pascal_case":
                 formatted = text.replace(/(?:^\w|[A-Z]|\b\w)/g, (word) => word.toUpperCase());
                 break;
-            case "kebab-case":
+            case "kebab_case":
                 formatted = text.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
                 break;
             case "snake_case":

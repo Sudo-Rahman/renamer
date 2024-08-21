@@ -7,8 +7,7 @@
     import {toast} from "svelte-sonner";
     import {Label} from "$lib/components/ui/label";
     import {Checkbox} from "$lib/components/ui/checkbox";
-    import CircularProgress from "$lib/components/CircularProgress.svelte";
-
+    import {t} from "$lib/translations";
 
     export let files: RenamerFile[] = [];
 
@@ -57,21 +56,21 @@
 
 <div class="{$$props.class}">
 
-    <div class="flex items-center">
+    <div class="flex items-center h-10">
         <Menubar.Root>
             <Menubar.Menu>
-                <Menubar.Trigger>File</Menubar.Trigger>
+                <Menubar.Trigger>{$t('menu_bar.file.title')}</Menubar.Trigger>
                 <Menubar.Content>
                     <Menubar.Item>
-                        Settings
+                        {$t('menu_bar.file.settings')}
                     </Menubar.Item>
                     <Menubar.Separator/>
                     <Menubar.Item on:click={getFiles}>
-                        Import Files
+                        {$t('menu_bar.file.import_files')}
                         <Menubar.Shortcut>⌘N</Menubar.Shortcut>
                     </Menubar.Item>
                     <Menubar.Item on:click={getFolder}>
-                        Import from directory
+                        {$t('menu_bar.file.import_files_from_dir')}
                         <Menubar.Shortcut class="ml-2">⇧⌘N</Menubar.Shortcut>
                     </Menubar.Item>
                 </Menubar.Content>
@@ -90,7 +89,8 @@
         </Menubar.Root>
 
         <div class="flex w-full justify-end">
-            <Button variant="outline" size="icon" class="h-9 w-10 active:bg-primary" on:click={onRenameFiles} disabled="{!($renamable)}">
+            <Button variant="outline" size="icon" class="h-9 w-10 active:bg-primary" on:click={onRenameFiles}
+                    disabled="{!($renamable)}">
                 <Play/>
             </Button>
         </div>

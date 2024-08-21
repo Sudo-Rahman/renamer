@@ -4,6 +4,7 @@
     import { Button } from "$lib/components/ui/button/index.js";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
     import {RenamerFile} from "$models";
+    import {t} from "$lib/translations";
 
     export let tableModel: TableViewModel<RenamerFile>;
     const { pluginStates, flatColumns } = tableModel;
@@ -29,11 +30,11 @@
     <DropdownMenu.Trigger asChild let:builder>
         <Button variant="outline" size="sm" class="ml-auto opacity-0 pointer-events-none h-8 lg:opacity-100 flex lg:pointer-events-auto transition-all duration-300 ease-in-out" builders={[builder]}>
             <MixerHorizontal class="mr-2 h-4 w-4" />
-            View
+            {$t('data_table.view_options.btn')}
         </Button>
     </DropdownMenu.Trigger>
     <DropdownMenu.Content>
-        <DropdownMenu.Label>Toggle columns</DropdownMenu.Label>
+        <DropdownMenu.Label> {$t('data_table.view_options.title')}</DropdownMenu.Label>
         <DropdownMenu.Separator />
         {#each flatColumns as col}
             {#if hidableCols.includes(col.id)}

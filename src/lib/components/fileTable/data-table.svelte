@@ -18,6 +18,8 @@
     import DatatableNewName from "./data-table-new-name.svelte";
     import DatatableName from "./data-table-name.svelte";
     import DatatableStatus from "./data-table-status.svelte";
+    import {t} from "$lib/translations";
+    import {ScrollArea} from "$lib/components/ui/scroll-area";
 
     export let filesList: RenamerFile[] = [];
 
@@ -81,7 +83,7 @@
         }),
         table.column({
             accessor: "status",
-            header: "Status",
+            header: $t('data_table.table_header.status'),
             cell: ({row}) => {
                 return createRender(DatatableStatus, {
                     file: row.original,
@@ -90,7 +92,7 @@
         }),
         table.column({
             accessor: "name",
-            header: "Name",
+            header: $t('data_table.table_header.name'),
             cell: ({row}, {pluginStates}) => {
                 return createRender(DatatableName, {
                     file: row.original,
@@ -99,7 +101,7 @@
         }),
         table.column({
             accessor: "newName",
-            header: "New Name",
+            header: $t('data_table.table_header.new_name'),
             cell: ({row}, {pluginStates}) => {
                 return createRender(DatatableNewName, {
                     file: row.original,
@@ -108,14 +110,14 @@
         }),
         table.column({
             accessor: "size",
-            header: "Size",
+            header: $t('data_table.table_header.size'),
             cell: ({value}) => {
                 return RenamerFile.getStringSize(value)
             },
         }),
         table.column({
             accessor: "modificationDate",
-            header: "Modification Date",
+            header: $t('data_table.table_header.mode_date'),
             cell: ({value}) => {
                 return value.toLocaleString();
             },
@@ -140,7 +142,7 @@
 
     pluginStates.sort.sortKeys.subscribe(
         (value) => {
-            filesList.sort((a : RenamerFile, b : RenamerFile) => {
+            filesList.sort((a: RenamerFile, b: RenamerFile) => {
                 for (const sortKey of value) {
                     const {id, order} = sortKey;
                     const aValue = a[id];
@@ -159,54 +161,57 @@
 
 </script>
 
-<div class="flex flex-col ml-2 pb-4 pt-1 space-y-2 min-w-[64rem]">
+<ScrollArea class="h-full pt-2" orientation="both">
 
-    <DatatableToolbar {tableModel}/>
+    <div class="flex flex-col ml-2 pb-4 pt-1 px-2 space-y-2 min-w-[64rem]">
 
-    <div class="rounded-2xl border overflow-hidden">
-        <Table.Root {...$tableAttrs}>
-            <Table.Header>
-                {#each $headerRows as headerRow}
-                    <Subscribe rowAttrs={headerRow.attrs()}>
-                        <Table.Row>
-                            {#each headerRow.cells as cell (cell.id)}
-                                <Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
-                                    <Table.Head {...attrs}>
-                                        {#if cell.id === "name" || cell.id === "newName" || cell.id === "size" || cell.id === "modificationDate"}
-                                            <Button variant="ghost" on:click={props.sort.toggle}>
+        <DatatableToolbar {tableModel}/>
+
+        <div class="rounded-2xl border overflow-hidden">
+            <Table.Root {...$tableAttrs}>
+                <Table.Header>
+                    {#each $headerRows as headerRow}
+                        <Subscribe rowAttrs={headerRow.attrs()}>
+                            <Table.Row>
+                                {#each headerRow.cells as cell (cell.id)}
+                                    <Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
+                                        <Table.Head {...attrs}>
+                                            {#if cell.id === "name" || cell.id === "newName" || cell.id === "size" || cell.id === "modificationDate"}
+                                                <Button variant="ghost" on:click={props.sort.toggle}>
+                                                    <Render of={cell.render()}/>
+                                                    <ArrowUpDown class={"ml-2 h-4 w-4"}/>
+                                                </Button>
+                                            {:else}
                                                 <Render of={cell.render()}/>
-                                                <ArrowUpDown class={"ml-2 h-4 w-4"}/>
-                                            </Button>
-                                        {:else}
+                                            {/if}
+                                        </Table.Head>
+                                    </Subscribe>
+                                {/each}
+                            </Table.Row>
+                        </Subscribe>
+                    {/each}
+                </Table.Header>
+                <Table.Body {...$tableBodyAttrs}>
+                    {#each $pageRows as row (row.id)}
+                        <Subscribe rowAttrs={row.attrs()} let:rowAttrs>
+                            <Table.Row
+                                    {...rowAttrs}
+                                    data-state={$selectedDataIds[row.id] && "selected"}>
+                                {#each row.cells as cell (cell.id)}
+                                    <Subscribe attrs={cell.attrs()} let:attrs>
+                                        <Table.Cell {...attrs} class="select-text">
                                             <Render of={cell.render()}/>
-                                        {/if}
-                                    </Table.Head>
-                                </Subscribe>
-                            {/each}
-                        </Table.Row>
-                    </Subscribe>
-                {/each}
-            </Table.Header>
-            <Table.Body {...$tableBodyAttrs}>
-                {#each $pageRows as row (row.id)}
-                    <Subscribe rowAttrs={row.attrs()} let:rowAttrs>
-                        <Table.Row
-                                   {...rowAttrs}
-                                   data-state={$selectedDataIds[row.id] && "selected"}>
-                            {#each row.cells as cell (cell.id)}
-                                <Subscribe attrs={cell.attrs()} let:attrs>
-                                    <Table.Cell {...attrs} class="select-text">
-                                        <Render of={cell.render()}/>
-                                    </Table.Cell>
-                                </Subscribe>
-                            {/each}
-                        </Table.Row>
-                    </Subscribe>
-                {/each}
-            </Table.Body>
-        </Table.Root>
+                                        </Table.Cell>
+                                    </Subscribe>
+                                {/each}
+                            </Table.Row>
+                        </Subscribe>
+                    {/each}
+                </Table.Body>
+            </Table.Root>
+        </div>
+
+        <DataTablePagination {tableModel}/>
+
     </div>
-
-    <DataTablePagination {tableModel}/>
-
-</div>
+</ScrollArea>

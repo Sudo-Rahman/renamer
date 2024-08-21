@@ -7,7 +7,7 @@
     import * as RadioGroup from "$lib/components/ui/radio-group";
     import {Button} from "$lib/components/ui/button";
     import {X} from "lucide-svelte";
-
+    import {t} from "$lib/translations";
 
     export let formatter: CasesFormatter;
 
@@ -33,7 +33,7 @@
 
         <div class="flex h-6 mb-1 w-full items-center relative">
             <Accordion.Trigger class="w-full hover:no-underline py-0 flex items-center h-full justify-center absolute inset-0">
-                Case
+                {$t('formatter.case.title')}
             </Accordion.Trigger>
 
             <div class="ml-auto z-0">
@@ -50,12 +50,12 @@
 
                 <div class="flex items-center space-x-3">
                     <Switch bind:checked={checked}/>
-                    <Label>{formatter.mode === 0 ? 'Apply on file name' : 'Apply on formatted name'}</Label>
+                    <Label>{formatter.mode === 0 ? $t('formatter.case.name_switch.on_file_name') : $t('formatter.case.name_switch.on_formatted_name')}</Label>
                 </div>
 
                 <div class="flex items-center space-x-3">
                     <Switch bind:checked={withSpaces}/>
-                    <Label>{formatter.removeSpaces ? 'Remove spaces' : 'leave spaces'}</Label>
+                    <Label>{formatter.removeSpaces ? $t('formatter.case.space_switch.no_space') : $t('formatter.case.space_switch.space')}</Label>
                 </div>
 
                 <RadioGroup.Root class="grid-cols-2" bind:value={formatter.case}>
@@ -63,7 +63,7 @@
                     {#each CasesFormatter.Cases as c}
                         <div class="flex items-center space-x-2">
                             <RadioGroup.Item value={c} on:click={()=>handleCaseChange(c)}/>
-                            <Label>{c}</Label>
+                            <Label>{$t(`formatter.case.${c}`)}</Label>
                         </div>
                     {/each}
 

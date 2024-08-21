@@ -8,6 +8,7 @@
     import { Button } from "$lib/components/ui/button/index.js";
     import {RenamerFile} from "$models";
     import {get} from "svelte/store";
+    import {t} from "$lib/translations";
 
     export let tableModel: TableViewModel<RenamerFile>;
 
@@ -21,11 +22,11 @@
 
 <div class="flex items-center justify-between px-2">
     <div class="text-muted-foreground flex-1 text-sm">
-        {Object.keys($selectedDataIds).length} of {$rows.length} row(s) selected.
+        {Object.keys($selectedDataIds).length} {$t('data_table.pagination.of')} {$rows.length} {$t('data_table.pagination.rows_selected')}
     </div>
     <div class="flex items-center space-x-6 lg:space-x-8">
         <div class="flex items-center space-x-2">
-            <p class="text-sm font-medium">Rows per page</p>
+            <p class="text-sm font-medium">{$t('data_table.pagination.rows_per_page')}</p>
             <Select.Root
                     onSelectedChange={(selected) => pageSize.set(selected?.value)}
                     selected={{ value: get(pageSize), label: get(pageSize).toString() }}
@@ -43,7 +44,7 @@
             </Select.Root>
         </div>
         <div class="flex w-[100px] items-center justify-center text-sm font-medium">
-            Page {$pageIndex + 1} of {$pageCount}
+            {$t('data_table.pagination.page')} {$pageIndex + 1} {$t('data_table.pagination.of')} {$pageCount}
         </div>
         <div class="flex items-center space-x-2 transition-all duration-300 ease-in-out">
             <Button

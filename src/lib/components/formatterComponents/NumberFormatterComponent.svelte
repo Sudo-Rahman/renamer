@@ -7,7 +7,7 @@
     import {NumberFormatter} from "$models/Formatter";
     import {Info, X} from 'lucide-svelte';
     import {Button} from "$lib/components/ui/button";
-
+    import {t} from "$lib/translations";
 
     export let formatter: NumberFormatter;
 
@@ -37,7 +37,7 @@
 
         <div class="flex h-6 mb-1 w-full items-center relative">
             <Accordion.Trigger class="w-full hover:no-underline py-0 flex items-center h-full justify-center absolute inset-0">
-                Number
+                {$t('formatter.number.title')}
             </Accordion.Trigger>
 
             <div class="ml-auto z-0">
@@ -55,13 +55,13 @@
 
                 <div class="grid w-full items-center gap-1.5">
                     <div class="flex space-x-1 items-center">
-                        <Label class="pl-1" for="start">Text</Label>
+                        <Label class="pl-1" for="start">{$t('formatter.number.text_input.label')}</Label>
                         <Popover.Root>
                             <Popover.Trigger>
                                 <Info size="16px"/>
                             </Popover.Trigger>
                             <Popover.Content>
-                                {`Optional text, respect the format : text{%}text`}
+                                {$t('formatter.number.text_input.info')}
                             </Popover.Content>
                         </Popover.Root>
                     </div>
@@ -70,14 +70,13 @@
 
                 <div class="grid w-full items-center gap-1.5">
                     <div class="flex space-x-1 items-center">
-                        <Label class="pl-1" for="number">Number</Label>
+                        <Label class="pl-1" for="number">{$t('formatter.number.number_input.label')}</Label>
                         <Popover.Root>
                             <Popover.Trigger>
                                 <Info size="16px"/>
                             </Popover.Trigger>
                             <Popover.Content>
-                                First is start number, second is step, third is fill char, fourth is number of fill
-                                chars
+                                {$t('formatter.number.number_input.info')}
                             </Popover.Content>
                         </Popover.Root>
                     </div>

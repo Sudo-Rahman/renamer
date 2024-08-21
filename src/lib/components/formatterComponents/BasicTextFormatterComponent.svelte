@@ -5,9 +5,10 @@
     import {BasicTextFormatter, formatters} from "$models";
     import {Button} from "$lib/components/ui/button";
     import {X} from "lucide-svelte";
+    import {t} from "$lib/translations";
 
 
-    export let formatter:BasicTextFormatter;
+    export let formatter: BasicTextFormatter;
 
 
     let text = formatter.text;
@@ -23,8 +24,9 @@
     <Accordion.Item value="item-{formatter.id}" class="border-none">
 
         <div class="flex h-6 mb-1 w-full items-center relative">
-            <Accordion.Trigger class="w-full hover:no-underline py-0 flex items-center h-full justify-center absolute inset-0">
-                Text
+            <Accordion.Trigger
+                    class="w-full hover:no-underline py-0 flex items-center h-full justify-center absolute inset-0">
+                {$t('formatter.basic_text.title')}
             </Accordion.Trigger>
 
             <div class="ml-auto z-0">
@@ -37,8 +39,9 @@
 
         <Accordion.Content>
             <div class="grid w-full items-center gap-1.5 px-1">
-                <Label class="pl-1" for="text">Text</Label>
-                <Input class="transition-all duration-300 ease-in-out" type="text" id="text" placeholder="example" bind:value={text}/>
+                <Label class="pl-1" for="text">{$t('formatter.basic_text.input1.label')}</Label>
+                <Input class="transition-all duration-300 ease-in-out" type="text" id="text" placeholder={$t('formatter.basic_text.input1.placeholder')}
+                       bind:value={text}/>
             </div>
         </Accordion.Content>
     </Accordion.Item>

@@ -7,7 +7,7 @@
     import {slide} from "svelte/transition";
     import {Button} from "$lib/components/ui/button";
     import {X} from "lucide-svelte";
-
+    import {t} from "$lib/translations";
 
     export let formatter:ExtensionFormatter;
 
@@ -28,7 +28,7 @@
 
         <div class="flex h-6 mb-1 w-full items-center relative">
             <Accordion.Trigger class="w-full hover:no-underline py-0 flex items-center h-full justify-center absolute inset-0">
-                Extension
+                {$t('formatter.extension.title')}
             </Accordion.Trigger>
 
             <div class="ml-auto z-0">
@@ -45,14 +45,14 @@
 
                 <div class="flex items-center space-x-3">
                     <Switch id="custom-ext" bind:checked={customExt}/>
-                    <Label for="custom-ext">{customExt ? 'Custom extension' : 'File extension'}</Label>
+                    <Label for="custom-ext">{customExt ? $t('formatter.extension.switch.custom') : $t('formatter.extension.switch.file')}</Label>
                 </div>
 
                 {#if customExt}
 
                     <div transition:slide class="grid w-full items-center gap-1.5">
-                        <Label class="pl-1" for="ext">Extension</Label>
-                        <Input type="text" id="ext" placeholder="png" bind:value={customExtension}/>
+                        <Label class="pl-1" for="ext">{$t('formatter.extension.input.label')}</Label>
+                        <Input type="text" class="transition-all duration-300 ease-in-out" id="ext" placeholder={$t('formatter.extension.input.placeholder')} bind:value={customExtension}/>
                     </div>
 
                 {/if}

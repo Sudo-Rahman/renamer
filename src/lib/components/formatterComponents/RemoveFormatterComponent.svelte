@@ -8,6 +8,7 @@
     import {Button} from "$lib/components/ui/button";
     import {Plus, X, GripVertical} from "lucide-svelte";
     import {type DndEvent, dndzone, type Item} from "svelte-dnd-action";
+    import {t} from "$lib/translations";
 
     export let formatter: RemoveFormatter;
 
@@ -43,7 +44,7 @@
     <Accordion.Item value="item-{formatter.id}" class="border-none">
         <div class="flex h-fit mb-1 w-full items-center relative">
             <Accordion.Trigger class="w-full hover:no-underline py-0  flex items-center h-full justify-center absolute inset-0">
-                Remove custom characters
+                {$t('formatter.remove.title')}
             </Accordion.Trigger>
 
             <div class="ml-auto z-10">
@@ -68,7 +69,7 @@
                             <Input
                                     type="text"
                                     bind:value={input.value}
-                                    placeholder="Enter text"
+                                    placeholder={$t('formatter.remove.input_placeholder')}
                                     class="w-full"
                             />
                             <div>
@@ -83,7 +84,7 @@
                 </div>
 
                 <div class="flex justify-center items-center w-full">
-                    <Button variant="ghost" class="h-10 w-10 rounded-full p-0 active:bg-primary/50" on:click={newInput}>
+                    <Button variant="ghost" class="h-8 w-8 rounded-full p-0 active:bg-primary/50" on:click={newInput}>
                         <Plus/>
                     </Button>
                 </div>

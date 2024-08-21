@@ -1,7 +1,6 @@
-use std::time::{SystemTime, UNIX_EPOCH};
 use serde::{Deserialize, Serialize};
+use std::time::{SystemTime, UNIX_EPOCH};
 use uuid::Uuid;
-
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct RenameFile {
@@ -10,7 +9,7 @@ pub struct RenameFile {
     size: u64,
     creation_date: u64,
     last_modified_date: u64,
-    uuid : String,
+    uuid: String,
 }
 
 impl RenameFile {
@@ -24,8 +23,10 @@ impl RenameFile {
             .to_string();
 
         let size = metadata.len();
-        let creation_date = Self::system_time_to_unix(metadata.created().unwrap_or(SystemTime::UNIX_EPOCH));
-        let last_modified_date = Self::system_time_to_unix(metadata.modified().unwrap_or(SystemTime::UNIX_EPOCH));
+        let creation_date =
+            Self::system_time_to_unix(metadata.created().unwrap_or(SystemTime::UNIX_EPOCH));
+        let last_modified_date =
+            Self::system_time_to_unix(metadata.modified().unwrap_or(SystemTime::UNIX_EPOCH));
 
         Ok(Self {
             path,
@@ -33,7 +34,7 @@ impl RenameFile {
             size,
             creation_date,
             last_modified_date,
-            uuid : Uuid::new_v4().to_string(),
+            uuid: Uuid::new_v4().to_string(),
         })
     }
 

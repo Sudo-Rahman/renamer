@@ -7,7 +7,7 @@
     import * as RadioGroup from "$lib/components/ui/radio-group";
     import {Button} from "$lib/components/ui/button";
     import {X} from "lucide-svelte";
-
+    import {t} from "$lib/translations";
 
     export let formatter:CreationDateFormatter;
 
@@ -24,7 +24,7 @@
 
         <div class="flex h-6 mb-1 w-full items-center relative">
             <Accordion.Trigger class="w-full hover:no-underline py-0 flex items-center h-full justify-center absolute inset-0">
-                Creation Date
+                {$t('formatter.creation_date.title')}
             </Accordion.Trigger>
 
             <div class="ml-auto z-0">
@@ -38,7 +38,7 @@
         <Accordion.Content>
 
             <div class="grid gap-1.5 pl-2">
-                <Label for="formatter.enabled" class="text-sm">Format</Label>
+                <Label for="formatter.enabled" class="text-sm">{$t('formatter.creation_date.input1.label')}</Label>
                 <RadioGroup.Root value="{formatter.dateFormat}">
                     {#each CreationDateFormatter.Format as format}
                         <div class="flex items-center space-x-2">

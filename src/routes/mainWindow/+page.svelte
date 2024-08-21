@@ -10,10 +10,13 @@
     import {onMount} from "svelte";
     import {listen} from "@tauri-apps/api/event";
     import {invoke} from "@tauri-apps/api/core";
+    import {t} from "$lib/translations";
+    import {Label} from "$lib/components/ui/label";
+    import AddFormatterButton from "$lib/components/formatterComponents/AddFormatterButton.svelte";
 
 
     let dragActive = false;
-    let rightPane : HTMLElement;
+    let rightPane: HTMLElement;
 
     onMount(async () => {
         const dropListen = await listen('tauri://drag-drop', async (event: any) => {
@@ -66,22 +69,32 @@
 
 <div class="flex flex-col h-screen overflow-hidden">
 
-    <Menubar bind:files={$files} class="w-full px-4 py-2"/>
-    <Separator/>
     <div class="flex-grow overflow-hidden">
         <Resizable.PaneGroup direction="horizontal" class="h-full">
-            <Resizable.Pane class="p-2" minSize={15} maxSize={30}>
-                <FormattersComponent/>
+            <Resizable.Pane class="p-0" minSize={15} maxSize={30}>
+                <div class="flex flex-col h-full w-full">
+                    <div class="h-16 flex w-full items-center px-2 justify-between">
+                        <Label class="text-xl text-center
+                         font-bold">{$t('formatter.panel.title')}</Label>
+                        <AddFormatterButton/>
+                    </div>
+                    <Separator class="flex-col w-full"/>
+                    <FormattersComponent/>
+                </div>
             </Resizable.Pane>
             <Resizable.Handle withHandle/>
-            <Resizable.Pane class="p-2" bind:el={rightPane}>
-                <ScrollArea class="h-full" orientation="both">
+            <Resizable.Pane class="p-0" bind:el={rightPane}>
+                <div class="flex flex-col h-full w-full">
+
+                    <div class="h-16 flex items-center">
+                        <Menubar bind:files={$files} class="w-full px-4"/>
+                    </div>
+                    <Separator/>
 
                     {#key $files}
                         <DataTable filesList={$files}/>
                     {/key}
-
-                </ScrollArea>
+                </div>
             </Resizable.Pane>
         </Resizable.PaneGroup>
     </div>
