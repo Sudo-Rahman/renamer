@@ -145,7 +145,7 @@ export class FormatterList {
 
     async renameFiles(): Promise<void> {
 
-        if (get(renamable)) {
+        if (!get(renamable)) {
             throw new Error("Some files have errors");
         }
 
@@ -173,6 +173,26 @@ export class FormatterList {
                 this.format();
             }
         );
+    }
+
+    up(id: string): void {
+        const index = this._formatters.findIndex((f) => f.id === id);
+        if (index === 0) return;
+        const tmp = this._formatters[index];
+        this._formatters[index] = this._formatters[index - 1];
+        this._formatters[index - 1] = tmp;
+        this.format();
+        this.onListChangedSignal.emit(this._formatters);
+    }
+
+    down(id: string): void {
+        const index = this._formatters.findIndex((f) => f.id === id);
+        if (index === this._formatters.length - 1) return;
+        const tmp = this._formatters[index];
+        this._formatters[index] = this._formatters[index + 1];
+        this._formatters[index + 1] = tmp;
+        this.format();
+        this.onListChangedSignal.emit(this._formatters);
     }
 }
 

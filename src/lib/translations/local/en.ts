@@ -22,8 +22,8 @@ export const en = {
             mode_date: "Modified Date",
         },
         view_options: {
-            btn : "View",
-            title: "Toggle Columns",
+            btn : "Columns",
+            title: "Switch Columns",
         }
     },
     menu_bar: {

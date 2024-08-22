@@ -13,6 +13,6 @@
 </script>
 
 
-<span>
+<span class="select-text">
 {name}
 </span>

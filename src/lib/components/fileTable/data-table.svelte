@@ -161,9 +161,8 @@
 
 </script>
 
-<ScrollArea class="h-full pt-2" orientation="both">
-
-    <div class="flex flex-col ml-2 pb-4 pt-1 px-2 space-y-2 min-w-[64rem]">
+<ScrollArea class="h-full pt-2 w-full" orientation="both">
+    <div class="flex flex-col ml-2 pb-4 pt-1 px-2 space-y-2">
 
         <DatatableToolbar {tableModel}/>
 
@@ -199,7 +198,7 @@
                                     data-state={$selectedDataIds[row.id] && "selected"}>
                                 {#each row.cells as cell (cell.id)}
                                     <Subscribe attrs={cell.attrs()} let:attrs>
-                                        <Table.Cell {...attrs} class="select-text">
+                                        <Table.Cell {...attrs}>
                                             <Render of={cell.render()}/>
                                         </Table.Cell>
                                     </Subscribe>

@@ -43,7 +43,7 @@
     async function onRenameFiles() {
         $formatters.renameFiles().then(
             () => {
-                toast("Files renamed successfully", {type: "success"});
+                toast("Files renamed", {type: "success"});
             },
             (error) => {
                 toast("Error renaming files", {type: "error"});

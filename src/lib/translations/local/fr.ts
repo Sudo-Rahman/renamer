@@ -22,7 +22,7 @@ export const fr = {
             mode_date: "Date de modification",
         },
         view_options: {
-            btn : "Vue",
+            btn : "Colonnes",
             title: "Basculer les colonnes",
         }
     },

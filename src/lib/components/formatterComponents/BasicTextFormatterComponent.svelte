@@ -6,6 +6,8 @@
     import {Button} from "$lib/components/ui/button";
     import {X} from "lucide-svelte";
     import {t} from "$lib/translations";
+    import { ChevronUp,ChevronDown } from 'lucide-svelte';
+
 
 
     export let formatter: BasicTextFormatter;
@@ -25,7 +27,7 @@
 
         <div class="flex h-6 mb-1 w-full items-center relative">
             <Accordion.Trigger
-                    class="w-full hover:no-underline py-0 flex items-center h-full justify-center absolute inset-0">
+                    class="w-full hover:no-underline py-0 z-0 flex items-center h-full justify-center absolute inset-0">
                 {$t('formatter.basic_text.title')}
             </Accordion.Trigger>
 

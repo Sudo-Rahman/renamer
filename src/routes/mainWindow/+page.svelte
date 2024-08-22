@@ -1,9 +1,6 @@
 <script lang="ts">
-    import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
-    import * as Resizable from "$lib/components/ui/resizable";
     import {Separator} from "$lib/components/ui/separator";
     import {files, RenamerFile} from "$models";
-    import {ScrollArea} from "$lib/components/ui/scroll-area/index.js";
     import Menubar from "$lib/components/MenuBar.svelte";
     import FormattersComponent from "$lib/components/FormattersComponent.svelte";
     import DataTable from "$lib/components/fileTable/data-table.svelte";
@@ -13,6 +10,7 @@
     import {t} from "$lib/translations";
     import {Label} from "$lib/components/ui/label";
     import AddFormatterButton from "$lib/components/formatterComponents/AddFormatterButton.svelte";
+    import {ScrollArea} from "$lib/components/ui/scroll-area";
 
 
     let dragActive = false;
@@ -67,35 +65,26 @@
 
 </script>
 
-<div class="flex flex-col h-screen overflow-hidden">
-
-    <div class="flex-grow overflow-hidden">
-        <Resizable.PaneGroup direction="horizontal" class="h-full">
-            <Resizable.Pane class="p-0" minSize={15} maxSize={30}>
-                <div class="flex flex-col h-full w-full">
-                    <div class="h-16 flex w-full items-center px-2 justify-between">
-                        <Label class="text-xl text-center
+<div class="flex w-full h-full overflow-hidden">
+    <div class="flex flex-col h-full sm:w-60 lg:w-80 xl:w-96 transition-all duration-300 ease-in-out">
+        <div class="h-16 flex w-full items-center px-2 justify-between">
+            <Label class="text-xl text-center
                          font-bold">{$t('formatter.panel.title')}</Label>
-                        <AddFormatterButton/>
-                    </div>
-                    <Separator class="flex-col w-full"/>
-                    <FormattersComponent/>
-                </div>
-            </Resizable.Pane>
-            <Resizable.Handle withHandle/>
-            <Resizable.Pane class="p-0" bind:el={rightPane}>
-                <div class="flex flex-col h-full w-full">
+            <AddFormatterButton/>
+        </div>
+        <Separator class="flex-col w-full"/>
+        <FormattersComponent/>
+    </div>
+    <Separator orientation="vertical"/>
+    <div class="flex flex-col h-full w-full">
 
-                    <div class="h-16 flex items-center">
-                        <Menubar bind:files={$files} class="w-full px-4"/>
-                    </div>
-                    <Separator/>
+        <div class="h-16 flex items-center">
+            <Menubar bind:files={$files} class="w-full px-4"/>
+        </div>
+        <Separator/>
 
-                    {#key $files}
-                        <DataTable filesList={$files}/>
-                    {/key}
-                </div>
-            </Resizable.Pane>
-        </Resizable.PaneGroup>
+        {#key $files}
+            <DataTable filesList={$files}/>
+        {/key}
     </div>
 </div>

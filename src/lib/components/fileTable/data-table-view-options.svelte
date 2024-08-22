@@ -5,10 +5,15 @@
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
     import {RenamerFile} from "$models";
     import {t} from "$lib/translations";
+    import {onMount} from "svelte";
+    import {listen} from "@tauri-apps/api/event";
+    import { Store } from '@tauri-apps/plugin-store';
 
     export let tableModel: TableViewModel<RenamerFile>;
     const { pluginStates, flatColumns } = tableModel;
     const { hiddenColumnIds } = pluginStates.hide;
+
+    const store = new Store('renamer');
 
     function handleHide(id: string) {
         hiddenColumnIds.update((ids: string[]) => {
@@ -17,10 +22,17 @@
             }
             return [...ids, id];
         });
+        store.set("hiddenCols", $hiddenColumnIds);
     }
 
-
-    hiddenColumnIds.set(["size","modificationDate"]);
+    onMount(async () => {
+        const hiddenCols = await store.get("hiddenCols");
+        if (hiddenCols) {
+            hiddenColumnIds.set(hiddenCols);
+        }else{
+            hiddenColumnIds.set(["size","modificationDate"]);
+        }
+    });
 
     const hidableCols = ["size","modificationDate"];
 
