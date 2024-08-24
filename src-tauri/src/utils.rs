@@ -148,6 +148,5 @@ pub async fn check_files_names(files: Vec<FileRenameInfo>) -> Result<Vec<FileSta
 
 #[tauri::command]
 pub fn get_system_language() -> String {
-    let current_locale = get_locale().unwrap_or_else(|| String::from("en-US"));
-    current_locale
+    get_locale().unwrap_or_else(|| String::from("en-US")).split('-').next().unwrap().to_string()
 }

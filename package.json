@@ -1,6 +1,6 @@
 {
   "name": "renamer",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "",
   "type": "module",
   "scripts": {
@@ -13,11 +13,11 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@tauri-apps/api": "2.0.0-rc.0",
+    "@tauri-apps/api": "2.0.0-rc.3",
     "@tauri-apps/plugin-dialog": "2.0.0-rc.0",
-    "@tauri-apps/plugin-fs": "2.0.0-rc.0",
+    "@tauri-apps/plugin-fs": "2.0.0-rc.1",
     "@tauri-apps/plugin-os": "2.0.0-rc.0",
-    "@tauri-apps/plugin-shell": ">=2.0.0-rc.0",
+    "@tauri-apps/plugin-shell": "2.0.0-rc.0",
     "@tauri-apps/plugin-store": "2.0.0-rc.0",
     "@types/dateformat": "^5.0.2",
     "bits-ui": "^0.21.12",

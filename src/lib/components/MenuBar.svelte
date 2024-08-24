@@ -1,6 +1,6 @@
 <script lang="ts">
     import * as Menubar from "$lib/components/ui/menubar";
-    import {formatters, getFilesFromFileDialog, options, renamable, RenamerFile} from "$models";
+    import {formatters, getFilesFromFileDialog, options, preset, renamable, RenamerFile, savePreset} from "$models";
     import {onMount} from "svelte";
     import {Play} from 'lucide-svelte';
     import {Button} from '$lib/components/ui/button';
@@ -8,6 +8,9 @@
     import {Label} from "$lib/components/ui/label";
     import {Checkbox} from "$lib/components/ui/checkbox";
     import {t} from "$lib/translations";
+    import SettingsDialog from "$lib/components/SettingsDialog.svelte";
+    import CreatePreset from "$lib/components/SavePresetDialog.svelte";
+    import PresetListDialog from "$lib/components/PresetListDialog.svelte";
 
     export let files: RenamerFile[] = [];
 
@@ -52,6 +55,38 @@
         );
     }
 
+    async function onSavePreset() {
+
+    }
+
+    async function onSaveAsPreset() {
+        if($preset === null) {
+            savePresetDialog = true;
+            return;
+        }
+        savePreset($preset).then(
+            () => {
+                toast.success("Preset saved");
+            },
+            (error) => {
+                toast.error("Error saving preset");
+                console.error(error);
+            }
+        );
+    }
+
+    async function onLoadPreset() {
+        loadPresetDialog = true;
+    }
+
+
+    let openSettings = false;
+    let loadPresetDialog = false;
+    let savePresetDialog = false;
+    let saveDisable = false;
+
+    $ : saveDisable = $formatters.formatters.length === 0 || $preset === null;
+
 </script>
 
 <div class="{$$props.class}">
@@ -61,7 +96,7 @@
             <Menubar.Menu>
                 <Menubar.Trigger>{$t('menu_bar.file.title')}</Menubar.Trigger>
                 <Menubar.Content>
-                    <Menubar.Item>
+                    <Menubar.Item on:click={()=>openSettings = !openSettings}>
                         {$t('menu_bar.file.settings')}
                     </Menubar.Item>
                     <Menubar.Separator/>
@@ -71,7 +106,7 @@
                     </Menubar.Item>
                     <Menubar.Item on:click={getFolder}>
                         {$t('menu_bar.file.import_files_from_dir')}
-                        <Menubar.Shortcut class="ml-2">⇧⌘N</Menubar.Shortcut>
+                        <Menubar.Shortcut class="ml-2">⌘⇧N</Menubar.Shortcut>
                     </Menubar.Item>
                 </Menubar.Content>
             </Menubar.Menu>
@@ -86,6 +121,23 @@
                     </Menubar.Label>
                 </Menubar.Content>
             </Menubar.Menu>
+            <Menubar.Menu>
+                <Menubar.Trigger>{$t('menu_bar.preset.title')}</Menubar.Trigger>
+                <Menubar.Content>
+                    <Menubar.Item  on:click={onSavePreset} disabled={saveDisable}>
+                        {$t('menu_bar.preset.save')}
+                        <Menubar.Shortcut>⌘S</Menubar.Shortcut>
+                    </Menubar.Item>
+                    <Menubar.Item on:click={onSaveAsPreset} disabled={$formatters.formatters.length === 0 ?? false}>
+                        {$t('menu_bar.preset.save_as')}
+                        <Menubar.Shortcut>⌘⇧S</Menubar.Shortcut>
+                    </Menubar.Item>
+                    <Menubar.Item on:click={onLoadPreset}>
+                        {$t('menu_bar.preset.load')}
+                        <Menubar.Shortcut>⌘O</Menubar.Shortcut>
+                    </Menubar.Item>
+                </Menubar.Content>
+            </Menubar.Menu>
         </Menubar.Root>
 
         <div class="flex w-full justify-end">
@@ -96,3 +148,7 @@
         </div>
     </div>
 </div>
+
+<SettingsDialog bind:open={openSettings}/>
+<CreatePreset bind:open={savePresetDialog}/>
+<PresetListDialog bind:open={loadPresetDialog}/>

@@ -1,5 +1,5 @@
-import {v7 as uuidv7} from 'uuid';
-import {type RenamerFile} from "$models/File";
+import {v4 as uuidv4} from 'uuid';
+import {type RenamerFile, Preset} from "$models";
 import dateFormat from "dateformat";
 import {Signal} from "$models/Signal";
 import {invoke} from "@tauri-apps/api/core";
@@ -14,7 +14,7 @@ export abstract class Formatter {
     id: string;
 
     protected constructor() {
-        this.id = uuidv7();
+        this.id = uuidv4();
     }
 
     finish(): void {
@@ -30,6 +30,12 @@ export class FormatterList {
 
     constructor(files: RenamerFile[]) {
         this._renamerFiles = files;
+    }
+
+    fromPreset(preset : Preset){
+        this._formatters = preset.formatters;
+        this.format();
+        this.onListChangedSignal.emit(this._formatters);
     }
 
     private launchTimeout(func: () => void) {
@@ -65,9 +71,6 @@ export class FormatterList {
         this._formatters.push(newFormatter);
         this.format();
         this.onListChangedSignal.emit(this._formatters);
-        this.launchTimeout(() => {
-            this.checkFilesNames();
-        });
         return newFormatter;
     }
 
@@ -79,9 +82,6 @@ export class FormatterList {
         this._formatters.splice(index, 1);
         this.format();
         this.onListChangedSignal.emit(this._formatters);
-        this.launchTimeout(() => {
-            this.checkFilesNames();
-        });
     }
 
     getFormatter(id: string): Formatter | undefined {
@@ -125,7 +125,7 @@ export class FormatterList {
         });
         invoke("check_files_names", {files: files}).then((res) => {
             if(res){
-                (res as any).forEach((file : any) => {
+                (res as any[]).forEach((file : any) => {
                     const f = this._renamerFiles.find((f) => f.uuid === file.uuid);
                     if (f) {
                         f.statusMessage = file.error;
@@ -133,12 +133,12 @@ export class FormatterList {
                     }
                 });
                 this._renamerFiles.forEach((f) => {
-                    if((res as any).find((file : any) => file.uuid === f.uuid) === undefined){
+                    if((res as any[]).find((file : any) => file.uuid === f.uuid) === undefined){
                         f.statusMessage = "";
                         f.status = "None";
                     }
                 });
-                renamable.set(res.length <= 0);
+                renamable.set((res as any[]).length <= 0);
             }
         });
     }
@@ -157,7 +157,7 @@ export class FormatterList {
 
         await invoke('rename_files', {fileInfos: fileInfos}).then(
             (res) => {
-                if (res && res.length > 0) {
+                if (res && (res as any[]).length > 0) {
                     (res as {    status : boolean, error : string, uuid: string}[]).forEach((file) => {
                         const f = this._renamerFiles.find((f) => f.uuid === file.uuid);
                         if (f) {

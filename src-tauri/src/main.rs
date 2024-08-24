@@ -1,7 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use crate::utils::{check_files_names, files_from_vec, list_files_in_directory, rename_files};
+use crate::utils::{check_files_names, files_from_vec, list_files_in_directory, rename_files,get_system_language};
 
 mod rename_file;
 mod utils;
@@ -17,7 +17,8 @@ fn main() {
             list_files_in_directory,
             files_from_vec,
             rename_files,
-            check_files_names
+            check_files_names,
+            get_system_language
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

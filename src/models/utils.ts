@@ -1,4 +1,4 @@
-import {RenamerFile} from '$models';
+import {Preset, RenamerFile} from '$models';
 import {message, open} from '@tauri-apps/plugin-dialog';
 import {invoke} from "@tauri-apps/api/core";
 
@@ -49,7 +49,7 @@ export async function getFilesFromFileDialog(type: "Files" | "Folder" = "Files")
         }
     } catch (err) {
         console.error(err);
-        await message(err, {
+        await message(err as string, {
             title: "Error",
             kind: "error",
         });

@@ -10,7 +10,6 @@
     import {t} from "$lib/translations";
     import {Label} from "$lib/components/ui/label";
     import AddFormatterButton from "$lib/components/formatterComponents/AddFormatterButton.svelte";
-    import {ScrollArea} from "$lib/components/ui/scroll-area";
 
 
     let dragActive = false;

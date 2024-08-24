@@ -32,6 +32,12 @@ export const en = {
             settings: "Settings",
             import_files: "Import Files",
             import_files_from_dir: "Import from Directory",
+        },
+        preset : {
+            title : "Presets",
+            save : "Save",
+            save_as : "Save As",
+            load : "Load",
         }
     },
     formatter : {
@@ -115,5 +121,13 @@ export const en = {
                 label : "Format",
             },
         }
+    },
+    settings : {
+        title : "Settings",
+        select_language : {
+            title : "Language",
+            placeholder : "Select language",
+        },
+        save_btn : "Save",
     }
 }

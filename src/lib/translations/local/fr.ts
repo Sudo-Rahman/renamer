@@ -32,6 +32,12 @@ export const fr = {
             settings: "Paramètres",
             import_files: "Importer des fichiers",
             import_files_from_dir: "Importer depuis un répertoire",
+        },
+        preset : {
+            title : "Préréglages",
+            save : "Enregistrer",
+            save_as : "Enregistrer sous",
+            load : "Charger",
         }
     },
     formatter : {
@@ -115,5 +121,13 @@ export const fr = {
                 label : "Format",
             },
         }
+    },
+    settings : {
+        title : "Paramètres",
+        select_language : {
+            title : "Langue",
+            placeholder : "Sélectionner une langue",
+        },
+        save_btn : "Enregistrer",
     }
 }
