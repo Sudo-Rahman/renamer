@@ -4,7 +4,7 @@
     import {Input} from "$lib/components/ui/input/index.js";
     import { formatters, RegexFormatter} from "$models";
     import {Button} from "$lib/components/ui/button";
-    import {X} from "lucide-svelte";
+    import {GripVertical, X} from "lucide-svelte";
     import {Switch} from "$lib/components/ui/switch";
     import {slide} from "svelte/transition";
     import {t} from "$lib/translations";
@@ -33,6 +33,9 @@
     <Accordion.Item value="item-{formatter.id}" class="border-none">
 
         <div class="flex h-6 mb-1 w-full items-center relative">
+            <div class="z-10" aria-label="">
+                <GripVertical class="h-5 w-5"/>
+            </div>
             <Accordion.Trigger
                     class="w-full hover:no-underline py-0 flex items-center h-full justify-center absolute inset-0">
                 {$t('formatter.regex.title')}

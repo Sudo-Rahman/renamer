@@ -20,13 +20,15 @@
 
     function onLoad(p: Preset) {
         preset.set(p);
+        open = false;
+        toast.success($t('toast.load_preset.success').replace("%s", p.name));
     }
 
     function onDelete(preset: Preset) {
         if (!preset) return;
         deletePreset(preset.id).then((value) => {
-            if (value) toast.success("Preset deleted successfully");
-            else toast.error("Failed to delete preset");
+            if (value) toast.success($t('toast.delete_preset.success').replace("%s", preset.name));
+            else toast.error($t('toast.delete_preset.error').replace("%s", preset.name));
             getPresetList().then((result) => {
                 presets = result;
             });
@@ -39,7 +41,7 @@
 <Dialog.Root bind:open={open}>
     <Dialog.Content class="h-[60vh] transition-all duration-300 ease-in-out flex flex-col">
         <Dialog.Header>
-            <Dialog.Title class="flex w-full justify-center">{$t('settings.title')}</Dialog.Title>
+            <Dialog.Title class="flex w-full justify-center">{$t('menu_bar.preset.list_dialog.title')}</Dialog.Title>
         </Dialog.Header>
 
         <ScrollArea class="h-full w-full p-1" orientation="vertical">
@@ -52,8 +54,8 @@
                         </DropdownMenu.Trigger>
                         <DropdownMenu.Content>
                             <DropdownMenu.Group>
-                                <DropdownMenu.Item on:click={()=>onLoad(preset)}>Load</DropdownMenu.Item>
-                                <DropdownMenu.Item on:click={()=>onDelete(preset)}>Delete</DropdownMenu.Item>
+                                <DropdownMenu.Item on:click={()=>onLoad(preset)}>{$t('menu_bar.preset.list_dialog.load')}</DropdownMenu.Item>
+                                <DropdownMenu.Item on:click={()=>onDelete(preset)}>{$t('menu_bar.preset.list_dialog.delete')}</DropdownMenu.Item>
                             </DropdownMenu.Group>
                         </DropdownMenu.Content>
                     </DropdownMenu.Root>

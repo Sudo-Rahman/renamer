@@ -51,54 +51,51 @@
     });
 
     async function getFolder() {
-        files = await getFilesFromFileDialog("Folder");
+        try {
+            files = await getFilesFromFileDialog("Folder");
+            toast.success($t('toast.import_files.success'));
+        } catch (e) {
+            toast.error($t('toast.import_files.error'));
+            console.error(e);
+        }
     }
 
     async function getFiles() {
-        files = await getFilesFromFileDialog("Files");
+        try {
+            files = await getFilesFromFileDialog("Files");
+            toast.success($t('toast.import_files.success'));
+        } catch (e) {
+            toast.error($t('toast.import_files.error'));
+            console.error(e);
+        }
     }
 
     async function onRenameFiles() {
         $formatters.renameFiles().then(
             () => {
-                toast.success("Files renamed");
+                toast.success($t('toast.rename_files.success'));
             },
             (error) => {
-                toast.error("Error renaming files");
+                toast.error($t('toast.rename_files.error'));
                 console.error(error);
             }
         );
     }
 
     async function onSavePreset() {
-        if($preset === null) return;
-            savePreset($preset).then(
-            () => {
-                toast.success("Preset saved");
+        if ($preset === null) return;
+        savePreset($preset).then(
+            (value) => {
+                if (value)
+                    toast.success($t('toast.save_as_preset.success').replace('%s', $preset?.name));
+                else toast.error($t('toast.save_as_preset.error').replace('%s', $preset?.name));
             },
-            (error) => {
-                toast.error("Error saving preset");
-                console.error(error);
-            }
         );
 
     }
 
     async function onSaveAsPreset() {
-        if($preset === null) {
-            savePresetDialog = true;
-            return;
-        }
-        $preset.regenId();
-        savePreset($preset).then(
-            () => {
-                toast.success("Preset saved");
-            },
-            (error) => {
-                toast.error("Error saving preset");
-                console.error(error);
-            }
-        );
+        savePresetDialog = true;
     }
 
     async function onLoadPreset() {
@@ -152,7 +149,7 @@
             <Menubar.Menu>
                 <Menubar.Trigger>{$t('menu_bar.preset.title')}</Menubar.Trigger>
                 <Menubar.Content>
-                    <Menubar.Item  on:click={onSavePreset} disabled={saveDisable()}>
+                    <Menubar.Item on:click={onSavePreset} disabled={saveDisable()}>
                         {$t('menu_bar.preset.save')}
                         <Menubar.Shortcut>⌘S</Menubar.Shortcut>
                     </Menubar.Item>
@@ -168,7 +165,14 @@
             </Menubar.Menu>
         </Menubar.Root>
 
-        <div class="flex w-full justify-end">
+
+        <div class="flex w-full justify-center items-center font-bold">
+            {#if $preset}
+                <span class="font-bold">Preset : {$preset?.name}</span>
+            {/if}
+        </div>
+
+        <div class="flex">
             <Button variant="outline" size="icon" class="h-9 w-10 active:bg-primary" on:click={onRenameFiles}
                     disabled="{!($renamable)}">
                 <Play/>

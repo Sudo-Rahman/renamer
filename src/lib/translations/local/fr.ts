@@ -38,6 +38,18 @@ export const fr = {
             save : "Enregistrer",
             save_as : "Enregistrer sous",
             show : "Afficher",
+            save_as_dialog : {
+                title : "Enregistrer le préréglage",
+                input : "Nom",
+                placeholder : "Insérer le nom du préréglage",
+                save_btn : "Enregistrer",
+                cancel_btn : "Annuler",
+            },
+            list_dialog : {
+                title : "Préréglages",
+                load : "Charger",
+                delete : "Supprimer",
+            }
         }
     },
     formatter : {
@@ -129,5 +141,27 @@ export const fr = {
             placeholder : "Sélectionner une langue",
         },
         save_btn : "Enregistrer",
+    },
+    toast : {
+        save_as_preset : {
+            success : "Préréglage %s enregistré avec succès",
+            error : "Erreur lors de l'enregistrement du préréglage %s",
+        },
+        load_preset : {
+            success : "Préréglage %s chargé avec succès",
+            error : "Erreur lors du chargement du préréglage %s",
+        },
+        delete_preset : {
+            success : "Préréglage %s supprimé avec succès",
+            error : "Erreur lors de la suppression du préréglage %s",
+        },
+        rename_files : {
+            success : "Fichiers renommés avec succès",
+            error : "Erreur lors du renommage des fichiers",
+        },
+        import_files : {
+            success : "Fichiers importés avec succès",
+            error : "Erreur lors de l'importation des fichiers",
+        }
     }
 }

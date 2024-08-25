@@ -37,11 +37,6 @@ export class Preset {
         this._id = uuidv4();
     }
 
-    static fromObject(obj: any): Preset {
-        let preset = new Preset(obj._name, obj._formatters);
-        preset._id = obj._id;
-        return preset;
-    }
 }
 
 
@@ -66,14 +61,6 @@ export async function savePreset(preset : Preset) {
     }
 }
 
-export async function loadPreset(presetId: string): Promise<Preset|null> {
-    let presets : Preset[] | null = await store.get("presets");
-    if(presets) {
-        return presets.find((p) => p.id === presetId) ?? null;
-    }else{
-        return null;
-    }
-}
 
 export async function deletePreset(presetId: string) {
     let presets = await getPresetList();

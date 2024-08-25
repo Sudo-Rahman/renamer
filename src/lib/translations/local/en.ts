@@ -38,6 +38,18 @@ export const en = {
             save : "Save",
             save_as : "Save As",
             show : "Show",
+            save_as_dialog : {
+                title : "Save Preset",
+                input : "Name",
+                placeholder : "Insert preset name",
+                save_btn : "Save",
+                cancel_btn : "Cancel",
+            },
+            list_dialog : {
+                title : "Presets",
+                load : "Load",
+                delete : "Delete",
+            }
         }
     },
     formatter : {
@@ -129,5 +141,27 @@ export const en = {
             placeholder : "Select language",
         },
         save_btn : "Save",
+    },
+    toast : {
+        save_as_preset : {
+            success : "Preset %s saved successfully",
+            error : "Error saving preset %s",
+        },
+        load_preset : {
+            success : "Preset %s loaded successfully",
+            error : "Error loading preset %s",
+        },
+        delete_preset : {
+            success : "Preset %s deleted successfully",
+            error : "Error deleting preset %s",
+        },
+        rename_files : {
+            success : "Files renamed successfully",
+            error : "Error renaming files",
+        },
+        import_files : {
+            success : "Files imported successfully",
+            error : "Error importing files",
+        }
     }
 }

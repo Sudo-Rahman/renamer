@@ -12,7 +12,7 @@
 
     export let formatter: RemoveFormatter;
 
-    let inputs: Item[] = [];
+    let inputs: Item[] = formatter.text.map((value) => ({id: crypto.randomUUID(), value}));
 
     let dropTargetStyle: any = {
         border: "none",
@@ -43,6 +43,9 @@
 <Accordion.Root id={formatter.id}>
     <Accordion.Item value="item-{formatter.id}" class="border-none">
         <div class="flex h-fit mb-1 w-full items-center relative">
+            <div class="z-10" aria-label="">
+                <GripVertical class="h-5 w-5"/>
+            </div>
             <Accordion.Trigger class="w-full hover:no-underline py-0  flex items-center h-full justify-center absolute inset-0">
                 {$t('formatter.remove.title')}
             </Accordion.Trigger>
@@ -62,8 +65,8 @@
                      on:finalize={handleDndFinalize}
                      class="space-y-2">
                     {#each inputs as input (input.id)}
-                        <div class="flex items-center space-x-2 h-10">
-                            <div class="cursor-move">
+                        <div class="flex items-center space-x-2 h-10 px-2">
+                            <div>
                                 <GripVertical class="h-5 w-5"/>
                             </div>
                             <Input

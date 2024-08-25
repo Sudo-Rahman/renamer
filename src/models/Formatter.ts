@@ -1,5 +1,5 @@
 import {v4 as uuidv4} from 'uuid';
-import {type RenamerFile, Preset} from "$models";
+import {Preset, type RenamerFile} from "$models";
 import dateFormat from "dateformat";
 import {Signal} from "$models/Signal";
 import {invoke} from "@tauri-apps/api/core";
@@ -12,7 +12,7 @@ export abstract class Formatter {
     abstract format(file: RenamerFile): void;
 
     id: string;
-    type:string;
+    type: string;
 
     protected constructor() {
         this.id = uuidv4();
@@ -24,7 +24,7 @@ export abstract class Formatter {
 
     static fromObject(obj: any): Formatter {
         let formatter: Formatter;
-        switch(obj.type) {
+        switch (obj.type) {
             case 'NumberFormatter':
                 formatter = new NumberFormatter();
                 break;
@@ -64,13 +64,13 @@ export class FormatterList {
     private _renamerFiles: RenamerFile[] = [];
     public onFormattedSignal = new Signal<RenamerFile[]>();
     public onListChangedSignal = new Signal<Formatter[]>();
-    private _timer : any;
+    private _timer: any;
 
     constructor(files: RenamerFile[]) {
         this._renamerFiles = files;
     }
 
-    fromPreset(preset : Preset){
+    fromPreset(preset: Preset) {
         this._formatters = preset.formatters;
         this.onListChangedSignal.emit(this._formatters);
         this.format();
@@ -132,7 +132,7 @@ export class FormatterList {
         this._renamerFiles.forEach((file) => {
             if (!file.selected) {
                 file.newName = file.name;
-            }else{
+            } else {
                 if (this._formatters.length > 0) file.newName = "";
                 else file.newName = file.name;
                 this._formatters.forEach(f => {
@@ -162,8 +162,8 @@ export class FormatterList {
             }
         });
         invoke("check_files_names", {files: files}).then((res) => {
-            if(res){
-                (res as any[]).forEach((file : any) => {
+            if (res) {
+                (res as any[]).forEach((file: any) => {
                     const f = this._renamerFiles.find((f) => f.uuid === file.uuid);
                     if (f) {
                         f.statusMessage = file.error;
@@ -171,7 +171,7 @@ export class FormatterList {
                     }
                 });
                 this._renamerFiles.forEach((f) => {
-                    if((res as any[]).find((file : any) => file.uuid === f.uuid) === undefined){
+                    if ((res as any[]).find((file: any) => file.uuid === f.uuid) === undefined) {
                         f.statusMessage = "";
                         f.status = "None";
                     }
@@ -196,12 +196,12 @@ export class FormatterList {
         await invoke('rename_files', {fileInfos: fileInfos}).then(
             (res) => {
                 if (res && (res as any[]).length > 0) {
-                    (res as {    status : boolean, error : string, uuid: string}[]).forEach((file) => {
+                    (res as { status: boolean, error: string, uuid: string }[]).forEach((file) => {
                         const f = this._renamerFiles.find((f) => f.uuid === file.uuid);
                         if (f) {
                             f.statusMessage = file.error;
                             f.status = file.status ? "Success" : "Error";
-                            if(file.status){
+                            if (file.status) {
                                 f.name = f.newName;
                                 f.onRenamed.emit();
                             }
@@ -213,24 +213,9 @@ export class FormatterList {
         );
     }
 
-    up(id: string): void {
-        const index = this._formatters.findIndex((f) => f.id === id);
-        if (index === 0) return;
-        const tmp = this._formatters[index];
-        this._formatters[index] = this._formatters[index - 1];
-        this._formatters[index - 1] = tmp;
+    reorderFormatter(formatters : Formatter[]): void {
+        this._formatters = formatters;
         this.format();
-        this.onListChangedSignal.emit(this._formatters);
-    }
-
-    down(id: string): void {
-        const index = this._formatters.findIndex((f) => f.id === id);
-        if (index === this._formatters.length - 1) return;
-        const tmp = this._formatters[index];
-        this._formatters[index] = this._formatters[index + 1];
-        this._formatters[index + 1] = tmp;
-        this.format();
-        this.onListChangedSignal.emit(this._formatters);
     }
 }
 

@@ -65,7 +65,7 @@
 </script>
 
 <div class="flex w-full h-full overflow-hidden">
-    <div class="flex flex-col h-full sm:w-60 lg:w-80 xl:w-96 transition-all duration-300 ease-in-out">
+    <div class="flex flex-col h-full sm:w-80 md:w-96 lg:w-[30rem] xl:w-[35rem] transition-all duration-300 ease-in-out">
         <div class="h-16 flex w-full items-center px-2 justify-between">
             <Label class="text-xl text-center
                          font-bold">{$t('formatter.panel.title')}</Label>

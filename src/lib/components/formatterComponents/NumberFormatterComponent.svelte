@@ -5,18 +5,17 @@
     import * as Popover from "$lib/components/ui/popover/index.js";
     import {formatters} from "$models";
     import {NumberFormatter} from "$models/Formatter";
-    import {Info, X} from 'lucide-svelte';
+    import {GripVertical, Info, X} from 'lucide-svelte';
     import {Button} from "$lib/components/ui/button";
     import {t} from "$lib/translations";
 
     export let formatter: NumberFormatter;
 
-    let start = 1;
-    let step = 1;
-    let text = '';
-    let fill = 0;
-    let fillChar = '0';
-    let reRender = {};
+    let start = formatter.start;
+    let step = formatter.step;
+    let text = formatter.text;
+    let fill = formatter.fill.length;
+    let fillChar = formatter.fill.char;
 
     $: {
         formatter.start = start;
@@ -36,6 +35,9 @@
     <Accordion.Item value="item-{formatter.id}" class="border-none">
 
         <div class="flex h-6 mb-1 w-full items-center relative">
+            <div class="z-10" aria-label="">
+                <GripVertical class="h-5 w-5"/>
+            </div>
             <Accordion.Trigger class="w-full hover:no-underline py-0 flex items-center h-full justify-center absolute inset-0">
                 {$t('formatter.number.title')}
             </Accordion.Trigger>

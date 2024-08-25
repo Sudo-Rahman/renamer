@@ -5,6 +5,7 @@
     import {files, getFilesFromFileDialog, RenamerFile} from '$models';
     import {invoke} from "@tauri-apps/api/core";
     import { t} from '$lib/translations';
+    import {toast} from "svelte-sonner";
 
 
     let dragActive = false;
@@ -22,6 +23,7 @@
     onMount(async () => {
         const dropListen = await listen('tauri://drag-drop', async (event: any) => {
             if (dragActive) {
+                try{
                 const droppedFiles = event.payload.paths as string[];
                 let new_files: RenamerFile[] = [];
 
@@ -34,8 +36,13 @@
 
                 new_files = new_files.sort((a, b) => a.name.localeCompare(b.name));
                 $files = new_files;
+                toast.success($t('toast.import_files.success'));
                 dragActive = false;
                 await goto('/mainWindow');
+                }catch(e){
+                    toast.error($t('toast.import_files.error'));
+                    console.error(e);
+                }
             }
         });
 
@@ -65,6 +72,18 @@
             dragOverListen();
         };
     });
+
+    async function getFolder() {
+        try {
+            $files = await getFilesFromFileDialog("Folder");
+            await goto('/mainWindow');
+            toast.success($t('toast.import_files.success'));
+        } catch (e) {
+            toast.error($t('toast.import_files.error'));
+            console.error(e);
+        }
+    }
+
 </script>
 
 <div id="dropzone"
@@ -73,7 +92,7 @@
      class:border-secondary={dragActive}
      on:dragover={handleDragOver}
      on:dragleave={handleDragLeave}>
-    <button class="h-full w-full" type="button" on:click={async ()=>{$files = await getFilesFromFileDialog("Folder"); await goto('/mainWindow');}}>
+    <button class="h-full w-full" type="button" on:click={getFolder}>
         {$t('drag_drop_zone')}
     </button>
 </div>
