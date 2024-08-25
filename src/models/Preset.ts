@@ -46,8 +46,7 @@ export class Preset {
 
 
 export async function savePreset(preset : Preset) {
-    if(preset.formatters.length === 0) return false;
-    let presets : Preset[] | null = await store.get("presets");
+    let presets = await getPresetList();
     if(!presets) {
         presets = [];
         presets.push(preset);
@@ -90,7 +89,12 @@ export async function deletePreset(presetId: string) {
 export async function getPresetList(): Promise<Preset[]> {
     let presets: any[] | null = await store.get("presets");
     if (presets) {
-        return presets.map(Preset.fromObject);
+        return presets.map(presetData => {
+            let preset = new Preset(presetData._name);
+            preset['_id'] = presetData._id;
+            preset.formatters = presetData._formatters.map(Formatter.fromObject);
+            return preset;
+        });
     } else {
         return [];
     }

@@ -14,6 +14,12 @@ files.subscribe((value) => {
 
 export const preset = writable<Preset | null>(null);
 
+preset.subscribe((value) => {
+    if (value) {
+        get(formatters).fromPreset(value);
+    }
+});
+
 export const options = writable({
     spaceBetweenFormatters: false,
 });

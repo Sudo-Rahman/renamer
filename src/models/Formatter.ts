@@ -12,13 +12,51 @@ export abstract class Formatter {
     abstract format(file: RenamerFile): void;
 
     id: string;
+    type:string;
 
     protected constructor() {
         this.id = uuidv4();
+        this.type = this.constructor.name;
     }
 
     finish(): void {
     }
+
+    static fromObject(obj: any): Formatter {
+        let formatter: Formatter;
+        switch(obj.type) {
+            case 'NumberFormatter':
+                formatter = new NumberFormatter();
+                break;
+            case 'ExtensionFormatter':
+                formatter = new ExtensionFormatter();
+                break;
+            case 'CreationDateFormatter':
+                formatter = new CreationDateFormatter();
+                break;
+            case 'CasesFormatter':
+                formatter = new CasesFormatter();
+                break;
+            case 'RemoveFormatter':
+                formatter = new RemoveFormatter();
+                break;
+            case 'OriginalFileNameFormatter':
+                formatter = new OriginalFileNameFormatter();
+                break;
+            case 'RegexFormatter':
+                formatter = new RegexFormatter();
+                break;
+            case 'BasicTextFormatter':
+                formatter = new BasicTextFormatter();
+                break;
+            default:
+                throw new Error(`Unknown formatter type: ${obj.type}`);
+        }
+
+        Object.assign(formatter, obj);
+        return formatter;
+    }
+
 }
 
 export class FormatterList {
@@ -34,8 +72,8 @@ export class FormatterList {
 
     fromPreset(preset : Preset){
         this._formatters = preset.formatters;
-        this.format();
         this.onListChangedSignal.emit(this._formatters);
+        this.format();
     }
 
     private launchTimeout(func: () => void) {
@@ -264,6 +302,10 @@ export class NumberFormatter extends Formatter {
         }
         this._start = +this._start + +this._step;
         file.newName += formatted;
+    }
+
+    fromAny(any: any): void {
+
     }
 }
 

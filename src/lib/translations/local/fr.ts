@@ -37,7 +37,7 @@ export const fr = {
             title : "Préréglages",
             save : "Enregistrer",
             save_as : "Enregistrer sous",
-            load : "Charger",
+            show : "Afficher",
         }
     },
     formatter : {

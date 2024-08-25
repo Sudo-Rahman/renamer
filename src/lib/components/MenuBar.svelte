@@ -26,6 +26,21 @@
                 await getFiles();
                 return;
             }
+            if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key === 's') {
+                event.preventDefault();
+                await onSaveAsPreset();
+                return;
+            }
+            if ((event.metaKey || event.ctrlKey) && event.key === 's') {
+                event.preventDefault();
+                await onSavePreset();
+                return;
+            }
+            if ((event.metaKey || event.ctrlKey) && event.key === 'o') {
+                event.preventDefault();
+                await onLoadPreset();
+                return;
+            }
         };
 
         document.addEventListener('keydown', handleKeyDown);
@@ -46,16 +61,26 @@
     async function onRenameFiles() {
         $formatters.renameFiles().then(
             () => {
-                toast("Files renamed", {type: "success"});
+                toast.success("Files renamed");
             },
             (error) => {
-                toast("Error renaming files", {type: "error"});
+                toast.error("Error renaming files");
                 console.error(error);
             }
         );
     }
 
     async function onSavePreset() {
+        if($preset === null) return;
+            savePreset($preset).then(
+            () => {
+                toast.success("Preset saved");
+            },
+            (error) => {
+                toast.error("Error saving preset");
+                console.error(error);
+            }
+        );
 
     }
 
@@ -64,6 +89,7 @@
             savePresetDialog = true;
             return;
         }
+        $preset.regenId();
         savePreset($preset).then(
             () => {
                 toast.success("Preset saved");
@@ -83,9 +109,11 @@
     let openSettings = false;
     let loadPresetDialog = false;
     let savePresetDialog = false;
-    let saveDisable = false;
 
-    $ : saveDisable = $formatters.formatters.length === 0 || $preset === null;
+
+    function saveDisable() {
+        return $formatters.formatters.length === 0 || $preset === null;
+    }
 
 </script>
 
@@ -124,7 +152,7 @@
             <Menubar.Menu>
                 <Menubar.Trigger>{$t('menu_bar.preset.title')}</Menubar.Trigger>
                 <Menubar.Content>
-                    <Menubar.Item  on:click={onSavePreset} disabled={saveDisable}>
+                    <Menubar.Item  on:click={onSavePreset} disabled={saveDisable()}>
                         {$t('menu_bar.preset.save')}
                         <Menubar.Shortcut>⌘S</Menubar.Shortcut>
                     </Menubar.Item>
@@ -133,7 +161,7 @@
                         <Menubar.Shortcut>⌘⇧S</Menubar.Shortcut>
                     </Menubar.Item>
                     <Menubar.Item on:click={onLoadPreset}>
-                        {$t('menu_bar.preset.load')}
+                        {$t('menu_bar.preset.show')}
                         <Menubar.Shortcut>⌘O</Menubar.Shortcut>
                     </Menubar.Item>
                 </Menubar.Content>

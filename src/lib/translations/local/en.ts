@@ -37,7 +37,7 @@ export const en = {
             title : "Presets",
             save : "Save",
             save_as : "Save As",
-            load : "Load",
+            show : "Show",
         }
     },
     formatter : {
