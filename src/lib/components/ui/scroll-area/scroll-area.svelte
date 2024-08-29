@@ -15,13 +15,12 @@
 	export let orientation = "vertical";
 	export let scrollbarXClasses: string = "";
 	export let scrollbarYClasses: string = "hidden";
-	export let viewportRef: HTMLDivElement = null;
 
 
 </script>
 
 <ScrollAreaPrimitive.Root {...$$restProps} class={cn("relative overflow-hidden", className)}>
-	<ScrollAreaPrimitive.Viewport class="h-full w-full rounded-[inherit]" bind:el={viewportRef}>
+	<ScrollAreaPrimitive.Viewport class="h-full w-full rounded-[inherit]">
 		<ScrollAreaPrimitive.Content class="flex-col" style="min-width: 100%">
 			<slot />
 		</ScrollAreaPrimitive.Content>

@@ -75,15 +75,15 @@
         <FormattersComponent/>
     </div>
     <Separator orientation="vertical"/>
-    <div class="flex flex-col h-full w-full">
+    <div class="flex flex-col h-full w-full" bind:this={rightPane}>
 
         <div class="h-16 flex items-center">
             <Menubar bind:files={$files} class="w-full px-4"/>
         </div>
         <Separator/>
 
-        {#key $files}
-            <DataTable filesList={$files}/>
-        {/key}
+            {#key $files}
+                <DataTable filesList={$files}/>
+            {/key}
     </div>
 </div>

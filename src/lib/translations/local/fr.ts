@@ -163,5 +163,11 @@ export const fr = {
             success : "Fichiers importés avec succès",
             error : "Erreur lors de l'importation des fichiers",
         }
+    },
+    file_status: {
+        error: {
+            0 : "",
+            1: "Le nom du fichier existe déjà dans le répertoire."
+        }
     }
 }

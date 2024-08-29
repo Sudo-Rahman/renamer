@@ -13,7 +13,7 @@
 
 {#if open}
     <Dialog.Root bind:open={open}>
-        <Dialog.Content class="h-[75vh] min-w-[75%] flex flex-col">
+        <Dialog.Content class="h-[75vh] min-w-[75%] flex flex-col select-none">
             <Dialog.Header>
                 <Dialog.Title class="flex w-full justify-center">{$t('settings.title')}</Dialog.Title>
             </Dialog.Header>
