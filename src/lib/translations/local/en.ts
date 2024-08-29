@@ -22,7 +22,7 @@ export const en = {
             mode_date: "Modified Date",
         },
         view_options: {
-            btn : "Columns",
+            btn: "Columns",
             title: "Switch Columns",
         }
     },
@@ -33,66 +33,66 @@ export const en = {
             import_files: "Import Files",
             import_files_from_dir: "Import from Directory",
         },
-        preset : {
-            title : "Presets",
-            save : "Save",
-            save_as : "Save As",
-            show : "Show",
-            save_as_dialog : {
-                title : "Save Preset",
-                input : "Name",
-                placeholder : "Insert preset name",
-                save_btn : "Save",
-                cancel_btn : "Cancel",
+        preset: {
+            title: "Presets",
+            save: "Save",
+            save_as: "Save As",
+            show: "Show",
+            save_as_dialog: {
+                title: "Save Preset",
+                input: "Name",
+                placeholder: "Insert preset name",
+                save_btn: "Save",
+                cancel_btn: "Cancel",
             },
-            list_dialog : {
-                title : "Presets",
-                load : "Load",
-                delete : "Delete",
+            list_dialog: {
+                title: "Presets",
+                load: "Load",
+                delete: "Delete",
             }
         }
     },
-    formatter : {
-        add_btn : "Add Formatter",
-        panel : {
-            title : "Formatters",
+    formatter: {
+        add_btn: "Add Formatter",
+        panel: {
+            title: "Formatters",
         },
-        number : {
-            title : "Number",
-            text_input : {
-                label : "Text",
-                info : "Optional text, respect the format : text{%}text"
+        number: {
+            title: "Number",
+            text_input: {
+                label: "Text",
+                info: "Optional text, respect the format : text{%}text"
             },
-            number_input : {
-                label : "Number",
-                info : "First is start number, second is step, third is fill char, fourth is number of fill chars"
+            number_input: {
+                label: "Number",
+                info: "First is start number, second is step, third is fill char, fourth is number of fill chars"
             },
         },
-        regex : {
-            title : "Regex",
-            regex_input : {
-                label : "Regex",
+        regex: {
+            title: "Regex",
+            regex_input: {
+                label: "Regex",
                 placeholder: "Insert regex pattern",
             },
-            replace_input : {
-                label : "Replacement",
+            replace_input: {
+                label: "Replacement",
                 placeholder: "Insert replacement pattern",
             },
-            switch : "Replace all occurences",
-            start_pos : "Start Position",
-            end_pos : "End Position",
+            switch: "Replace all occurences",
+            start_pos: "Start Position",
+            end_pos: "End Position",
         },
-        remove : {
-            title : "Remove text",
-            input_placeholder : "Insert text to remove",
+        remove: {
+            title: "Remove text",
+            input_placeholder: "Insert text to remove",
         },
-        file_name : {
-            title : "Original Name",
+        file_name: {
+            title: "Original Name",
             switch_on: "With Extension",
             switch_off: "Without Extension"
         },
-        case : {
-            title : "Case",
+        case: {
+            title: "Case",
             name_switch: {
                 on_file_name: "Apply on File Name",
                 on_formatted_name: "Apply On Formatted Name",
@@ -109,59 +109,65 @@ export const en = {
             snake_case: "snake_case",
             kebab_case: "kebab-case",
         },
-        basic_text : {
-            title : "Basic Text",
-            input1 : {
-                label : "Text",
+        basic_text: {
+            title: "Basic Text",
+            input1: {
+                label: "Text",
                 placeholder: "Insert text",
             },
         },
-        extension : {
-            title : "Extension",
-            switch  : {
-                file : "Original extension",
-                custom : "Custom extension",
+        extension: {
+            title: "Extension",
+            switch: {
+                file: "Original extension",
+                custom: "Custom extension",
             },
-            input : {
-                label : "Extension",
+            input: {
+                label: "Extension",
                 placeholder: "Insert extension",
             }
         },
-        creation_date : {
-            title : "Creation Date",
-            input1 : {
-                label : "Format",
+        creation_date: {
+            title: "Creation Date",
+            input1: {
+                label: "Format",
             },
         }
     },
-    settings : {
-        title : "Settings",
-        select_language : {
-            title : "Language",
-            placeholder : "Select language",
+    settings: {
+        title: "Settings",
+        select_language: {
+            title: "Language",
+            placeholder: "Select language",
         },
-        save_btn : "Save",
+        save_btn: "Save",
     },
-    toast : {
-        save_as_preset : {
-            success : "Preset %s saved successfully",
-            error : "Error saving preset %s",
+    toast: {
+        save_as_preset: {
+            success: "Preset %s saved successfully",
+            error: "Error saving preset %s",
         },
-        load_preset : {
-            success : "Preset %s loaded successfully",
-            error : "Error loading preset %s",
+        load_preset: {
+            success: "Preset %s loaded successfully",
+            error: "Error loading preset %s",
         },
-        delete_preset : {
-            success : "Preset %s deleted successfully",
-            error : "Error deleting preset %s",
+        delete_preset: {
+            success: "Preset %s deleted successfully",
+            error: "Error deleting preset %s",
         },
-        rename_files : {
-            success : "Files renamed successfully",
-            error : "Error renaming files",
+        rename_files: {
+            success: "Files renamed successfully",
+            error: "Error renaming files",
         },
-        import_files : {
-            success : "Files imported successfully",
-            error : "Error importing files",
+        import_files: {
+            success: "Files imported successfully",
+            error: "Error importing files",
+        },
+    },
+    file_status: {
+        error: {
+            0 : "",
+            1: "File name already exists in the directory."
         }
     }
 }

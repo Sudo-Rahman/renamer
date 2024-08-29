@@ -89,7 +89,7 @@ pub async fn rename_files(file_infos: Vec<FileRenameInfo>) -> Result<Vec<RenameS
 #[derive(Debug, Deserialize, Serialize)]
 pub struct FileStatus {
     uuid: String, // ou le type approprié pour uuid
-    error: String,
+    error: u8,
 }
 
 // check file name is unique in the directory
@@ -120,7 +120,7 @@ pub async fn check_files_names(files: Vec<FileRenameInfo>) -> Result<Vec<FileSta
         if files_in_dir.contains(&new_path.to_string()) {
             files_vec.push(FileStatus {
                 uuid: (*uuid).parse().unwrap(),
-                error: "File name already exists in the directory".to_string(),
+                error: 1,
             });
         }
     }
@@ -136,7 +136,7 @@ pub async fn check_files_names(files: Vec<FileRenameInfo>) -> Result<Vec<FileSta
             if *new_path == *new_path2 && *uuid != *uuid2 {
                 files_vec.push(FileStatus {
                     uuid: (*uuid).parse().unwrap(),
-                    error: "File name already exists in the list".to_string(),
+                    error: 1
                 });
                 break;
             }

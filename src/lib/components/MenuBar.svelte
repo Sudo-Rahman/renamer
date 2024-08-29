@@ -136,17 +136,6 @@
                 </Menubar.Content>
             </Menubar.Menu>
             <Menubar.Menu>
-                <Menubar.Trigger>Options</Menubar.Trigger>
-                <Menubar.Content>
-                    <Menubar.Label>
-                        <div class="flex justify-around space-x-2 w-full items-center">
-                            <Label>Space between formatters</Label>
-                            <Checkbox bind:checked={$options.spaceBetweenFormatters}/>
-                        </div>
-                    </Menubar.Label>
-                </Menubar.Content>
-            </Menubar.Menu>
-            <Menubar.Menu>
                 <Menubar.Trigger>{$t('menu_bar.preset.title')}</Menubar.Trigger>
                 <Menubar.Content>
                     <Menubar.Item on:click={onSavePreset} disabled={saveDisable()}>

@@ -166,13 +166,13 @@ export class FormatterList {
                 (res as any[]).forEach((file: any) => {
                     const f = this._renamerFiles.find((f) => f.uuid === file.uuid);
                     if (f) {
-                        f.statusMessage = file.error;
+                        f.statusCode = file.error;
                         f.status = "Error";
                     }
                 });
                 this._renamerFiles.forEach((f) => {
                     if ((res as any[]).find((file: any) => file.uuid === f.uuid) === undefined) {
-                        f.statusMessage = "";
+                        f.statusCode = 0;
                         f.status = "None";
                     }
                 });
@@ -196,10 +196,10 @@ export class FormatterList {
         await invoke('rename_files', {fileInfos: fileInfos}).then(
             (res) => {
                 if (res && (res as any[]).length > 0) {
-                    (res as { status: boolean, error: string, uuid: string }[]).forEach((file) => {
+                    (res as { status: boolean, error: number, uuid: string }[]).forEach((file) => {
                         const f = this._renamerFiles.find((f) => f.uuid === file.uuid);
                         if (f) {
-                            f.statusMessage = file.error;
+                            f.statusCode = file.status ? 0 : 1;
                             f.status = file.status ? "Success" : "Error";
                             if (file.status) {
                                 f.name = f.newName;

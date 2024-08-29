@@ -2,16 +2,17 @@
     import {Check, X, Minus} from "lucide-svelte";
     import {RenamerFile} from "$models";
     import {Button} from "$lib/components/ui/button";
+    import {t} from "$lib/translations";
     import * as Popover from "$lib/components/ui/popover";
 
     export let file: RenamerFile;
 
     let status: string = file.status;
-    let message: string = file.statusMessage;
+    let message: string = $t(`file_status.error.${file.statusCode}`);
     file.onStatusChanged.connect(
         (s) => {
             status = s;
-            message = file.statusMessage;
+            message =  $t(`file_status.error.${file.statusCode}`);
         }
     )
 

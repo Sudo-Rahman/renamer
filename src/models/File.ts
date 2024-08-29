@@ -2,19 +2,19 @@ import {Signal} from "$models/Signal";
 import {size} from "$lib/components/fileTable/store";
 
 export class RenamerFile {
+    get statusCode(): number {
+        return this._statusCode;
+    }
+
+    set statusCode(value: number) {
+        this._statusCode = value;
+    }
     get newName(): string {
         return this._newName;
     }
 
     set newName(value: string) {
         this._newName = value;
-    }
-    get statusMessage(): string {
-        return this._statusMessage;
-    }
-
-    set statusMessage(value: string) {
-        this._statusMessage = value;
     }
     get uuid(): string {
         return this._uuid;
@@ -64,7 +64,7 @@ export class RenamerFile {
     private readonly _creationDate: Date;
     private readonly _modificationDate: Date;
     private _status : "None" | "Error" | "Success";
-    private _statusMessage : string;
+    private _statusCode : number;
 
 
     constructor(params: {
@@ -87,7 +87,7 @@ export class RenamerFile {
         this.onRenamed = new Signal<void>();
         this._uuid = params.uuid;
         this._status = "None";
-        this._statusMessage = "";
+        this._statusCode = 0;
     }
 
 
