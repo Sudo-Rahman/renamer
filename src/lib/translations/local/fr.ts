@@ -169,5 +169,13 @@ export const fr = {
             0 : "",
             1: "Le nom du fichier existe déjà dans le répertoire."
         }
+    },
+    ask_dialog : {
+        delete_preset : {
+            title : "Supprimer le préréglage",
+            message : "Êtes-vous sûr de vouloir supprimer le préréglage %s ?",
+            ok_btn : "Oui",
+            cancel_btn : "Non",
+        }
     }
 }

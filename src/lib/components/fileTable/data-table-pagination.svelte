@@ -35,7 +35,6 @@
                     <Select.Value placeholder="Select page size" />
                 </Select.Trigger>
                 <Select.Content>
-                    <Select.Item value={10}>10</Select.Item>
                     <Select.Item value={20}>20</Select.Item>
                     <Select.Item value={30}>30</Select.Item>
                     <Select.Item value={50}>50</Select.Item>

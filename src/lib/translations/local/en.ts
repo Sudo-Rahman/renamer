@@ -169,5 +169,13 @@ export const en = {
             0 : "",
             1: "File name already exists in the directory."
         }
+    },
+    ask_dialog : {
+        delete_preset : {
+            title : "Delete Preset",
+            message : "Are you sure you want to delete the preset %s ?",
+            ok_btn : "Yes",
+            cancel_btn : "No",
+        }
     }
 }

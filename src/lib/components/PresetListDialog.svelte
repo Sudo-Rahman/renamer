@@ -5,6 +5,7 @@
     import {toast} from "svelte-sonner";
     import {t} from "$lib/translations";
     import {ScrollArea} from "$lib/components/ui/scroll-area";
+    import {ask} from "@tauri-apps/plugin-dialog";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 
     export let open = false;
@@ -26,13 +27,23 @@
 
     function onDelete(preset: Preset) {
         if (!preset) return;
-        deletePreset(preset.id).then((value) => {
-            if (value) toast.success($t('toast.delete_preset.success').replace("%s", preset.name));
-            else toast.error($t('toast.delete_preset.error').replace("%s", preset.name));
-            getPresetList().then((result) => {
-                presets = result;
-            });
+
+        ask($t('ask_dialog.delete_preset.message').replace('%s', preset.name), {
+            title: $t('ask_dialog.delete_preset.title'),
+            kind: 'warning',
+            okLabel: $t('ask_dialog.delete_preset.ok_btn'),
+            cancelLabel: $t('ask_dialog.delete_preset.cancel_btn')
+        }).then((bool) => {
+            if(bool)
+                deletePreset(preset.id).then((value) => {
+                    if (value) toast.success($t('toast.delete_preset.success').replace("%s", preset.name));
+                    else toast.error($t('toast.delete_preset.error').replace("%s", preset.name));
+                    getPresetList().then((result) => {
+                        presets = result;
+                    });
+                });
         });
+
     }
 
 </script>

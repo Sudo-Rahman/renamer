@@ -9,6 +9,7 @@
     import {invoke} from "@tauri-apps/api/core";
     import {t} from "$lib/translations";
     import {Label} from "$lib/components/ui/label";
+    import * as Resizable from "$lib/components/ui/resizable";
     import AddFormatterButton from "$lib/components/formatterComponents/AddFormatterButton.svelte";
 
 
@@ -65,8 +66,11 @@
 </script>
 
 <div class="flex w-full h-full overflow-hidden">
-    <div class="flex flex-col h-full sm:w-80 md:w-96 lg:w-[30rem] xl:w-[35rem] transition-all duration-300 ease-in-out">
-        <div class="h-16 flex w-full items-center px-2 justify-between">
+
+    <Resizable.PaneGroup direction="horizontal" class="h-full p-0">
+        <Resizable.Pane defaultSize={30}>
+    <div class="flex flex-col h-full transition-all duration-300 ease-in-out">
+        <div class="h-16 flex min-w-60 items-center px-2 justify-between">
             <Label class="text-xl text-center
                          font-bold">{$t('formatter.panel.title')}</Label>
             <AddFormatterButton/>
@@ -74,7 +78,9 @@
         <Separator class="flex-col w-full"/>
         <FormattersComponent/>
     </div>
-    <Separator orientation="vertical"/>
+        </Resizable.Pane>
+        <Resizable.Handle withHandle  class="p-0 m-0"/>
+    <Resizable.Pane minSize={50}>
     <div class="flex flex-col h-full w-full" bind:this={rightPane}>
 
         <div class="h-16 flex items-center">
@@ -86,4 +92,7 @@
                 <DataTable filesList={$files}/>
             {/key}
     </div>
+    </Resizable.Pane>
+    </Resizable.PaneGroup>
+
 </div>

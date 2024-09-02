@@ -162,7 +162,7 @@
 </script>
 
 <ScrollArea class="h-full pt-2 w-full" orientation="both">
-    <div class="flex flex-col pb-4 pt-1 h-full px-2 space-y-2">
+    <div class="flex flex-col min-w-[40rem] pb-4 pt-1 h-full px-2 space-y-2">
 
         <DatatableToolbar {tableModel}/>
 
