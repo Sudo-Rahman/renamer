@@ -136,7 +136,7 @@ pub async fn check_files_names(files: Vec<FileRenameInfo>) -> Result<Vec<FileSta
             if *new_path == *new_path2 && *uuid != *uuid2 {
                 files_vec.push(FileStatus {
                     uuid: (*uuid).parse().unwrap(),
-                    error: 1
+                    error: 1,
                 });
                 break;
             }
@@ -148,5 +148,10 @@ pub async fn check_files_names(files: Vec<FileRenameInfo>) -> Result<Vec<FileSta
 
 #[tauri::command]
 pub fn get_system_language() -> String {
-    get_locale().unwrap_or_else(|| String::from("en-US")).split('-').next().unwrap().to_string()
+    get_locale()
+        .unwrap_or_else(|| String::from("en-US"))
+        .split('-')
+        .next()
+        .unwrap()
+        .to_string()
 }

@@ -177,5 +177,11 @@ export const en = {
             ok_btn : "Yes",
             cancel_btn : "No",
         }
+    },
+    updater : {
+        title : "Update Available",
+        yes_btn: 'Update',
+        cancel_btn: 'Cancel',
+        message : "A new version of the application is available. Do you want to update to version %s ?"
     }
 }

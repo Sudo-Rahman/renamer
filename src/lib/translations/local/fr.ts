@@ -177,5 +177,11 @@ export const fr = {
             ok_btn : "Oui",
             cancel_btn : "Non",
         }
+    },
+    updater : {
+        title : 'Mise à jour disponible',
+        yes_btn: 'Mettre à jour',
+        cancel_btn: 'Annuler',
+        message : 'Une mise à jour est disponible pour la version %s. Voulez-vous mettre à jour ?'
     }
 }

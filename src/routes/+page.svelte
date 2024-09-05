@@ -1,5 +1,12 @@
 <script lang="ts">
     import InputFiles from "$lib/components/InputFiles.svelte";
+    import {onMount} from "svelte";
+    import {checkForAppUpdates} from "$lib/updater";
+
+    onMount(async ()=>
+    {
+       await checkForAppUpdates(false);
+    })
 
 </script>
 
