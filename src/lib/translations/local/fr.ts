@@ -138,7 +138,6 @@ export const fr = {
         title : "Paramètres",
         select_language : {
             title : "Langue",
-            placeholder : "Sélectionner une langue",
         },
         save_btn : "Enregistrer",
     },
@@ -167,7 +166,8 @@ export const fr = {
     file_status: {
         error: {
             0 : "",
-            1: "Le nom du fichier existe déjà dans le répertoire."
+            1: "Le nom du fichier existe déjà dans le répertoire.",
+            2: "Le fichier n'existe pas.",
         }
     },
     ask_dialog : {

@@ -138,7 +138,6 @@ export const en = {
         title: "Settings",
         select_language: {
             title: "Language",
-            placeholder: "Select language",
         },
         save_btn: "Save",
     },
@@ -167,7 +166,8 @@ export const en = {
     file_status: {
         error: {
             0 : "",
-            1: "File name already exists in the directory."
+            1: "The file name already exists in the directory.",
+            2: "The file does not exist.",
         }
     },
     ask_dialog : {

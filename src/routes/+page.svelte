@@ -5,7 +5,7 @@
 
     onMount(async ()=>
     {
-       await checkForAppUpdates(false);
+       await checkForAppUpdates();
     })
 
 </script>

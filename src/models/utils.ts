@@ -14,7 +14,7 @@ export async function getFilesFromFileDialog(type: "Files" | "Folder" = "Files")
             if (files_tmp) {
                 const paths = files_tmp.map(
                     (file) => {
-                        return file.path;
+                        return file;
                     }
                 );
                 let tmp_files: any[] = await invoke('files_from_vec', {files: paths})

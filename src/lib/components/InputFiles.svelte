@@ -76,6 +76,9 @@
     async function getFolder() {
         try {
             $files = await getFilesFromFileDialog("Folder");
+            if ($files.length === 0) {
+                return;
+            }
             await goto('/mainWindow');
             toast.success($t('toast.import_files.success'));
         } catch (e) {

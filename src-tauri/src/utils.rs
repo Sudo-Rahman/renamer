@@ -143,6 +143,16 @@ pub async fn check_files_names(files: Vec<FileRenameInfo>) -> Result<Vec<FileSta
         }
     }
 
+    for file in &files {
+        if !Path::new(&file.path).exists() {
+            files_vec.push(FileStatus {
+                uuid: file.uuid.parse().unwrap(),
+                error: 2,
+            });
+        }
+
+    }
+
     Ok(files_vec)
 }
 

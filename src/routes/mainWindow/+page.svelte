@@ -1,6 +1,6 @@
 <script lang="ts">
     import {Separator} from "$lib/components/ui/separator";
-    import {files, RenamerFile} from "$models";
+    import {files, informations, preset, RenamerFile} from "$models";
     import Menubar from "$lib/components/MenuBar.svelte";
     import FormattersComponent from "$lib/components/FormattersComponent.svelte";
     import DataTable from "$lib/components/fileTable/data-table.svelte";
@@ -11,6 +11,7 @@
     import {Label} from "$lib/components/ui/label";
     import * as Resizable from "$lib/components/ui/resizable";
     import AddFormatterButton from "$lib/components/formatterComponents/AddFormatterButton.svelte";
+    import {Button} from "$lib/components/ui/button";
 
 
     let dragActive = false;
@@ -62,37 +63,52 @@
         };
     });
 
-
 </script>
 
-<div class="flex w-full h-full overflow-hidden">
+<div class="flex flex-col w-full h-full overflow-hidden">
 
     <Resizable.PaneGroup direction="horizontal" class="h-full p-0">
         <Resizable.Pane defaultSize={30}>
-    <div class="flex flex-col h-full transition-all duration-300 ease-in-out">
-        <div class="h-16 flex min-w-60 items-center px-2 justify-between">
-            <Label class="text-xl text-center
+            <div class="flex flex-col h-full transition-all duration-300 ease-in-out">
+                <div class="h-16 flex min-w-60 items-center px-2 justify-between">
+                    <Label class="text-xl text-center
                          font-bold">{$t('formatter.panel.title')}</Label>
-            <AddFormatterButton/>
-        </div>
-        <Separator class="flex-col w-full"/>
-        <FormattersComponent/>
-    </div>
+                    <AddFormatterButton/>
+                </div>
+                <Separator class="flex-col w-full"/>
+                <FormattersComponent/>
+            </div>
         </Resizable.Pane>
-        <Resizable.Handle withHandle  class="p-0 m-0"/>
-    <Resizable.Pane minSize={50}>
-    <div class="flex flex-col h-full w-full" bind:this={rightPane}>
+        <Resizable.Handle withHandle class="p-0 m-0"/>
+        <Resizable.Pane minSize={50}>
+            <div class="flex flex-col h-full w-full" bind:this={rightPane}>
 
-        <div class="h-16 flex items-center">
-            <Menubar bind:files={$files} class="w-full px-4"/>
-        </div>
-        <Separator/>
+                <div class="h-16 flex items-center">
+                    <Menubar bind:files={$files} class="w-full px-4"/>
+                </div>
+                <Separator/>
 
-            {#key $files}
-                <DataTable filesList={$files}/>
-            {/key}
-    </div>
-    </Resizable.Pane>
+                {#key $files || $t}
+                    <DataTable filesList={$files}/>
+                {/key}
+            </div>
+        </Resizable.Pane>
     </Resizable.PaneGroup>
+
+    <Separator class="w-full"/>
+
+    <div class="flex w-full p-1 text-sm h-6 px-3 space-x-5 items-center justify-between">
+
+        {#if $preset}
+            <span class="px-2 font-medium">Preset : {$preset?.name}</span>
+        {/if}
+
+        <div class="flex items-center">
+            {#each $informations as info (info)}
+                <span class="px-2">{@html info}</span>
+            {/each}
+        </div>
+
+    </div>
 
 </div>

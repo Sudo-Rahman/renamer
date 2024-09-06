@@ -8,9 +8,9 @@
     import {Label} from "$lib/components/ui/label";
     import {Checkbox} from "$lib/components/ui/checkbox";
     import {t} from "$lib/translations";
-    import SettingsDialog from "$lib/components/SettingsDialog.svelte";
     import CreatePreset from "$lib/components/SavePresetDialog.svelte";
     import PresetListDialog from "$lib/components/PresetListDialog.svelte";
+    import {goto} from "$app/navigation";
 
     export let files: RenamerFile[] = [];
 
@@ -52,8 +52,12 @@
 
     async function getFolder() {
         try {
-            files = await getFilesFromFileDialog("Folder");
-            toast.success($t('toast.import_files.success'));
+            getFilesFromFileDialog("Folder").then(value => {
+                if(value.length > 0) {
+                    files = value;
+                    toast.success($t('toast.import_files.success'));
+                }
+            });
         } catch (e) {
             toast.error($t('toast.import_files.error'));
             console.error(e);
@@ -62,8 +66,12 @@
 
     async function getFiles() {
         try {
-            files = await getFilesFromFileDialog("Files");
-            toast.success($t('toast.import_files.success'));
+            getFilesFromFileDialog("Files").then(value => {
+                if(value.length > 0) {
+                    files = value;
+                    toast.success($t('toast.import_files.success'));
+                }
+            });
         } catch (e) {
             toast.error($t('toast.import_files.error'));
             console.error(e);
@@ -103,7 +111,6 @@
     }
 
 
-    let openSettings = false;
     let loadPresetDialog = false;
     let savePresetDialog = false;
 
@@ -121,7 +128,7 @@
             <Menubar.Menu>
                 <Menubar.Trigger>{$t('menu_bar.file.title')}</Menubar.Trigger>
                 <Menubar.Content>
-                    <Menubar.Item on:click={()=>openSettings = !openSettings}>
+                    <Menubar.Item on:click={async ()=> { await goto('settings')}}>
                         {$t('menu_bar.file.settings')}
                     </Menubar.Item>
                     <Menubar.Separator/>
@@ -155,13 +162,7 @@
         </Menubar.Root>
 
 
-        <div class="flex w-full justify-center items-center font-bold">
-            {#if $preset}
-                <span class="font-bold">Preset : {$preset?.name}</span>
-            {/if}
-        </div>
-
-        <div class="flex">
+        <div class="flex w-full justify-end">
             <Button variant="outline" size="icon" class="h-9 w-10 active:bg-primary" on:click={onRenameFiles}
                     disabled="{!($renamable)}">
                 <Play/>
@@ -170,6 +171,5 @@
     </div>
 </div>
 
-<SettingsDialog bind:open={openSettings}/>
 <CreatePreset bind:open={savePresetDialog}/>
 <PresetListDialog bind:open={loadPresetDialog}/>
