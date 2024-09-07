@@ -8,6 +8,7 @@
     import {Switch} from "$lib/components/ui/switch";
     import {slide} from "svelte/transition";
     import {t} from "$lib/translations";
+    import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
     export let formatter: RegexFormatter;
 
@@ -29,62 +30,41 @@
 
 </script>
 
-<Accordion.Root id={formatter.id}>
-    <Accordion.Item value="item-{formatter.id}" class="border-none">
+<AccordionFormatter title={$t('formatter.regex.title')} id={formatter.id}>
 
-        <div class="flex h-6 mb-1 w-full items-center relative">
-            <div class="z-10" aria-label="">
-                <GripVertical class="h-5 w-5"/>
-            </div>
-            <Accordion.Trigger
-                    class="w-full hover:no-underline py-0 flex items-center h-full justify-center absolute inset-0">
-                {$t('formatter.regex.title')}
-            </Accordion.Trigger>
+    <div class="flex flex-col w-full items-center space-y-4 px-1">
 
-            <div class="ml-auto z-0">
-                <Button variant="outline" class="w-6 h-6 p-0"
-                        on:click={() => $formatters.removeFormatter(formatter.id)}>
-                    <X size="16px"/>
-                </Button>
-            </div>
+        <div class="grid w-full items-center gap-1.5">
+            <Label class="pl-1" for="regex">{$t('formatter.regex.regex_input.label')}</Label>
+            <Input class="transition-all duration-300 ease-in-out" type="text" id="regex"
+                   placeholder={$t('formatter.regex.regex_input.placeholder')} bind:value={regex}/>
         </div>
 
-        <Accordion.Content>
+        <div class="grid w-full items-center gap-1.5">
+            <Label class="pl-1" for="regex">{$t('formatter.regex.replace_input.label')}</Label>
+            <Input class="transition-all duration-300 ease-in-out" type="text" id="regex"
+                   placeholder={$t('formatter.regex.replace_input.placeholder')} bind:value={replace}/>
+        </div>
 
-            <div class="flex flex-col w-full items-center space-y-4 px-1">
+        <div class="flex w-full items-center space-x-3">
+            <Switch bind:checked={all}/>
+            <Label>{$t('formatter.regex.switch')}</Label>
+        </div>
 
-                <div class="grid w-full items-center gap-1.5">
-                    <Label class="pl-1" for="regex">{$t('formatter.regex.regex_input.label')}</Label>
-                    <Input class="transition-all duration-300 ease-in-out" type="text" id="regex"
-                           placeholder={$t('formatter.regex.regex_input.placeholder')} bind:value={regex}/>
+        {#if all}
+            <div transition:slide class="flex justify-center items-end space-x-2">
+                <div class="grid w-fit items-center gap-1.5">
+                    <Label class="pl-1">{$t('formatter.regex.start_pos')}</Label>
+                    <Input type="number" bind:value={startPos}/>
                 </div>
 
-                <div class="grid w-full items-center gap-1.5">
-                    <Label class="pl-1" for="regex">{$t('formatter.regex.replace_input.label')}</Label>
-                    <Input class="transition-all duration-300 ease-in-out" type="text" id="regex"
-                           placeholder={$t('formatter.regex.replace_input.placeholder')} bind:value={replace}/>
+                <div class="grid w-fit items-center gap-1.5">
+                    <Label class="pl-1">{$t('formatter.regex.end_pos')}</Label>
+                    <Input  type="number" bind:value={endPos}/>
                 </div>
-
-                <div class="flex w-full items-center space-x-3">
-                    <Switch bind:checked={all}/>
-                    <Label>{$t('formatter.regex.switch')}</Label>
-                </div>
-
-                {#if all}
-                    <div transition:slide class="flex justify-center items-end space-x-2">
-                        <div class="grid w-fit items-center gap-1.5">
-                            <Label class="pl-1">{$t('formatter.regex.start_pos')}</Label>
-                            <Input type="number" bind:value={startPos}/>
-                        </div>
-
-                        <div class="grid w-fit items-center gap-1.5">
-                            <Label class="pl-1">{$t('formatter.regex.end_pos')}</Label>
-                            <Input  type="number" bind:value={endPos}/>
-                        </div>
-                    </div>
-                {/if}
-
             </div>
-        </Accordion.Content>
-    </Accordion.Item>
-</Accordion.Root>
+        {/if}
+
+    </div>
+
+</AccordionFormatter>

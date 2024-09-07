@@ -8,8 +8,9 @@
     import {Button} from "$lib/components/ui/button";
     import {GripVertical, X} from "lucide-svelte";
     import {t} from "$lib/translations";
+    import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    export let formatter:OriginalFileNameFormatter;
+    export let formatter: OriginalFileNameFormatter;
 
 
     let withExtension = formatter.withExtension;
@@ -21,30 +22,12 @@
 
 </script>
 
-<Accordion.Root id={formatter.id}>
-    <Accordion.Item value="item-{formatter.id}" class="border-none">
 
-        <div class="flex h-6 mb-1 w-full items-center relative">
-            <div class="z-10" aria-label="">
-                <GripVertical class="h-5 w-5"/>
-            </div>
-            <Accordion.Trigger class="w-full hover:no-underline py-0 flex items-center h-full justify-center absolute inset-0">
-                {$t('formatter.file_name.title')}
-            </Accordion.Trigger>
+<AccordionFormatter title={$t('formatter.file_name.title')} id={formatter.id}>
 
-            <div class="ml-auto z-0">
-                <Button variant="outline" class="w-6 h-6 p-0"
-                        on:click={() => $formatters.removeFormatter(formatter.id)}>
-                    <X size="16px"/>
-                </Button>
-            </div>
-        </div>
+    <div class="flex items-center space-x-3">
+        <Switch bind:checked={withExtension}/>
+        <Label> {withExtension ? $t('formatter.file_name.switch_on') : $t('formatter.file_name.switch_off') }</Label>
+    </div>
 
-        <Accordion.Content>
-            <div class="flex items-center space-x-3">
-                <Switch bind:checked={withExtension}/>
-                <Label> {withExtension ? $t('formatter.file_name.switch_on') : $t('formatter.file_name.switch_off') }</Label>
-            </div>
-        </Accordion.Content>
-    </Accordion.Item>
-</Accordion.Root>
+</AccordionFormatter>

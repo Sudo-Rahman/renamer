@@ -8,6 +8,7 @@
     import {Button} from "$lib/components/ui/button";
     import {GripVertical, X} from "lucide-svelte";
     import {t} from "$lib/translations";
+    import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
     export let formatter:ExtensionFormatter;
 
@@ -23,44 +24,25 @@
 
 </script>
 
-<Accordion.Root id={formatter.id}>
-    <Accordion.Item value="item-{formatter.id}" class="border-none">
 
-        <div class="flex h-6 mb-1 w-full items-center relative">
-            <div class="z-10" aria-label="">
-                <GripVertical class="h-5 w-5"/>
-            </div>
-            <Accordion.Trigger class="w-full hover:no-underline py-0 flex items-center h-full justify-center absolute inset-0">
-                {$t('formatter.extension.title')}
-            </Accordion.Trigger>
+<AccordionFormatter title={$t('formatter.extension.title')} id={formatter.id}>
 
-            <div class="ml-auto z-0">
-                <Button variant="outline" class="w-6 h-6 p-0"
-                        on:click={() => $formatters.removeFormatter(formatter.id)}>
-                    <X size="16px"/>
-                </Button>
-            </div>
+    <div class="flex flex-col w-full space-y-4 px-1">
+
+        <div class="flex items-center space-x-3">
+            <Switch id="custom-ext" bind:checked={customExt}/>
+            <Label for="custom-ext">{customExt ? $t('formatter.extension.switch.custom') : $t('formatter.extension.switch.file')}</Label>
         </div>
 
-        <Accordion.Content>
+        {#if customExt}
 
-            <div class="flex flex-col w-full space-y-4 px-1">
-
-                <div class="flex items-center space-x-3">
-                    <Switch id="custom-ext" bind:checked={customExt}/>
-                    <Label for="custom-ext">{customExt ? $t('formatter.extension.switch.custom') : $t('formatter.extension.switch.file')}</Label>
-                </div>
-
-                {#if customExt}
-
-                    <div transition:slide class="grid w-full items-center gap-1.5">
-                        <Label class="pl-1" for="ext">{$t('formatter.extension.input.label')}</Label>
-                        <Input type="text" class="transition-all duration-300 ease-in-out" id="ext" placeholder={$t('formatter.extension.input.placeholder')} bind:value={customExtension}/>
-                    </div>
-
-                {/if}
-
+            <div transition:slide class="grid w-full items-center gap-1.5">
+                <Label class="pl-1" for="ext">{$t('formatter.extension.input.label')}</Label>
+                <Input type="text" class="transition-all duration-300 ease-in-out" id="ext" placeholder={$t('formatter.extension.input.placeholder')} bind:value={customExtension}/>
             </div>
-        </Accordion.Content>
-    </Accordion.Item>
-</Accordion.Root>
+
+        {/if}
+
+    </div>
+
+</AccordionFormatter>

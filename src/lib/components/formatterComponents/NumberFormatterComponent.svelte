@@ -8,6 +8,7 @@
     import {GripVertical, Info, X} from 'lucide-svelte';
     import {Button} from "$lib/components/ui/button";
     import {t} from "$lib/translations";
+    import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
     export let formatter: NumberFormatter;
 
@@ -31,73 +32,51 @@
 
 </script>
 
-<Accordion.Root id={formatter.id}>
-    <Accordion.Item value="item-{formatter.id}" class="border-none">
+<AccordionFormatter title={$t('formatter.number.title')} id={formatter.id}>
 
-        <div class="flex h-6 mb-1 w-full items-center relative">
-            <div class="z-10" aria-label="">
-                <GripVertical class="h-5 w-5"/>
+    <div class="flex flex-col w-full space-y-4 px-1">
+
+        <div class="grid w-full items-center gap-1.5">
+            <div class="flex space-x-1 items-center">
+                <Label class="pl-1" for="start">{$t('formatter.number.text_input.label')}</Label>
+                <Popover.Root>
+                    <Popover.Trigger>
+                        <Info size="16px"/>
+                    </Popover.Trigger>
+                    <Popover.Content>
+                        {$t('formatter.number.text_input.info')}
+                    </Popover.Content>
+                </Popover.Root>
             </div>
-            <Accordion.Trigger class="w-full hover:no-underline py-0 flex items-center h-full justify-center absolute inset-0">
-                {$t('formatter.number.title')}
-            </Accordion.Trigger>
+            <Input type="text" class="w-full" id="start" bind:value={text}/>
+        </div>
 
-            <div class="ml-auto z-0">
-                <Button variant="outline" class="w-6 h-6 p-0"
-                        on:click={() => $formatters.removeFormatter(formatter.id)}>
-                    <X size="16px"/>
-                </Button>
+        <div class="grid w-full items-center gap-1.5">
+            <div class="flex space-x-1 items-center">
+                <Label class="pl-1" for="number">{$t('formatter.number.number_input.label')}</Label>
+                <Popover.Root>
+                    <Popover.Trigger>
+                        <Info size="16px"/>
+                    </Popover.Trigger>
+                    <Popover.Content>
+                        {$t('formatter.number.number_input.info')}
+                    </Popover.Content>
+                </Popover.Root>
+            </div>
+
+            <div class="flex border-input rounded-md border px-2">
+                <Input class="p-1 text-center border-none focus-visible:ring-0 shadow-none" type="number"
+                       bind:value={start}/>
+                <Input class="p-1 text-center border-none focus-visible:ring-0 shadow-none" type="number"
+                       bind:value={step}/>
+
+                <Input class="p-1 text-center border-none focus-visible:ring-0 shadow-none" type="text"
+                       bind:value={fillChar}/>
+                <Input class="p-1 text-center border-none focus-visible:ring-0 shadow-none" type="number"
+                       bind:value={fill}/>
             </div>
         </div>
 
+    </div>
 
-        <Accordion.Content>
-
-            <div class="flex flex-col w-full space-y-4 px-1">
-
-                <div class="grid w-full items-center gap-1.5">
-                    <div class="flex space-x-1 items-center">
-                        <Label class="pl-1" for="start">{$t('formatter.number.text_input.label')}</Label>
-                        <Popover.Root>
-                            <Popover.Trigger>
-                                <Info size="16px"/>
-                            </Popover.Trigger>
-                            <Popover.Content>
-                                {$t('formatter.number.text_input.info')}
-                            </Popover.Content>
-                        </Popover.Root>
-                    </div>
-                    <Input type="text" class="w-full" id="start" bind:value={text}/>
-                </div>
-
-                <div class="grid w-full items-center gap-1.5">
-                    <div class="flex space-x-1 items-center">
-                        <Label class="pl-1" for="number">{$t('formatter.number.number_input.label')}</Label>
-                        <Popover.Root>
-                            <Popover.Trigger>
-                                <Info size="16px"/>
-                            </Popover.Trigger>
-                            <Popover.Content>
-                                {$t('formatter.number.number_input.info')}
-                            </Popover.Content>
-                        </Popover.Root>
-                    </div>
-
-                    <div class="flex border-input rounded-md border px-2">
-                        <Input class="p-1 text-center border-none focus-visible:ring-0 shadow-none" type="number"
-                               bind:value={start}/>
-                        <Input class="p-1 text-center border-none focus-visible:ring-0 shadow-none" type="number"
-                               bind:value={step}/>
-
-                        <Input class="p-1 text-center border-none focus-visible:ring-0 shadow-none" type="text"
-                               bind:value={fillChar}/>
-                        <Input class="p-1 text-center border-none focus-visible:ring-0 shadow-none" type="number"
-                               bind:value={fill}/>
-                    </div>
-                </div>
-
-            </div>
-
-        </Accordion.Content>
-    </Accordion.Item>
-</Accordion.Root>
+</AccordionFormatter>

@@ -151,7 +151,10 @@ export class RenamerFile {
     }
 
     public getNameWithoutExtension(): string {
-        return this.name.split(".").slice(0, -1).join(".");
+        if(this.name.includes(".")){
+            return this.name.split(".").slice(0, -1).join(".");
+        }
+        return this.name;
     }
 
 }

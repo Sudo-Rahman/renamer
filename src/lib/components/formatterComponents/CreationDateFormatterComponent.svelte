@@ -8,8 +8,9 @@
     import {Button} from "$lib/components/ui/button";
     import {GripVertical, X} from "lucide-svelte";
     import {t} from "$lib/translations";
+    import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    export let formatter:CreationDateFormatter;
+    export let formatter: CreationDateFormatter;
 
 
     function updateFormatter(format: string) {
@@ -19,39 +20,18 @@
 
 </script>
 
-<Accordion.Root id={formatter.id}>
-    <Accordion.Item value="item-{formatter.id}" class="border-none">
+<AccordionFormatter title={$t('formatter.creation_date.title')} id={formatter.id}>
 
-        <div class="flex h-6 mb-1 w-full items-center relative">
-            <div class="z-10" aria-label="">
-                <GripVertical class="h-5 w-5"/>
-            </div>
-            <Accordion.Trigger class="w-full hover:no-underline py-0 flex items-center h-full justify-center absolute inset-0">
-                {$t('formatter.creation_date.title')}
-            </Accordion.Trigger>
+    <div class="grid gap-1.5 pl-2">
+        <Label for="formatter.enabled" class="text-sm">{$t('formatter.creation_date.input1.label')}</Label>
+        <RadioGroup.Root value="{formatter.dateFormat}">
+            {#each CreationDateFormatter.Format as format}
+                <div class="flex items-center space-x-2">
+                    <RadioGroup.Item value="{format}" on:click={() => updateFormatter(format)}/>
+                    <Label for="{format} format" class="text-sm">{format}</Label>
+                </div>
+            {/each}
+        </RadioGroup.Root>
+    </div>
 
-            <div class="ml-auto z-0">
-                <Button variant="outline" class="w-6 h-6 p-0"
-                        on:click={() => $formatters.removeFormatter(formatter.id)}>
-                    <X size="16px"/>
-                </Button>
-            </div>
-        </div>
-
-        <Accordion.Content>
-
-            <div class="grid gap-1.5 pl-2">
-                <Label for="formatter.enabled" class="text-sm">{$t('formatter.creation_date.input1.label')}</Label>
-                <RadioGroup.Root value="{formatter.dateFormat}">
-                    {#each CreationDateFormatter.Format as format}
-                        <div class="flex items-center space-x-2">
-                            <RadioGroup.Item value="{format}" on:click={() => updateFormatter(format)}/>
-                            <Label for="{format} format" class="text-sm">{format}</Label>
-                        </div>
-                    {/each}
-                </RadioGroup.Root>
-            </div>
-
-        </Accordion.Content>
-    </Accordion.Item>
-</Accordion.Root>
+</AccordionFormatter>
