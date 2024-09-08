@@ -5,6 +5,7 @@ import {Signal} from "$models/Signal";
 import {invoke} from "@tauri-apps/api/core";
 import {renamable} from "$models/store";
 import {get} from "svelte/store";
+import {size} from "$lib/components/fileTable/store";
 
 
 export abstract class Formatter {
@@ -287,10 +288,6 @@ export class NumberFormatter extends Formatter {
         }
         this._start = +this._start + +this._step;
         file.newName += formatted;
-    }
-
-    fromAny(any: any): void {
-
     }
 }
 
@@ -595,6 +592,71 @@ export class BasicTextFormatter extends Formatter {
 
     format(file: RenamerFile): void {
         file.newName += this._text;
+    }
+}
+
+export class SizeFormatter extends Formatter {
+    get digits_of_precision(): number {
+        return this._digits_of_precision;
+    }
+
+    set digits_of_precision(value: number) {
+        if(value < 0 || value > 10) {
+            throw new Error("Invalid number of digits of precision");
+        }
+        this._digits_of_precision = value;
+        console.log(this._digits_of_precision);
+    }
+    get text(): string {
+        return this._text;
+    }
+
+    set text(value: string) {
+        this._text = value;
+    }
+    get unit(): "Byte" | "KB" | "MB" | "GB" {
+        return this._unit;
+    }
+
+    static readonly units = ["Byte", "KB", "MB", "GB"];
+
+    set unit(value: "Byte" | "KB" | "MB" | "GB") {
+        this._unit = value;
+    }
+
+    private _unit : "Byte" | "KB" | "MB" | "GB";
+    private _text: string;
+    private _digits_of_precision: number;
+
+    constructor() {
+        super();
+        this._unit = "Byte";
+        this._text = "";
+        this._digits_of_precision = 2;
+    }
+
+    private convertSize(fileSize : number): string {
+        let size = 0;
+        switch (this._unit) {
+            case "Byte":
+                size = fileSize;
+                break;
+            case "KB":
+                size = fileSize / 1024;
+                break;
+            case "MB":
+                size = fileSize / 1024 / 1024;
+                break;
+            case "GB":
+                size = fileSize / 1024 / 1024 / 1024;
+                break;
+        }
+        size = parseFloat(size.toFixed(this._digits_of_precision));
+        return size.toString();
+    }
+
+    format(file: RenamerFile): void {
+        file.newName += this.convertSize(file.size) + this._text;
     }
 
 }

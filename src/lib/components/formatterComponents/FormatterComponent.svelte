@@ -7,7 +7,7 @@
         ExtensionFormatter, Formatter,
         NumberFormatter,
         OriginalFileNameFormatter, RegexFormatter,
-        RemoveFormatter
+        RemoveFormatter,SizeFormatter
     } from "$models";
     import NumberFormatterComponent from "$lib/components/formatterComponents/NumberFormatterComponent.svelte";
     import CreationDateFormatterComponent
@@ -19,6 +19,7 @@
         from "$lib/components/formatterComponents/OriginalFileNameFormatterComponent.svelte";
     import BasicTextFormatterComponent from "$lib/components/formatterComponents/BasicTextFormatterComponent.svelte";
     import RegexFormatterComponent from "$lib/components/formatterComponents/RegexFormatterComponent.svelte";
+    import SizeFormatterComponent from "$lib/components/formatterComponents/SizeFormatterComponent.svelte";
 
     export let formatter: Formatter;
 
@@ -41,4 +42,6 @@
     <BasicTextFormatterComponent {formatter}/>
 {:else if formatter instanceof RegexFormatter}
     <RegexFormatterComponent {formatter}/>
+{:else if formatter instanceof SizeFormatter}
+    <SizeFormatterComponent {formatter}/>
 {/if}

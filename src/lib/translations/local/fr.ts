@@ -132,7 +132,22 @@ export const fr = {
             input1 : {
                 label : "Format",
             },
-        }
+        },
+        size: {
+            title : "Taille",
+            unit : {
+                Byte : "Octet",
+                KB : "Ko",
+                MB : "Mo",
+                GB : "Go",
+            },
+            unit_label : "Unité",
+            text_input : {
+                label : "Texte",
+                placeholder : "Texte ajouté après la taille",
+            },
+            digits_of_precision_label : "Chiffres après la virgule",
+        },
     },
     settings : {
         title : "Paramètres",

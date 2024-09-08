@@ -10,7 +10,8 @@
         ExtensionFormatter, Formatter, formatters,
         NumberFormatter,
         OriginalFileNameFormatter, RegexFormatter,
-        RemoveFormatter
+        RemoveFormatter,
+        SizeFormatter
     } from "$models";
 
 
@@ -51,6 +52,8 @@
                     on:click={()=> addFormatter(BasicTextFormatter)}>{$t('formatter.basic_text.title')}
             </DropdownMenu.Item>
             <DropdownMenu.Item on:click={()=> addFormatter(RegexFormatter)}>{$t('formatter.regex.title')}
+            </DropdownMenu.Item>
+            <DropdownMenu.Item on:click={()=> addFormatter(SizeFormatter)}>{$t('formatter.size.title')}
             </DropdownMenu.Item>
         </DropdownMenu.Group>
     </DropdownMenu.Content>

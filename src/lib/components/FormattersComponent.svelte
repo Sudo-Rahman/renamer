@@ -30,7 +30,7 @@
 
 <ScrollArea class="h-full w-full" orientation="both">
 
-    <div class="flex-col space-y-2 h-full w-full min-w-60">
+    <div class="flex-col space-y-2 h-full w-full min-w-72">
 
         <div class="flex flex-col min-w-10 space-y-2 p-1"
              use:dndzone={{items: formatterList, dropTargetStyle, type: "formatter"}}

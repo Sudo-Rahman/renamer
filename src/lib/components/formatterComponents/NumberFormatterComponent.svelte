@@ -22,12 +22,38 @@
         formatter.start = start;
         formatter.step = step;
         formatter.text = text;
-        fill > 0 ? fill : 0;
         formatter.fill = {
             char: fillChar,
             length: fill
         };
         $formatters.format();
+    }
+
+    function handleInputStart(event: InputEvent) {
+        if ((event.target as HTMLInputElement).value.length > 0) {
+            start = parseInt((event.target as HTMLInputElement).value);
+        } else {
+            start = 1;
+            (event.target as HTMLInputElement).value = formatter.start.toString();
+        }
+    }
+
+    function handleInputStep(event: InputEvent) {
+        if ((event.target as HTMLInputElement).value.length > 0) {
+            step = parseInt((event.target as HTMLInputElement).value);
+        } else {
+            step = 1;
+            (event.target as HTMLInputElement).value = formatter.step.toString();
+        }
+    }
+
+    function handleInputFill(event: InputEvent) {
+        if ((event.target as HTMLInputElement).value.length > 0) {
+            fill = parseInt((event.target as HTMLInputElement).value);
+        } else {
+            fill = 1;
+            (event.target as HTMLInputElement).value = formatter.fill.length.toString();
+        }
     }
 
 </script>
@@ -65,14 +91,14 @@
             </div>
 
             <div class="flex border-input rounded-md border px-2">
-                <Input class="p-1 text-center border-none focus-visible:ring-0 shadow-none" type="number"
+                <Input class="p-1 text-center border-none focus-visible:ring-0 shadow-none" type="number" on:input={handleInputStart}
                        bind:value={start}/>
-                <Input class="p-1 text-center border-none focus-visible:ring-0 shadow-none" type="number"
+                <Input class="p-1 text-center border-none focus-visible:ring-0 shadow-none" type="number" on:input={handleInputStep}
                        bind:value={step}/>
 
                 <Input class="p-1 text-center border-none focus-visible:ring-0 shadow-none" type="text"
                        bind:value={fillChar}/>
-                <Input class="p-1 text-center border-none focus-visible:ring-0 shadow-none" type="number"
+                <Input class="p-1 text-center border-none focus-visible:ring-0 shadow-none" type="number" min={0} on:input={handleInputFill}
                        bind:value={fill}/>
             </div>
         </div>

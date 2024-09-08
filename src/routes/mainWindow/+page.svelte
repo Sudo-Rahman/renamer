@@ -70,7 +70,7 @@
     <Resizable.PaneGroup direction="horizontal" class="h-full p-0">
         <Resizable.Pane defaultSize={30}>
             <div class="flex flex-col h-full transition-all duration-300 ease-in-out">
-                <div class="h-16 flex min-w-60 items-center px-2 justify-between">
+                <div class="h-16 flex min-w-72 items-center px-2 justify-between">
                     <Label class="text-xl text-center
                          font-bold">{$t('formatter.panel.title')}</Label>
                     <AddFormatterButton/>
