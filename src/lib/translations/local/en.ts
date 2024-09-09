@@ -132,7 +132,22 @@ export const en = {
             input1: {
                 label: "Format",
             },
-        }
+        },
+        size: {
+            title : "Size",
+            unit : {
+                Byte : "Byte",
+                KB : "KB",
+                MB : "MB",
+                GB : "GB",
+            },
+            unit_label : "Unit",
+            text_input : {
+                label : "Text",
+                placeholder : "Text after the size",
+            },
+            digits_of_precision_label : "Digits after the decimal",
+        },
     },
     settings: {
         title: "Settings",
