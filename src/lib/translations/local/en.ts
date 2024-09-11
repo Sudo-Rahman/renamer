@@ -198,5 +198,8 @@ export const en = {
         yes_btn: 'Update',
         cancel_btn: 'Cancel',
         message : "A new version of the application is available. Do you want to update to version %s ?"
+    },
+    bottom_info : {
+        files_infos : "{0} file(s) selected - {1} error(s)",
     }
 }

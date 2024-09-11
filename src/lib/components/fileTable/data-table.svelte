@@ -48,23 +48,18 @@
                 },
             },
             header: (_, {pluginStates}) => {
-                const {allPageRowsSelected} = pluginStates.select;
+                const all = writable(true);
 
-                allPageRowsSelected.subscribe((value) => {
-                    rows.subscribe((rows) => {
-                        rows.forEach(
-                            (row) => {
-                                if (row) {
-                                    row.original.selected = row.cellForId.selected;
-                                }
-                            }
-                        );
+                all.subscribe((value) => {
+                    pluginStates.select.allRowsSelected.set(value)
+                    filesList.forEach((file) => {
+                        file.selected = value;
                     });
                     $formatters.format();
                 });
 
                 return createRender(DataTableCheckbox, {
-                    checked: allPageRowsSelected,
+                    checked: all,
                 });
             },
             cell: ({row}, {pluginStates}) => {
@@ -88,12 +83,12 @@
                 return createRender(DatatableStatus, {
                     file: row.original,
                 });
-            },
+            }
         }),
         table.column({
             accessor: "name",
             header: $t('data_table.table_header.name'),
-            cell: ({row}, {pluginStates}) => {
+            cell: ({row}) => {
                 return createRender(DatatableName, {
                     file: row.original,
                 });
@@ -102,7 +97,7 @@
         table.column({
             accessor: "newName",
             header: $t('data_table.table_header.new_name'),
-            cell: ({row}, {pluginStates}) => {
+            cell: ({row}) => {
                 return createRender(DatatableNewName, {
                     file: row.original,
                 });
@@ -139,25 +134,6 @@
     $: $hiddenColumnIds = Object.entries(hideForId)
         .filter(([, hide]) => !hide)
         .map(([id]) => id);
-
-    pluginStates.sort.sortKeys.subscribe(
-        (value) => {
-            filesList.sort((a: RenamerFile, b: RenamerFile) => {
-                for (const sortKey of value) {
-                    const {id, order} = sortKey;
-                    const aValue = a[id];
-                    const bValue = b[id];
-                    if (aValue < bValue) {
-                        return order === "asc" ? -1 : 1;
-                    }
-                    if (aValue > bValue) {
-                        return order === "asc" ? 1 : -1;
-                    }
-                }
-                return 0;
-            });
-        }
-    );
 
 </script>
 

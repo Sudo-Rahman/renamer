@@ -1,6 +1,6 @@
 <script lang="ts">
     import * as Menubar from "$lib/components/ui/menubar";
-    import {formatters, getFilesFromFileDialog, options, preset, renamable, RenamerFile, savePreset} from "$models";
+    import {formatters, getFilesFromFileDialog, preset, RenamerFile, savePreset} from "$models";
     import {onMount} from "svelte";
     import {Play} from 'lucide-svelte';
     import {Button} from '$lib/components/ui/button';
@@ -118,6 +118,8 @@
     function saveDisable() {
         return $formatters.formatters.length === 0 || $preset === null;
     }
+
+    let {renamable} = $formatters;
 
 </script>
 

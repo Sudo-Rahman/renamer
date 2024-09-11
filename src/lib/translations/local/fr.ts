@@ -198,5 +198,8 @@ export const fr = {
         yes_btn: 'Mettre à jour',
         cancel_btn: 'Annuler',
         message : 'Une mise à jour est disponible pour la version %s. Voulez-vous mettre à jour ?'
+    },
+    bottom_info : {
+        files_infos : "{0} fichier(s) sélectionné(s) - {1} erreur(s)",
     }
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
     import {Separator} from "$lib/components/ui/separator";
-    import {files, informations, preset, RenamerFile} from "$models";
+    import {files, formatString, formatters, information, preset, RenamerFile} from "$models";
     import Menubar from "$lib/components/MenuBar.svelte";
     import FormattersComponent from "$lib/components/FormattersComponent.svelte";
     import DataTable from "$lib/components/fileTable/data-table.svelte";
@@ -63,6 +63,11 @@
         };
     });
 
+    $formatters.errors.subscribe(value => {
+        let seletedFiles = $files.filter(file => file.selected).length;
+        $information = `<span>${formatString($t('bottom_info.files_infos'),seletedFiles,value)}</span>`;
+    });
+
 </script>
 
 <div class="flex flex-col w-full h-full overflow-hidden">
@@ -97,16 +102,16 @@
 
     <Separator class="w-full"/>
 
-    <div class="flex w-full p-1 text-sm h-6 px-3 space-x-5 items-center justify-between">
+    <div class="flex w-full p-1 text-sm h-6 px-3 space-x-5 items-center justify-end">
 
         {#if $preset}
-            <span class="px-2 font-medium">Preset : {$preset?.name}</span>
+            <span class="px-2 font-medium">{$preset ? `Preset : ${$preset?.name}` : ''}</span>
         {/if}
 
         <div class="flex items-center">
-            {#each $informations as info (info)}
-                <span class="px-2">{@html info}</span>
-            {/each}
+            {#key $information}
+            <span class="px-2">{@html $information}</span>
+                {/key}
         </div>
 
     </div>

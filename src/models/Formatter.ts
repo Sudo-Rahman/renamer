@@ -3,9 +3,7 @@ import {Preset, type RenamerFile} from "$models";
 import dateFormat from "dateformat";
 import {Signal} from "$models/Signal";
 import {invoke} from "@tauri-apps/api/core";
-import {renamable} from "$models/store";
-import {get} from "svelte/store";
-import {size} from "$lib/components/fileTable/store";
+import {get, writable} from "svelte/store";
 
 
 export abstract class Formatter {
@@ -66,6 +64,9 @@ export class FormatterList {
     public onFormattedSignal = new Signal<RenamerFile[]>();
     public onListChangedSignal = new Signal<Formatter[]>();
     private _timer: any;
+    readonly renamable = writable<boolean>(false);
+    readonly errors = writable<number>(0);
+
 
     constructor(files: RenamerFile[]) {
         this._renamerFiles = files;
@@ -89,7 +90,6 @@ export class FormatterList {
                 func();
             }
         }, 100);
-
     }
 
     public updateFiles(files: RenamerFile[]) {
@@ -129,7 +129,7 @@ export class FormatterList {
 
     format(): void {
         if (this._renamerFiles.length === 0) return;
-        renamable.set(false);
+        this.renamable.set(false);
         this._renamerFiles.forEach((file) => {
             if (!file.selected) {
                 file.newName = file.name;
@@ -162,6 +162,8 @@ export class FormatterList {
                 uuid: file.uuid
             }
         });
+
+
         invoke("check_files_names", {files: files}).then((res) => {
             if (res) {
                 (res as any[]).forEach((file: any) => {
@@ -177,18 +179,23 @@ export class FormatterList {
                         f.status = "None";
                     }
                 });
-                renamable.set((res as any[]).length <= 0);
+                if (files.length === 0) {
+                    this.renamable.set(false);
+                } else this.renamable.set((res as any[]).length === 0);
+                this.errors.set((res as any[]).length);
             }
         });
     }
 
     async renameFiles(): Promise<void> {
 
-        if (!get(renamable)) {
+        if (!get(this.renamable)) {
             throw new Error("Some files have errors");
         }
 
-        const fileInfos = this._renamerFiles.map(
+        const fileInfos = this._renamerFiles.filter(file => {
+            return file.selected;
+        }).map(
             (file) => {
                 return {path: file.path, new_path: `${file.getDirectory()}/${file.newName}`, uuid: file.uuid}
             }
@@ -214,7 +221,7 @@ export class FormatterList {
         );
     }
 
-    reorderFormatter(formatters : Formatter[]): void {
+    reorderFormatter(formatters: Formatter[]): void {
         this._formatters = formatters;
         this.format();
     }
@@ -601,12 +608,12 @@ export class SizeFormatter extends Formatter {
     }
 
     set digits_of_precision(value: number) {
-        if(value < 0 || value > 10) {
+        if (value < 0 || value > 10) {
             throw new Error("Invalid number of digits of precision");
         }
         this._digits_of_precision = value;
-        console.log(this._digits_of_precision);
     }
+
     get text(): string {
         return this._text;
     }
@@ -614,6 +621,7 @@ export class SizeFormatter extends Formatter {
     set text(value: string) {
         this._text = value;
     }
+
     get unit(): "Byte" | "KB" | "MB" | "GB" {
         return this._unit;
     }
@@ -624,7 +632,7 @@ export class SizeFormatter extends Formatter {
         this._unit = value;
     }
 
-    private _unit : "Byte" | "KB" | "MB" | "GB";
+    private _unit: "Byte" | "KB" | "MB" | "GB";
     private _text: string;
     private _digits_of_precision: number;
 
@@ -635,7 +643,7 @@ export class SizeFormatter extends Formatter {
         this._digits_of_precision = 2;
     }
 
-    private convertSize(fileSize : number): string {
+    private convertSize(fileSize: number): string {
         let size = 0;
         switch (this._unit) {
             case "Byte":

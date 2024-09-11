@@ -25,8 +25,6 @@ export const options = writable({
 });
 
 // info component for bottom of the page
-export const informations : Writable<Array<string>> = writable([]);
-
-export const renamable = writable<boolean>(false);
+export const information : Writable<string> = writable("");
 
 export const store = new Store("renamer");

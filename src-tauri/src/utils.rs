@@ -96,7 +96,7 @@ pub struct FileStatus {
 #[tauri::command]
 pub async fn check_files_names(files: Vec<FileRenameInfo>) -> Result<Vec<FileStatus>, String> {
     if files.is_empty() {
-        return Err("No files provided".to_string());
+        return Ok(Vec::new());
     }
 
     let mut files_vec = Vec::new();
