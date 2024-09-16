@@ -65,18 +65,18 @@
 
     $formatters.errors.subscribe(value => {
         let seletedFiles = $files.filter(file => file.selected).length;
-        $information = `<span>${formatString($t('bottom_info.files_infos'),seletedFiles,value)}</span>`;
+        $information = `<span>${formatString($t('bottom_info.files_infos'), seletedFiles, value)}</span>`;
     });
 
 </script>
 
 <div class="flex flex-col w-full h-full overflow-hidden">
 
-    <Resizable.PaneGroup direction="horizontal" class="h-full p-0">
+    <Resizable.PaneGroup class="h-full p-0" direction="horizontal">
         <Resizable.Pane defaultSize={30}>
             <div class="flex flex-col h-full transition-all duration-300 ease-in-out">
                 <div class="h-16 flex min-w-72 items-center px-2 justify-between">
-                    <Label class="text-xl text-center
+                    <Label class="text-xl text-center pl-2
                          font-bold">{$t('formatter.panel.title')}</Label>
                     <AddFormatterButton/>
                 </div>
@@ -84,9 +84,9 @@
                 <FormattersComponent/>
             </div>
         </Resizable.Pane>
-        <Resizable.Handle withHandle class="p-0 m-0"/>
+        <Resizable.Handle class="p-0 m-0" withHandle/>
         <Resizable.Pane minSize={50}>
-            <div class="flex flex-col h-full w-full" bind:this={rightPane}>
+            <div bind:this={rightPane} class="flex flex-col h-full w-full">
 
                 <div class="h-16 flex items-center">
                     <Menubar bind:files={$files} class="w-full px-4"/>
@@ -110,8 +110,8 @@
 
         <div class="flex items-center">
             {#key $information}
-            <span class="px-2">{@html $information}</span>
-                {/key}
+                <span class="px-2">{@html $information}</span>
+            {/key}
         </div>
 
     </div>

@@ -150,7 +150,6 @@ pub async fn check_files_names(files: Vec<FileRenameInfo>) -> Result<Vec<FileSta
                 error: 2,
             });
         }
-
     }
 
     Ok(files_vec)

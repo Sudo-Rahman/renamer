@@ -1,32 +1,40 @@
 <script lang="ts">
-    import {ScrollArea} from "$lib/components/ui/scroll-area";
-    import LanguageSelect from "$lib/components/LanguageSelect.svelte";
-    import {Label} from "$lib/components/ui/label";
-    import {t} from "$lib/translations";
     import {X} from 'lucide-svelte';
     import {Button} from "$lib/components/ui/button";
     import {goto} from "$app/navigation";
-    import {Separator} from "$lib/components/ui/separator";
+    import LeftSide from "./ui/LeftSide.svelte";
+    import {type SettingsRoute, settingsRouteList} from "./settings";
+    import {t} from "$lib/translations";
+    import {fade} from "svelte/transition";
+
+
+    let currentRoute: SettingsRoute = settingsRouteList[0];
+
+    function onRouteChange(route: CustomEvent<SettingsRoute>) {
+        console.log(route);
+        currentRoute = route.detail;
+    }
+
 </script>
 
 
-<ScrollArea class="h-full w-full" orientation="vertical">
+<div class="flex w-full h-full">
 
-    <div class="flex flex-col w-full p-3 text-center h-full justify-center space-y-3">
+    <LeftSide on:routeChange={onRouteChange}/>
 
-        <div class="flex relative w-full justify-center items-center">
-            <Button variant="outline" class="absolute w-10 rounded-full h-10 stroke p-0 left-0 top-0"
-                    on:click={async () => { await goto('mainWindow')}}>
+
+    <div class="flex flex-col w-full h-full p-4">
+        <div class="flex justify-between pb-5">
+            <h1 class="text-xl font-bold">{$t(currentRoute.title)}</h1>
+            <Button class="p-0 w-8 rounded-full h-8 stroke"
+                    on:click={async () => { await goto('mainWindow')}}
+                    variant="outline">
                 <X/>
             </Button>
-            <h1 class="text-2xl font-bold pb-10">{$t('settings.title')}</h1>
         </div>
 
-        <div class="flex justify-between items-center border rounded-2xl p-5">
-            <Label>{$t('settings.select_language.title')}</Label>
-            <LanguageSelect/>
-        </div>
-
+        <svelte:component this={currentRoute.page}/>
     </div>
 
-</ScrollArea>
+
+</div>

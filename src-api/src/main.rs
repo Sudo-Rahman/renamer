@@ -11,6 +11,8 @@ use axum::{
 };
 use serde_json::json;
 use std::process::exit;
+use mongodb::bson;
+use uuid::{Timestamp, Uuid};
 use crate::controllers::*;
 use crate::db::*;
 use crate::models::ServerConfig;
@@ -24,10 +26,9 @@ async fn main() {
 
     let config = ServerConfig { db };
 
-
     let app = Router::new()
         .route("/users", get(get_all_users))
-        .route("/user", get(handle_get_user_by_uuid))
+        .route("/user/:key", get(handle_get_user_by_key))
         .with_state(config);
 
     // run our app with hyper, listening globally on port 3000

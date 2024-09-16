@@ -17,6 +17,9 @@ importers:
       '@tauri-apps/plugin-fs':
         specifier: 2.0.0-rc.1
         version: 2.0.0-rc.1
+      '@tauri-apps/plugin-http':
+        specifier: 2.0.0-rc.2
+        version: 2.0.0-rc.2
       '@tauri-apps/plugin-os':
         specifier: 2.0.0-rc.0
         version: 2.0.0-rc.0
@@ -520,6 +523,9 @@ packages:
 
   '@tauri-apps/plugin-fs@2.0.0-rc.1':
     resolution: {integrity: sha512-r6N5dqBNXy9YAK9XbiEqAq3ZKBIN+TWevE7ZFmSRdvdSB1urrLweYu4wxycY2kDaDPzSeeOIJhCmqdNrFT9OSA==}
+
+  '@tauri-apps/plugin-http@2.0.0-rc.2':
+    resolution: {integrity: sha512-s/AbbMaQPgqnIOoObvWNAjJOV17gyf9G+U6gmvjLoFbt7D6jsujOUW6fn+Oe/+rzNSEeo1ZSVrUoMen5DgM+OA==}
 
   '@tauri-apps/plugin-os@2.0.0-rc.0':
     resolution: {integrity: sha512-OWAl8mooKnGykSD4iog8WRqcnOSx0gGmTJBlEExHdFeIuOHg0Ezvd+WiVLhT9LBg7go3ibNWRWpe/ZG7YEp4Vw==}
@@ -1652,6 +1658,10 @@ snapshots:
   '@tauri-apps/plugin-fs@2.0.0-rc.1':
     dependencies:
       '@tauri-apps/api': 2.0.0-rc.3
+
+  '@tauri-apps/plugin-http@2.0.0-rc.2':
+    dependencies:
+      '@tauri-apps/api': 2.0.0-rc.4
 
   '@tauri-apps/plugin-os@2.0.0-rc.0':
     dependencies:

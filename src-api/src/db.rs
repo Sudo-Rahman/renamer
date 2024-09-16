@@ -37,7 +37,7 @@ impl Mongo {
         }
     }
 
-    pub async fn find_user_by_key(&self, key: &str) -> Result<Option<User>> {
+    pub async fn find_user_by_key(&self, key: &Uuid) -> Result<Option<User>> {
         match self.database.collection::<User>("users").find_one(
             doc! {
                 "key": key

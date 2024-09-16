@@ -41,6 +41,7 @@
     "updater:allow-install",
     "updater:allow-download-and-install",
     "updater:default",
-    "process:default"
+    "process:default",
+    "http:default"
   ]
 }

@@ -1,35 +1,18 @@
 #![allow(unused)]
 
 use crate::models::{ServerConfig, User};
-use axum::extract::State;
+use axum::extract::{Path, State};
 use axum::http::{HeaderMap, StatusCode};
 use axum::response::IntoResponse;
-use axum::Json;
+use mongodb::bson;
+use mongodb::bson::Uuid;
 use mongodb::error::Error;
 use serde::Serialize;
 use serde_json::json;
 
-fn json_response<T>(data: T) -> impl IntoResponse
-where
-    T: Serialize,
-{
-    Json(data).into_response()
-}
-
-pub async fn handle_get_user_by_uuid(headers: HeaderMap, State(config): State<ServerConfig>) -> Result<(StatusCode, String), (StatusCode, String)> {
-    // Extraire l'en-tête 'key'
-    let key_header = headers.get("key");
-
-    // Vérifier si l'en-tête 'key' est présent
-    if key_header.is_none() {
-        return Err((StatusCode::BAD_REQUEST, "Missing 'key' header".to_string()));
-    }
-
-    // Extraire la valeur de l'en-tête 'key'
-    let key = key_header.unwrap().to_str().unwrap();
-
+pub async fn handle_get_user_by_key(Path((user_key)): Path<(Uuid)>, State(config): State<ServerConfig>) -> Result<(StatusCode, String), (StatusCode, String)> {
     // Rechercher l'utilisateur par 'key'
-    let user = config.db.find_user_by_key(key).await;
+    let user = config.db.find_user_by_key(&user_key).await;
 
     // Vérifier si l'utilisateur existe
     match user {
