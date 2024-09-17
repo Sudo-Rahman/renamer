@@ -1,8 +1,11 @@
 #![allow(unused)]
-use tauri::Wry;
-use tauri_plugin_store::{with_store, StoreCollection};
+
+use crate::app::User;
+use std::path::PathBuf;
 use serde_json::json;
+use tauri::{AppHandle, Manager, Wry};
 use tauri_plugin_http::reqwest;
+use tauri_plugin_store::{with_store, StoreCollection};
 
 #[cfg(debug_assertions)]
 pub const API_URL: &str = "http://localhost:3000/";
@@ -27,4 +30,15 @@ pub async fn check_licence(user_key: &str) -> Result<String, String> {
             Err(err.to_string())
         }
     }
+}
+
+#[tauri::command]
+pub(crate) async fn get_license(app: tauri::AppHandle) -> Result<String, String> {
+    println!("Getting license");
+    Ok("license".to_string())
+}
+
+#[tauri::command]
+pub(crate) async fn save_license(app: tauri::AppHandle) -> Result<bool, String> {
+    Ok(true)
 }

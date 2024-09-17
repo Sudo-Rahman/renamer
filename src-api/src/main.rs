@@ -3,6 +3,8 @@ mod db;
 mod models;
 mod controllers;
 
+use axum::extract::ConnectInfo;
+use std::net::SocketAddr;
 use axum::{
     extract::{Path, State},
     http::StatusCode,
@@ -29,11 +31,13 @@ async fn main() {
     let app = Router::new()
         .route("/users", get(get_all_users))
         .route("/user/:key", get(handle_get_user_by_key))
+        .route("/create", get(create_user))
         .with_state(config);
 
-    // run our app with hyper, listening globally on port 3000
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
 
-
-    axum::serve(listener, app).await.unwrap();
+    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+    axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>())
+        .await
+        .unwrap();
 }

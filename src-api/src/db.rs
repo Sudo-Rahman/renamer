@@ -48,6 +48,17 @@ impl Mongo {
         }
     }
 
+    pub async fn find_user_by_email(&self, email: &str) -> Result<Option<User>> {
+        match self.database.collection::<User>("users").find_one(
+            doc! {
+                "email": email
+            },
+        ).await {
+            Ok(response) => Ok(response),
+            Err(e) => Err(e),
+        }
+    }
+
     pub async fn find_all_users(&self) -> Result<Vec<User>> {
         let collection = self.database.collection::<User>("users");
 
