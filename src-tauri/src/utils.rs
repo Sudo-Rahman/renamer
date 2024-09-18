@@ -39,6 +39,7 @@ pub fn files_from_vec(files: Vec<String>) -> Result<Vec<RenameFile>, String> {
 }
 
 use serde::{Deserialize, Serialize};
+use crate::auth::get_license;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct FileRenameInfo {
@@ -55,7 +56,11 @@ pub struct RenameStatus {
 }
 
 #[tauri::command]
-pub async fn rename_files(file_infos: Vec<FileRenameInfo>) -> Result<Vec<RenameStatus>, String> {
+pub async fn rename_files(app: tauri::AppHandle, file_infos: Vec<FileRenameInfo>) -> Result<Vec<RenameStatus>, i8> {
+    if get_license(app).await.is_err() {
+        return Err(1);
+    }
+
     let mut vec = Vec::new();
 
     for FileRenameInfo {

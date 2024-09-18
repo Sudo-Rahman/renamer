@@ -1,22 +1,21 @@
 #![allow(unused)]
 
-use std::net::SocketAddr;
+use crate::db::Mongo;
 use crate::models::{ServerConfig, User};
-use axum::extract::{ConnectInfo, FromRequest, Path, State};
-use axum::http::{HeaderMap, StatusCode};
+use axum::extract::{ConnectInfo, Path, State};
+use axum::http::StatusCode;
 use axum::Json;
-use axum::response::IntoResponse;
 use mongodb::bson;
 use mongodb::bson::Uuid;
-use mongodb::error::Error;
-use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use crate::models;
-use crate::db::Mongo;
+use std::net::SocketAddr;
 
-pub async fn handle_get_user_by_key(Path((user_key)): Path<(Uuid)>, State(config): State<ServerConfig>) -> Result<(StatusCode, String), (StatusCode, String)> {
-    // Rechercher l'utilisateur par 'key'
-    let user = config.db.find_user_by_key(&user_key).await;
+pub async fn handle_get_license(
+    State(config): State<ServerConfig>,
+    Json(payload): Json<Value>,
+) -> Result<(StatusCode, String), (StatusCode, String)> {
+    let user = config.db.find_user(&payload).await;
+    println!("{:?}", user);
 
     // Vérifier si l'utilisateur existe
     match user {
@@ -60,7 +59,7 @@ pub async fn create_user(
             _id: bson::oid::ObjectId::new(),
             email: email.to_string(),
             key: Uuid::from_bytes(*uuid::Uuid::now_v7().as_bytes()),
-            used: false,
+            machine_id: "".to_string(),
         };
         match config.db.insert_user(&user).await {
             Ok(_) => Ok((StatusCode::CREATED, json!(user).to_string())),
@@ -68,5 +67,42 @@ pub async fn create_user(
         }
     } else {
         Err((StatusCode::NOT_FOUND, "".to_string()))
+    }
+}
+
+pub async fn activate_licence(
+    State(config): State<ServerConfig>,
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    Json(payload): Json<Value>,
+) -> Result<(StatusCode, String), (StatusCode, String)> {
+    let email = payload["email"].as_str().ok_or_else(|| {
+        (StatusCode::BAD_REQUEST, "Invalid or missing email".to_string())
+    })?;
+    let key = payload["key"].as_str().ok_or_else(|| {
+        (StatusCode::BAD_REQUEST, "Invalid or missing key".to_string())
+    })?;
+    let machine_id = payload["machine_id"].as_str().ok_or_else(|| {
+        (StatusCode::BAD_REQUEST, "Invalid or missing machine_id".to_string())
+    })?;
+    let user = config.db.find_user_by_email(email).await.unwrap();
+
+    match user {
+        Some(user) => {
+            if user.key.to_string() == key {
+                let updated_user = User {
+                    _id: user._id,
+                    email: user.email,
+                    key: user.key,
+                    machine_id: machine_id.to_string(),
+                };
+                match config.db.activate_licence(&updated_user).await {
+                    Ok(_) => Ok((StatusCode::OK, json!(updated_user).to_string())),
+                    Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to update user".to_string())),
+                }
+            } else {
+                Err((StatusCode::UNAUTHORIZED, "Invalid key".to_string()))
+            }
+        }
+        None => Err((StatusCode::NOT_FOUND, "User not found".to_string()))
     }
 }

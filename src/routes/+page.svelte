@@ -6,6 +6,7 @@
 
     onMount(async () => {
         await checkForAppUpdates();
+        await invoke("get_license");
     })
 
 </script>

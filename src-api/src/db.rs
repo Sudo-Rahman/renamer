@@ -5,7 +5,7 @@ use mongodb::{Client, Collection, Database, error::Result, bson::*, bson, Cursor
 use std::env;
 use dotenv::dotenv;
 use futures::stream::{StreamExt, TryStreamExt};
-
+use serde_json::{Map, Value};
 
 #[derive(Clone)]
 pub(crate) struct Mongo {
@@ -37,11 +37,16 @@ impl Mongo {
         }
     }
 
-    pub async fn find_user_by_key(&self, key: &Uuid) -> Result<Option<User>> {
+    fn payload_user_to_document(payload: &Value) -> Document {
+        doc! {
+            "email": payload["email"].as_str().unwrap(),
+            "key": Uuid::parse_str(payload["key"].as_str().unwrap()).unwrap(),
+        }
+    }
+
+    pub async fn find_user(&self, payload: &Value) -> Result<Option<User>> {
         match self.database.collection::<User>("users").find_one(
-            doc! {
-                "key": key
-            },
+            Self::payload_user_to_document(payload),
         ).await {
             Ok(response) => Ok(response),
             Err(e) => Err(e),
@@ -71,5 +76,22 @@ impl Mongo {
         let vec = cursor.try_collect::<Vec<User>>().await?;
 
         Ok(vec)
+    }
+
+    pub(crate) async fn activate_licence(&self, user: &User) -> Result<()> {
+        match self.database.collection::<User>("users").update_one(
+            doc! {
+                "key": &user.key,
+                "email": &user.email
+            },
+            doc! {
+                "$set": {
+                    "machine_id": &user.machine_id
+                }
+            },
+        ).await {
+            Ok(_) => Ok(()),
+            Err(e) => Err(e),
+        }
     }
 }

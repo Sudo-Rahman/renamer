@@ -30,7 +30,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/users", get(get_all_users))
-        .route("/user/:key", get(handle_get_user_by_key))
+        .route("/license", get(handle_get_license))
         .route("/create", get(create_user))
         .with_state(config);
 

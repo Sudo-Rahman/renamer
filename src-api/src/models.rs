@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use crate::db::Mongo;
 
 #[derive(Clone)]
-pub struct ServerConfig {
+pub(crate) struct ServerConfig {
     pub(crate) db: Mongo,
 }
 
@@ -14,5 +14,5 @@ pub struct User {
     pub(crate) _id: ObjectId,
     pub(crate) email: String,
     pub(crate) key: Uuid,
-    pub(crate) used: bool,
+    pub(crate) machine_id: String,
 }

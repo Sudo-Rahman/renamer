@@ -1,9 +1,13 @@
 #![allow(unused)]
 
+use std::string::ToString;
+use serde::{Deserialize, Serialize};
 use tauri::Manager;
+use tauri_plugin_store::StoreCollection;
 use crate::utils::*;
 use crate::auth::*;
 
+#[derive(Clone, Deserialize, Serialize, Debug)]
 pub(crate) struct User {
     pub(crate) license_key: String,
     pub(crate) email: String,
@@ -11,9 +15,12 @@ pub(crate) struct User {
 pub(crate) struct App {}
 
 impl App {
+    pub(crate) fn name_store() -> String {
+        return "renamer".to_string();
+    }
+
     pub fn new() -> Self {
         tauri::Builder::default()
-            .plugin(tauri_plugin_http::init())
             .plugin(tauri_plugin_process::init())
             .plugin(tauri_plugin_updater::Builder::new().build())
             .plugin(tauri_plugin_store::Builder::new().build())
