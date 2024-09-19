@@ -37,16 +37,9 @@ impl Mongo {
         }
     }
 
-    fn payload_user_to_document(payload: &Value) -> Document {
-        doc! {
-            "email": payload["email"].as_str().unwrap(),
-            "key": Uuid::parse_str(payload["key"].as_str().unwrap()).unwrap(),
-        }
-    }
-
-    pub async fn find_user(&self, payload: &Value) -> Result<Option<User>> {
+    pub async fn find_user(&self, payload: &Document) -> Result<Option<User>> {
         match self.database.collection::<User>("users").find_one(
-            Self::payload_user_to_document(payload),
+            payload.clone(),
         ).await {
             Ok(response) => Ok(response),
             Err(e) => Err(e),
@@ -76,6 +69,20 @@ impl Mongo {
         let vec = cursor.try_collect::<Vec<User>>().await?;
 
         Ok(vec)
+    }
+
+    pub(crate) async fn clear_license(&self, user: &Document) -> Result<()> {
+        match self.database.collection::<User>("users").update_one(
+            user.clone(),
+            doc! {
+                "$set": {
+                    "machine_id": ""
+                }
+            },
+        ).await {
+            Ok(_) => Ok(()),
+            Err(e) => Err(e),
+        }
     }
 
     pub(crate) async fn activate_licence(&self, user: &User) -> Result<()> {

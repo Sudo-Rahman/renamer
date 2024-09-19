@@ -39,7 +39,7 @@ pub fn files_from_vec(files: Vec<String>) -> Result<Vec<RenameFile>, String> {
 }
 
 use serde::{Deserialize, Serialize};
-use crate::auth::get_license;
+use crate::app::APPLICATION;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct FileRenameInfo {
@@ -56,8 +56,8 @@ pub struct RenameStatus {
 }
 
 #[tauri::command]
-pub async fn rename_files(app: tauri::AppHandle, file_infos: Vec<FileRenameInfo>) -> Result<Vec<RenameStatus>, i8> {
-    if get_license(app).await.is_err() {
+pub async fn rename_files(file_infos: Vec<FileRenameInfo>) -> Result<Vec<RenameStatus>, i8> {
+    if !APPLICATION.lock().await.license {
         return Err(1);
     }
 

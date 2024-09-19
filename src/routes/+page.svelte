@@ -3,10 +3,12 @@
     import {onMount} from "svelte";
     import {checkForAppUpdates} from "$lib/updater";
     import {invoke} from "@tauri-apps/api/core";
+    import {store} from "$models";
 
     onMount(async () => {
         await checkForAppUpdates();
-        await invoke("get_license");
+        // await store.set("license", '');
+        // await store.save();
     })
 
 </script>

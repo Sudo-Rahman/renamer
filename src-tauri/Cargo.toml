@@ -24,8 +24,10 @@ sys-locale = "0.3.1"
 tauri-plugin-store = "2.0.0-rc"
 tauri-plugin-process = "2.0.0-rc"
 mid = "3"
-online = { version = "4.0.0" }
+online = { version = "4" }
 reqwest = { version = "0", features = ["json"] }
+lazy_static = "1"
+tokio = { version = "1.0", features = ["full"] }
 
 
 

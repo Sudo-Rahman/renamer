@@ -5,13 +5,13 @@
     import LeftSide from "./ui/LeftSide.svelte";
     import {type SettingsRoute, settingsRouteList} from "./settings";
     import {t} from "$lib/translations";
-    import {fade} from "svelte/transition";
+    import {onMount} from "svelte";
+    import {page} from "$app/stores";
 
-
-    let currentRoute: SettingsRoute = settingsRouteList[0];
+    let currentRoute: SettingsRoute;
+    currentRoute = settingsRouteList[parseInt($page.url.searchParams.get('page') ?? "0")] ?? settingsRouteList[0];
 
     function onRouteChange(route: CustomEvent<SettingsRoute>) {
-        console.log(route);
         currentRoute = route.detail;
     }
 
@@ -20,7 +20,7 @@
 
 <div class="flex w-full h-full">
 
-    <LeftSide on:routeChange={onRouteChange}/>
+    <LeftSide bind:activeRoute={currentRoute} on:routeChange={onRouteChange}/>
 
 
     <div class="flex flex-col w-full h-full p-4">

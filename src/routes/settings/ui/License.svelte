@@ -6,46 +6,68 @@
     import {Button} from "$lib/components/ui/button";
     import SettingsItemCard from "./SettingsItemCard.svelte";
     import {message} from "@tauri-apps/plugin-dialog";
-    import type {User} from "$models/User";
+    import {onMount} from "svelte";
 
-    let user: User = {
-        key: "",
-        email: "",
-    } as User;
+    let key: string = '';
     let valide: boolean | null = null;
 
-    invoke("get_license").then(async (response) => {
-            if (response) {
-                response = JSON.parse(response as string);
-                user = response as User;
-                await checkLicenseKey();
-            } else {
-                valide = false;
-            }
-        },
-        (error) => {
-            valide = false;
-        });
+    onMount(async () => {
+        await checkLicense();
+    });
 
-
-    async function checkLicenseKey() {
+    async function checkLicense() {
         if (!window.navigator.onLine) {
             valide = false;
             return;
         } else {
             try {
-                let response: any = await invoke("check_licence", {user: user});
+                let response: any = await invoke("is_license_ok");
                 response = JSON.parse(response as string);
-                console.log(user.key);
-                valide = response.key === user.key;
-                console.log(valide);
+                valide = response as boolean;
             } catch (e) {
+                switch (e) {
+                    case 1:
+                        break;
+                    default:
+                        await message('An error occurred', {kind: 'error'});
+
+                }
                 console.log(e);
-                await message('Invalid License Key', {kind: 'error'});
                 valide = false;
                 return;
             }
         }
+    }
+
+    function activate_license() {
+        if (key === '') return;
+        invoke("activate_license", {"key": key}).then(
+            (response) => {
+                valide = response as boolean;
+            },
+            async (error) => {
+                console.log(error);
+                switch (error) {
+                    case 1:
+                        await message('An error occurred', {kind: 'error'});
+                        break;
+                    default :
+                        await message('The license is not valid or already used', {kind: 'error'});
+                }
+            }
+        )
+    }
+
+    function remove_license() {
+        invoke("remove_license").then(
+            (response) => {
+                valide = false
+            },
+            async (error) => {
+                console.log(error);
+                await message('An error occurred', {kind: 'error'});
+            }
+        )
     }
 
 </script>
@@ -63,20 +85,17 @@
             </div>
 
             <div class="flex w-full space-x-5">
-                <Input bind:value={user.key} type="text" class="min-w-80"
+                <Input bind:value={key} type="text" class="min-w-80"
                        placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"/>
-                <Button class="w-1/4" on:click={checkLicenseKey}>Check</Button>
+                <Button class="w-1/4" on:click={activate_license}>Check</Button>
             </div>
         </SettingsItemCard>
 
         {#if valide === true}
             <SettingsItemCard>
-                <div class="flex flex-col items-center w-full h-full">
-                    <span class="flex justify-center w-full text-green-500">License Key is valid</span>
-                    <div class="flex justify-between w-full">
-                        <span>You can remove the license in this Pc and use it in other Pc.</span>
-                        <Button class="w-1/4">Remove</Button>
-                    </div>
+                <div class="flex justify-between items-center w-full h-full">
+                    <span class="text-green-500">License Key is valid</span>
+                    <Button class="w-1/4" on:click={remove_license}>Remove license</Button>
                 </div>
             </SettingsItemCard>
         {/if}

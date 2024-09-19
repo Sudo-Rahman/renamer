@@ -53,7 +53,7 @@
     async function getFolder() {
         try {
             getFilesFromFileDialog("Folder").then(value => {
-                if(value.length > 0) {
+                if (value.length > 0) {
                     files = value;
                     toast.success($t('toast.import_files.success'));
                 }
@@ -67,7 +67,7 @@
     async function getFiles() {
         try {
             getFilesFromFileDialog("Files").then(value => {
-                if(value.length > 0) {
+                if (value.length > 0) {
                     files = value;
                     toast.success($t('toast.import_files.success'));
                 }
@@ -147,11 +147,11 @@
             <Menubar.Menu>
                 <Menubar.Trigger>{$t('menu_bar.preset.title')}</Menubar.Trigger>
                 <Menubar.Content>
-                    <Menubar.Item on:click={onSavePreset} disabled={saveDisable()}>
+                    <Menubar.Item disabled={saveDisable()} on:click={onSavePreset}>
                         {$t('menu_bar.preset.save')}
                         <Menubar.Shortcut>⌘S</Menubar.Shortcut>
                     </Menubar.Item>
-                    <Menubar.Item on:click={onSaveAsPreset} disabled={$formatters.formatters.length === 0 ?? false}>
+                    <Menubar.Item disabled={$formatters.formatters.length === 0 ?? false} on:click={onSaveAsPreset}>
                         {$t('menu_bar.preset.save_as')}
                         <Menubar.Shortcut>⌘⇧S</Menubar.Shortcut>
                     </Menubar.Item>
@@ -165,8 +165,8 @@
 
 
         <div class="flex w-full justify-end">
-            <Button variant="outline" size="icon" class="h-9 w-10 active:bg-primary" on:click={onRenameFiles}
-                    disabled="{!($renamable)}">
+            <Button class="h-9 w-10 active:bg-primary" disabled="{!($renamable)}" on:click={onRenameFiles} size="icon"
+                    variant="outline">
                 <Play/>
             </Button>
         </div>

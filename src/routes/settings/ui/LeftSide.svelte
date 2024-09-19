@@ -1,12 +1,8 @@
 <script lang="ts">
     import {type SettingsRoute, settingsRouteList, SettingsRoutes} from "../settings";
-    import {createEventDispatcher} from "svelte";
     import {t} from "$lib/translations";
 
-    let activeRoute: SettingsRoute = settingsRouteList[0];
-
-    let dispatch = createEventDispatcher();
-
+    export let activeRoute: SettingsRoute;
 
 </script>
 
@@ -18,7 +14,7 @@
     <div class="flex flex-col space-y-3">
         {#each settingsRouteList as route}
             <button class="p-3 rounded-xl items-center text-left w-full flex {route === activeRoute ? 'bg-primary': ''}"
-                    on:click={() => {activeRoute = route; dispatch('routeChange', route)}}>
+                    on:click={() => {activeRoute = route}}>
                 <svelte:component this={route.icon} class="aspect-square h-full mr-5"/>
                 {$t(route.title)}
             </button>

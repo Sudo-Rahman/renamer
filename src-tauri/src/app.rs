@@ -1,45 +1,32 @@
 #![allow(unused)]
 
-use std::string::ToString;
+use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
-use tauri::Manager;
-use tauri_plugin_store::StoreCollection;
-use crate::utils::*;
-use crate::auth::*;
+use std::string::ToString;
+use tokio::sync::Mutex;
+use std::sync::Arc;
 
 #[derive(Clone, Deserialize, Serialize, Debug)]
 pub(crate) struct User {
     pub(crate) license_key: String,
     pub(crate) email: String,
 }
-pub(crate) struct App {}
+
+#[derive(Debug, Default)]
+pub(crate) struct App {
+    pub(crate) license: bool,
+}
+
+lazy_static! {
+    pub(crate) static ref APPLICATION: Arc<Mutex<App>> = Arc::new(Mutex::new(App::default()));
+}
 
 impl App {
-    pub(crate) fn name_store() -> String {
-        return "renamer".to_string();
+    pub(crate) fn set_license(&mut self, license: bool) {
+        self.license = license;
     }
 
-    pub fn new() -> Self {
-        tauri::Builder::default()
-            .plugin(tauri_plugin_process::init())
-            .plugin(tauri_plugin_updater::Builder::new().build())
-            .plugin(tauri_plugin_store::Builder::new().build())
-            .plugin(tauri_plugin_dialog::init())
-            .plugin(tauri_plugin_fs::init())
-            .plugin(tauri_plugin_shell::init())
-            .plugin(tauri_plugin_os::init())
-            .invoke_handler(tauri::generate_handler![
-            list_files_in_directory,
-            files_from_vec,
-            rename_files,
-            check_files_names,
-            get_system_language,
-            check_licence,
-            get_license,
-            save_license
-        ])
-            .run(tauri::generate_context!())
-            .expect("error while running tauri application");
-        App {}
+    pub(crate) fn name_store() -> String {
+        "renamer".to_string()
     }
 }

@@ -1,11 +1,11 @@
 #![allow(unused)]
 
-use crate::app::App;
+use crate::app::{App, APPLICATION};
 use serde_json::Value::Null;
 use serde_json::{json, Value};
 use std::path::PathBuf;
 use std::str::FromStr;
-use reqwest::Client;
+use reqwest::{Client, StatusCode};
 
 extern crate mid;
 use tauri::{Manager, Wry};
@@ -27,7 +27,7 @@ pub async fn check_licence(user: Value) -> Result<String, String> {
         .send()
         .await
         .map_err(|e| e.to_string())?;
-    
+
     if res.status().is_success() {
         let text = res.text().await.map_err(|e| e.to_string())?;
         Ok(text)
@@ -80,29 +80,98 @@ pub(crate) async fn is_license_ok(app: tauri::AppHandle) -> Result<bool, i8> {
     let license = get_license(app.clone()).await;
     match license {
         Ok(license) => {
-            println!("License: {:?}", license);
             if license.is_empty() {
-                return Ok(false);
+                return Err(2);
             }
 
             let user = serde_json::Value::from_str(license.as_str()).unwrap();
             let machine_id = user["machine_id"].as_str();
             if (online::check(None).is_ok()) {
-                // let res = check_licence(app.clone(), user["key"].as_str().unwrap()).await;
-                Ok(true)
+                let res = check_licence(
+                    json!({
+                        "email": user["email"],
+                        "key": user["key"]
+                    })
+                ).await;
+                match res {
+                    Ok(res) => {
+                        Ok(res == license)
+                    }
+                    Err(_) => {
+                        Err(1)
+                    }
+                }
             } else {
                 if machine_id.is_none() {
-                    return Ok(false);
+                    return Err(1);
                 }
                 Ok(machine_id.unwrap() == get_machine_id() && user["email"].as_str().is_some() && user["key"].as_str().is_some())
             }
         }
         Err(_) => {
-            Ok(false)
+            Err(1)
         }
     }
 }
 
+#[tauri::command]
+pub(crate) async fn activate_license(app: tauri::AppHandle, key: String) -> Result<bool, i8> {
+    let application = APPLICATION.clone();
+    application.lock().await.set_license(false);
+    let client = Client::new();
+
+    let license = json!({
+       "key" : key,
+        "machine_id": get_machine_id()
+    });
+
+    let res = client.get(format!("{}activate_license", API_URL))
+        .json(&license)
+        .send()
+        .await.or_else(|_| Err(1))?;
+
+    if res.status().is_success() {
+        let text = res.text().await;
+        if (text.is_err()) {
+            return Err(1);
+        }
+        let user = serde_json::Value::from_str(text.unwrap().as_str()).unwrap();
+        save_license(app.clone(), user).await?;
+        application.lock().await.set_license(true);
+        Ok(true)
+    } else if res.status() == StatusCode::UNAUTHORIZED {
+        Err(2)
+    } else {
+        Err(1)
+    }
+}
+
 pub(crate) fn get_machine_id() -> String {
-    mid::get("renamer").unwrap()
+    mid::get("383441314b796e4723444550584a656d664056436566442e5b2532655b44473e23436273713345794558572855547140545766344545735b70786e6a30364250").unwrap()
+}
+
+#[tauri::command]
+pub(crate) async fn remove_license(app: tauri::AppHandle) -> Result<bool, i8> {
+    let license = get_license(app.clone()).await;
+    if license.is_err() {
+        return Err(1);
+    }
+    let json = serde_json::Value::from_str(license.unwrap().as_str()).unwrap();
+    let client = Client::new();
+    client.post(format!("{}clear_license", API_URL))
+        .json(&json!({
+            "email": json["email"],
+            "key": json["key"]
+        }).to_string())
+        .send()
+        .await.or_else(|_| Err(1))?;
+
+    let stores = app.try_state::<StoreCollection<Wry>>().ok_or(1)?;
+    let license = with_store(app.clone(), stores, PathBuf::from(App::name_store()), |store| {
+        store.insert("license".to_string(), json!(null))?;
+        // store.save()?;
+        Ok(true)
+    });
+    APPLICATION.lock().await.set_license(false);
+    Ok(license.unwrap())
 }

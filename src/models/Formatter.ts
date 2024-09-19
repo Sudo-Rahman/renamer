@@ -4,11 +4,11 @@ import dateFormat from "dateformat";
 import {Signal} from "$models/Signal";
 import {invoke} from "@tauri-apps/api/core";
 import {get, writable} from "svelte/store";
+import {message} from "@tauri-apps/plugin-dialog";
+import {goto} from "$app/navigation";
 
 
 export abstract class Formatter {
-
-    abstract format(file: RenamerFile): void;
 
     id: string;
     type: string;
@@ -16,9 +16,6 @@ export abstract class Formatter {
     protected constructor() {
         this.id = uuidv4();
         this.type = this.constructor.name;
-    }
-
-    finish(): void {
     }
 
     static fromObject(obj: any): Formatter {
@@ -56,20 +53,29 @@ export abstract class Formatter {
         return formatter;
     }
 
+    abstract format(file: RenamerFile): void;
+
+    finish(): void {
+    }
+
 }
 
 export class FormatterList {
-    private _formatters: Formatter[] = [];
-    private _renamerFiles: RenamerFile[] = [];
     public onFormattedSignal = new Signal<RenamerFile[]>();
     public onListChangedSignal = new Signal<Formatter[]>();
-    private _timer: any;
     readonly renamable = writable<boolean>(false);
     readonly errors = writable<number>(0);
-
+    private _renamerFiles: RenamerFile[] = [];
+    private _timer: any;
 
     constructor(files: RenamerFile[]) {
         this._renamerFiles = files;
+    }
+
+    private _formatters: Formatter[] = [];
+
+    public get formatters(): Formatter[] {
+        return this._formatters;
     }
 
     fromPreset(preset: Preset) {
@@ -78,27 +84,9 @@ export class FormatterList {
         this.format();
     }
 
-    private launchTimeout(func: () => void) {
-        let counter = 0;
-        if (this._timer) {
-            clearInterval(this._timer);
-        }
-        this._timer = setInterval(() => {
-            counter++;
-            if (counter === 10) {
-                clearInterval(this._timer);
-                func();
-            }
-        }, 100);
-    }
-
     public updateFiles(files: RenamerFile[]) {
         this._renamerFiles = files;
         this.format();
-    }
-
-    public get formatters(): Formatter[] {
-        return this._formatters;
     }
 
     createFormatter<T extends Formatter>(formatter: new () => T): T {
@@ -149,6 +137,68 @@ export class FormatterList {
         })
     }
 
+    async renameFiles(): Promise<void> {
+
+        if (!get(this.renamable)) {
+            throw new Error("Some files have errors");
+        }
+
+        const fileInfos = this._renamerFiles.filter(file => {
+            return file.selected;
+        }).map(
+            (file) => {
+                return {path: file.path, new_path: `${file.getDirectory()}/${file.newName}`, uuid: file.uuid}
+            }
+        );
+
+        await invoke('rename_files', {fileInfos: fileInfos}).then(
+            (res) => {
+                if (res && (res as any[]).length > 0) {
+                    (res as { status: boolean, error: number, uuid: string }[]).forEach((file) => {
+                        const f = this._renamerFiles.find((f) => f.uuid === file.uuid);
+                        if (f) {
+                            f.statusCode = file.status ? 0 : 1;
+                            f.status = file.status ? "Success" : "Error";
+                            if (file.status) {
+                                f.name = f.newName;
+                                f.onRenamed.emit();
+                            }
+                        }
+                    });
+                }
+                this.format();
+            },
+            (error) => {
+                if (error as number === 1) {
+                    message("you dont have a license", {kind: "error"}).then(
+                        (res) => {
+                            goto("settings?page=1");
+                        }
+                    )
+                }
+            }
+        );
+    }
+
+    reorderFormatter(formatters: Formatter[]): void {
+        this._formatters = formatters;
+        this.format();
+    }
+
+    private launchTimeout(func: () => void) {
+        let counter = 0;
+        if (this._timer) {
+            clearInterval(this._timer);
+        }
+        this._timer = setInterval(() => {
+            counter++;
+            if (counter === 10) {
+                clearInterval(this._timer);
+                func();
+            }
+        }, 100);
+    }
+
     private checkFilesNames() {
 
         let files = this._renamerFiles.filter(
@@ -186,48 +236,25 @@ export class FormatterList {
             }
         });
     }
-
-    async renameFiles(): Promise<void> {
-
-        if (!get(this.renamable)) {
-            throw new Error("Some files have errors");
-        }
-
-        const fileInfos = this._renamerFiles.filter(file => {
-            return file.selected;
-        }).map(
-            (file) => {
-                return {path: file.path, new_path: `${file.getDirectory()}/${file.newName}`, uuid: file.uuid}
-            }
-        );
-
-        await invoke('rename_files', {fileInfos: fileInfos}).then(
-            (res) => {
-                if (res && (res as any[]).length > 0) {
-                    (res as { status: boolean, error: number, uuid: string }[]).forEach((file) => {
-                        const f = this._renamerFiles.find((f) => f.uuid === file.uuid);
-                        if (f) {
-                            f.statusCode = file.status ? 0 : 1;
-                            f.status = file.status ? "Success" : "Error";
-                            if (file.status) {
-                                f.name = f.newName;
-                                f.onRenamed.emit();
-                            }
-                        }
-                    });
-                }
-                this.format();
-            }
-        );
-    }
-
-    reorderFormatter(formatters: Formatter[]): void {
-        this._formatters = formatters;
-        this.format();
-    }
 }
 
 export class NumberFormatter extends Formatter {
+    private _startTmp: number;
+
+    constructor() {
+        super();
+        this._start = 1;
+        this._startTmp = 1;
+        this._step = 1;
+        this._text = "";
+        this._fill = {
+            length: 0,
+            char: "0"
+        }
+    }
+
+    private _start: number;
+
     get start(): number {
         return this._start;
     }
@@ -237,6 +264,8 @@ export class NumberFormatter extends Formatter {
         this._startTmp = value;
     }
 
+    private _step: number;
+
     get step(): number {
         return this._step;
     }
@@ -245,12 +274,19 @@ export class NumberFormatter extends Formatter {
         this._step = value;
     }
 
+    private _text: string;
+
     get text(): string {
         return this._text;
     }
 
     set text(value: string) {
         this._text = value;
+    }
+
+    private _fill: {
+        length: number,
+        char: string
     }
 
     get fill(): { length: number; char: string } {
@@ -263,27 +299,6 @@ export class NumberFormatter extends Formatter {
 
     override finish(): void {
         this._start = this._startTmp;
-    }
-
-    private _start: number;
-    private _startTmp: number;
-    private _step: number;
-    private _text: string;
-    private _fill: {
-        length: number,
-        char: string
-    }
-
-    constructor() {
-        super();
-        this._start = 1;
-        this._startTmp = 1;
-        this._step = 1;
-        this._text = "";
-        this._fill = {
-            length: 0,
-            char: "0"
-        }
     }
 
     format(file: RenamerFile): void {
@@ -299,13 +314,13 @@ export class NumberFormatter extends Formatter {
 }
 
 export class ExtensionFormatter extends Formatter {
-    get customeExt(): boolean {
-        return this._customeExt;
+    constructor() {
+        super();
+        this._customeExt = false;
+        this._extension = "";
     }
 
-    set customeExt(value: boolean) {
-        this._customeExt = value;
-    }
+    private _extension: string;
 
     get extension(): string {
         return this._extension;
@@ -315,13 +330,14 @@ export class ExtensionFormatter extends Formatter {
         this._extension = value;
     }
 
-    private _extension: string;
     private _customeExt: boolean; // false = file extension, true = custom extension
 
-    constructor() {
-        super();
-        this._customeExt = false;
-        this._extension = "";
+    get customeExt(): boolean {
+        return this._customeExt;
+    }
+
+    set customeExt(value: boolean) {
+        this._customeExt = value;
     }
 
     format(file: RenamerFile): void {
@@ -336,17 +352,6 @@ export class ExtensionFormatter extends Formatter {
 }
 
 export class CreationDateFormatter extends Formatter {
-    get dateFormat(): string {
-        return this._dateFormat;
-    }
-
-    set dateFormat(value: string) {
-        if (!CreationDateFormatter.Format.includes(value)) {
-            throw new Error("Invalid date format");
-        }
-        this._dateFormat = value;
-    }
-
     public static readonly Format = [
         // "yyyy-mm-dd",
         // "dd-mm-yyyy",
@@ -362,6 +367,17 @@ export class CreationDateFormatter extends Formatter {
     }
 
     private _dateFormat: string;
+
+    get dateFormat(): string {
+        return this._dateFormat;
+    }
+
+    set dateFormat(value: string) {
+        if (!CreationDateFormatter.Format.includes(value)) {
+            throw new Error("Invalid date format");
+        }
+        this._dateFormat = value;
+    }
 
     format(file: RenamerFile): void {
         file.newName += dateFormat(file.creationDate, this._dateFormat);
@@ -380,6 +396,15 @@ export class CasesFormatter extends Formatter {
         "kebab_case",
     ];
 
+    constructor() {
+        super();
+        this._case = CasesFormatter.Cases[0];
+        this._mode = 0;
+        this._removeSpaces = false;
+    }
+
+    private _case: string;
+
     get case(): string {
         return this._case;
     }
@@ -391,6 +416,8 @@ export class CasesFormatter extends Formatter {
         this._case = value;
     }
 
+    private _mode: 0 | 1; // "FileName" | "FormattedName"
+
     get mode(): 0 | 1 {
         return this._mode;
     }
@@ -399,23 +426,14 @@ export class CasesFormatter extends Formatter {
         this._mode = value;
     }
 
+    private _removeSpaces: boolean;
+
     get removeSpaces(): boolean {
         return this._removeSpaces;
     }
 
     set removeSpaces(value: boolean) {
         this._removeSpaces = value;
-    }
-
-    private _case: string;
-    private _mode: 0 | 1; // "FileName" | "FormattedName"
-    private _removeSpaces: boolean;
-
-    constructor() {
-        super();
-        this._case = CasesFormatter.Cases[0];
-        this._mode = 0;
-        this._removeSpaces = false;
     }
 
     format(file: RenamerFile): void {
@@ -456,19 +474,19 @@ export class CasesFormatter extends Formatter {
 
 export class RemoveFormatter extends Formatter {
 
+    private _texts: string[];
+
+    constructor() {
+        super();
+        this._texts = [];
+    }
+
     get text(): string[] {
         return this._texts;
     }
 
     set text(value: string[]) {
         this._texts = value;
-    }
-
-    private _texts: string[];
-
-    constructor() {
-        super();
-        this._texts = [];
     }
 
     format(file: RenamerFile): void {
@@ -483,20 +501,19 @@ export class RemoveFormatter extends Formatter {
 
 
 export class OriginalFileNameFormatter extends Formatter {
+    constructor() {
+        super();
+        this._withExtension = true;
+    }
+
+    private _withExtension: boolean;
+
     get withExtension(): boolean {
         return this._withExtension;
     }
 
     set withExtension(value: boolean) {
         this._withExtension = value;
-    }
-
-
-    private _withExtension: boolean;
-
-    constructor() {
-        super();
-        this._withExtension = true;
     }
 
     format(file: RenamerFile): void {
@@ -506,29 +523,16 @@ export class OriginalFileNameFormatter extends Formatter {
 
 
 export class RegexFormatter extends Formatter {
-    get all(): boolean {
-        return this._all;
+    constructor() {
+        super();
+        this._regex = "";
+        this._replace = "";
+        this._all = true;
+        this._startPos = 0;
+        this._endPos = 0;
     }
 
-    set all(value: boolean) {
-        this._all = value;
-    }
-
-    get startPos(): number {
-        return this._startPos;
-    }
-
-    set startPos(value: number) {
-        this._startPos = value;
-    }
-
-    get endPos(): number {
-        return this._endPos;
-    }
-
-    set endPos(value: number) {
-        this._endPos = value;
-    }
+    private _regex: string;
 
     get regex(): string {
         return this._regex;
@@ -538,6 +542,8 @@ export class RegexFormatter extends Formatter {
         this._regex = value;
     }
 
+    private _replace: string;
+
     get replace(): string {
         return this._replace;
     }
@@ -546,19 +552,34 @@ export class RegexFormatter extends Formatter {
         this._replace = value;
     }
 
-    private _regex: string;
-    private _replace: string;
     private _all: boolean;
+
+    get all(): boolean {
+        return this._all;
+    }
+
+    set all(value: boolean) {
+        this._all = value;
+    }
+
     private _startPos: number
+
+    get startPos(): number {
+        return this._startPos;
+    }
+
+    set startPos(value: number) {
+        this._startPos = value;
+    }
+
     private _endPos: number;
 
-    constructor() {
-        super();
-        this._regex = "";
-        this._replace = "";
-        this._all = true;
-        this._startPos = 0;
-        this._endPos = 0;
+    get endPos(): number {
+        return this._endPos;
+    }
+
+    set endPos(value: number) {
+        this._endPos = value;
     }
 
     format(file: RenamerFile): void {
@@ -582,6 +603,13 @@ export class RegexFormatter extends Formatter {
 }
 
 export class BasicTextFormatter extends Formatter {
+    constructor() {
+        super();
+        this._text = "";
+    }
+
+    private _text: string;
+
     get text(): string {
         return this._text;
     }
@@ -590,19 +618,43 @@ export class BasicTextFormatter extends Formatter {
         this._text = value;
     }
 
-    private _text: string;
-
-    constructor() {
-        super();
-        this._text = "";
-    }
-
     format(file: RenamerFile): void {
         file.newName += this._text;
     }
 }
 
 export class SizeFormatter extends Formatter {
+    static readonly units = ["Byte", "KB", "MB", "GB"];
+
+    constructor() {
+        super();
+        this._unit = "Byte";
+        this._text = "";
+        this._digits_of_precision = 2;
+    }
+
+    private _unit: "Byte" | "KB" | "MB" | "GB";
+
+    get unit(): "Byte" | "KB" | "MB" | "GB" {
+        return this._unit;
+    }
+
+    set unit(value: "Byte" | "KB" | "MB" | "GB") {
+        this._unit = value;
+    }
+
+    private _text: string;
+
+    get text(): string {
+        return this._text;
+    }
+
+    set text(value: string) {
+        this._text = value;
+    }
+
+    private _digits_of_precision: number;
+
     get digits_of_precision(): number {
         return this._digits_of_precision;
     }
@@ -614,33 +666,8 @@ export class SizeFormatter extends Formatter {
         this._digits_of_precision = value;
     }
 
-    get text(): string {
-        return this._text;
-    }
-
-    set text(value: string) {
-        this._text = value;
-    }
-
-    get unit(): "Byte" | "KB" | "MB" | "GB" {
-        return this._unit;
-    }
-
-    static readonly units = ["Byte", "KB", "MB", "GB"];
-
-    set unit(value: "Byte" | "KB" | "MB" | "GB") {
-        this._unit = value;
-    }
-
-    private _unit: "Byte" | "KB" | "MB" | "GB";
-    private _text: string;
-    private _digits_of_precision: number;
-
-    constructor() {
-        super();
-        this._unit = "Byte";
-        this._text = "";
-        this._digits_of_precision = 2;
+    format(file: RenamerFile): void {
+        file.newName += this.convertSize(file.size) + this._text;
     }
 
     private convertSize(fileSize: number): string {
@@ -661,10 +688,6 @@ export class SizeFormatter extends Formatter {
         }
         size = parseFloat(size.toFixed(this._digits_of_precision));
         return size.toString();
-    }
-
-    format(file: RenamerFile): void {
-        file.newName += this.convertSize(file.size) + this._text;
     }
 
 }

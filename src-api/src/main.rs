@@ -13,6 +13,7 @@ use axum::{
 };
 use serde_json::json;
 use std::process::exit;
+use axum::routing::post;
 use mongodb::bson;
 use uuid::{Timestamp, Uuid};
 use crate::controllers::*;
@@ -21,8 +22,8 @@ use crate::models::ServerConfig;
 
 #[tokio::main]
 async fn main() {
-    let db = Mongo::new().await.unwrap_or_else(|_| {
-        eprintln!("Failed to connect to the database");
+    let db = Mongo::new().await.unwrap_or_else(|e| {
+        eprintln!("Failed to connect to the database: {}", e);
         exit(1);
     });
 
@@ -30,7 +31,9 @@ async fn main() {
 
     let app = Router::new()
         .route("/users", get(get_all_users))
-        .route("/license", get(handle_get_license))
+        .route("/license", get(get_license))
+        .route("/activate_license", get(activate_licence))
+        .route("/clear_license", post(clear_license))
         .route("/create", get(create_user))
         .with_state(config);
 
