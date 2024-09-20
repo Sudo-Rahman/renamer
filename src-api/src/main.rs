@@ -3,8 +3,10 @@ mod db;
 mod models;
 mod controllers;
 
+use std::collections::HashMap;
 use axum::extract::ConnectInfo;
-use std::net::SocketAddr;
+use std::net::{IpAddr, SocketAddr};
+use tower::{buffer::BufferLayer, limit::RateLimitLayer, BoxError, ServiceBuilder};
 use axum::{
     extract::{Path, State},
     http::StatusCode,
@@ -13,12 +15,27 @@ use axum::{
 };
 use serde_json::json;
 use std::process::exit;
+use std::time::Duration;
+use axum::error_handling::HandleErrorLayer;
 use axum::routing::post;
 use mongodb::bson;
+use tower_http::trace::TraceLayer;
 use uuid::{Timestamp, Uuid};
 use crate::controllers::*;
 use crate::db::*;
 use crate::models::ServerConfig;
+
+const ip_map: HashMap<IpAddr, u64> = HashMap::new();
+async fn rate_limit_by_ip(
+    remote_addr: Option<IpAddr>,
+) -> Result<(), (StatusCode, String)> {
+    let ip = remote_addr.unwrap();
+    let count = ip_map.get(&ip).unwrap_or(&0);
+    if count > &100 {
+        return Err((StatusCode::TOO_MANY_REQUESTS, "Rate limit exceeded".to_string()));
+    }
+    Ok(())
+}
 
 #[tokio::main]
 async fn main() {
@@ -32,10 +49,21 @@ async fn main() {
     let app = Router::new()
         .route("/users", get(get_all_users))
         .route("/license", get(get_license))
-        .route("/activate_license", get(activate_licence))
+        .route("/activate_license", post(activate_licence))
         .route("/clear_license", post(clear_license))
-        .route("/create", get(create_user))
-        .with_state(config);
+        .route("/create", post(create_user))
+        .with_state(config)
+        .layer(
+            ServiceBuilder::new()
+                .layer(HandleErrorLayer::new(|err: BoxError| async move {
+                    (
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        format!("Unhandled error: {}", err),
+                    )
+                }))
+                .layer(BufferLayer::new(1024))
+                .layer(RateLimitLayer::new(10000, Duration::from_secs(60))),
+        );
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
 

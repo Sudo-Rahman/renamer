@@ -6,6 +6,7 @@ import {invoke} from "@tauri-apps/api/core";
 import {get, writable} from "svelte/store";
 import {message} from "@tauri-apps/plugin-dialog";
 import {goto} from "$app/navigation";
+import {toast} from "svelte-sonner";
 
 
 export abstract class Formatter {
@@ -167,6 +168,7 @@ export class FormatterList {
                     });
                 }
                 this.format();
+                toast.success("Files renamed successfully");
             },
             (error) => {
                 if (error as number === 1) {

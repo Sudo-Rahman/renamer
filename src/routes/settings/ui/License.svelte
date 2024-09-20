@@ -7,6 +7,7 @@
     import SettingsItemCard from "./SettingsItemCard.svelte";
     import {message} from "@tauri-apps/plugin-dialog";
     import {onMount} from "svelte";
+    import {toast} from "svelte-sonner";
 
     let key: string = '';
     let valide: boolean | null = null;
@@ -62,6 +63,9 @@
         invoke("remove_license").then(
             (response) => {
                 valide = false
+                toast.success("Event has been created", {
+                    description: "Sunday, December 03, 2023 at 9:00 AM",
+                })
             },
             async (error) => {
                 console.log(error);
@@ -77,7 +81,7 @@
     <div class="flex justify-center items-center w-full h-full">
         <CircularProgress class="w-20 h-20"/>
     </div>
-{:else}
+{:else if valide === false}
     <div class="flex flex-col space-y-2">
         <SettingsItemCard>
             <div class="grid w-full max-w-sm  gap-1.5">
@@ -90,15 +94,12 @@
                 <Button class="w-1/4" on:click={activate_license}>Check</Button>
             </div>
         </SettingsItemCard>
-
-        {#if valide === true}
-            <SettingsItemCard>
-                <div class="flex justify-between items-center w-full h-full">
-                    <span class="text-green-500">License Key is valid</span>
-                    <Button class="w-1/4" on:click={remove_license}>Remove license</Button>
-                </div>
-            </SettingsItemCard>
-        {/if}
-
     </div>
+{:else}
+    <SettingsItemCard>
+        <div class="flex justify-between items-center w-full h-full">
+            <span class="text-green-500">License Key is valid</span>
+            <Button class="w-1/4" on:click={remove_license}>Remove license</Button>
+        </div>
+    </SettingsItemCard>
 {/if}

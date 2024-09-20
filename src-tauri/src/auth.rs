@@ -5,6 +5,7 @@ use serde_json::Value::Null;
 use serde_json::{json, Value};
 use std::path::PathBuf;
 use std::str::FromStr;
+use std::thread::available_parallelism;
 use reqwest::{Client, StatusCode};
 
 extern crate mid;
@@ -125,7 +126,7 @@ pub(crate) async fn activate_license(app: tauri::AppHandle, key: String) -> Resu
         "machine_id": get_machine_id()
     });
 
-    let res = client.get(format!("{}activate_license", API_URL))
+    let res = client.post(format!("{}activate_license", API_URL))
         .json(&license)
         .send()
         .await.or_else(|_| Err(1))?;
@@ -158,18 +159,18 @@ pub(crate) async fn remove_license(app: tauri::AppHandle) -> Result<bool, i8> {
     }
     let json = serde_json::Value::from_str(license.unwrap().as_str()).unwrap();
     let client = Client::new();
-    client.post(format!("{}clear_license", API_URL))
+    let res = client.post(format!("{}clear_license", API_URL))
         .json(&json!({
-            "email": json["email"],
-            "key": json["key"]
-        }).to_string())
+        "email": json["email"].as_str(),
+        "key": json["key"].as_str()
+    }))
         .send()
         .await.or_else(|_| Err(1))?;
 
     let stores = app.try_state::<StoreCollection<Wry>>().ok_or(1)?;
     let license = with_store(app.clone(), stores, PathBuf::from(App::name_store()), |store| {
         store.insert("license".to_string(), json!(null))?;
-        // store.save()?;
+        store.save()?;
         Ok(true)
     });
     APPLICATION.lock().await.set_license(false);

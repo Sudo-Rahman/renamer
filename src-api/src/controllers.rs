@@ -125,7 +125,6 @@ pub(crate) async fn clear_license(
     let email = payload["email"].as_str().ok_or_else(|| {
         (StatusCode::BAD_REQUEST, "Invalid or missing machine_id".to_string())
     })?;
-    println!("{:?}", payload);
     match config.db.clear_license(
         &bson::doc! {
             "email": email,

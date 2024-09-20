@@ -7,8 +7,6 @@
 
     onMount(async () => {
         await checkForAppUpdates();
-        // await store.set("license", '');
-        // await store.save();
     })
 
 </script>
