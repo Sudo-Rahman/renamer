@@ -2,8 +2,6 @@
     import InputFiles from "$lib/components/InputFiles.svelte";
     import {onMount} from "svelte";
     import {checkForAppUpdates} from "$lib/updater";
-    import {invoke} from "@tauri-apps/api/core";
-    import {store} from "$models";
 
     onMount(async () => {
         await checkForAppUpdates();

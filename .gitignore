@@ -13,3 +13,4 @@ vite.config.ts.timestamp-*
 renamer-api/target/
 
 latest.json
+/renamer-api/Cargo.lock

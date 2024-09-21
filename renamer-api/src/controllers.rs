@@ -93,6 +93,7 @@ pub async fn activate_licence(
             "key": Uuid::parse_str(key).unwrap(),
         }
     ).await.unwrap();
+    println!("{:?}", user);
 
     match user {
         Some(user) => {

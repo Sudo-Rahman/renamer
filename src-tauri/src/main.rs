@@ -1,18 +1,18 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod app;
+mod auth;
 mod rename_file;
 mod utils;
-mod auth;
-mod app;
 
 use crate::app::APPLICATION;
 use crate::auth::*;
 use crate::utils::*;
 
 fn main() {
-    tauri::Builder::default().
-        setup(setup)
+    tauri::Builder::default()
+        .setup(setup)
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_store::Builder::new().build())
@@ -36,7 +36,6 @@ fn main() {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
-
 
 fn setup<'a>(app: &'a mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let handle = app.handle().clone();

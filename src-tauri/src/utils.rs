@@ -38,8 +38,8 @@ pub fn files_from_vec(files: Vec<String>) -> Result<Vec<RenameFile>, String> {
     Ok(files_vec)
 }
 
-use serde::{Deserialize, Serialize};
 use crate::app::APPLICATION;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct FileRenameInfo {

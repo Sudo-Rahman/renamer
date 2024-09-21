@@ -3,8 +3,8 @@
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use std::string::ToString;
-use tokio::sync::Mutex;
 use std::sync::Arc;
+use tokio::sync::Mutex;
 
 #[derive(Clone, Deserialize, Serialize, Debug)]
 pub(crate) struct User {
