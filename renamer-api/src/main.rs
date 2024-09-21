@@ -3,39 +3,19 @@ mod db;
 mod models;
 mod controllers;
 
-use std::collections::HashMap;
-use axum::extract::ConnectInfo;
 use std::net::{IpAddr, SocketAddr};
 use tower::{buffer::BufferLayer, limit::RateLimitLayer, BoxError, ServiceBuilder};
 use axum::{
-    extract::{Path, State},
     http::StatusCode,
-    routing::{get, patch},
-    Json, Router,
+    routing::{get}, Router,
 };
-use serde_json::json;
 use std::process::exit;
 use std::time::Duration;
 use axum::error_handling::HandleErrorLayer;
 use axum::routing::post;
-use mongodb::bson;
-use tower_http::trace::TraceLayer;
-use uuid::{Timestamp, Uuid};
 use crate::controllers::*;
 use crate::db::*;
 use crate::models::ServerConfig;
-
-const ip_map: HashMap<IpAddr, u64> = HashMap::new();
-async fn rate_limit_by_ip(
-    remote_addr: Option<IpAddr>,
-) -> Result<(), (StatusCode, String)> {
-    let ip = remote_addr.unwrap();
-    let count = ip_map.get(&ip).unwrap_or(&0);
-    if count > &100 {
-        return Err((StatusCode::TOO_MANY_REQUESTS, "Rate limit exceeded".to_string()));
-    }
-    Ok(())
-}
 
 #[tokio::main]
 async fn main() {
