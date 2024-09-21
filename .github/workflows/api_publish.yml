@@ -22,10 +22,8 @@ jobs:
       - name: Build
         run: |
           cd renamer-api
-          pwd
           rustup target add x86_64-unknown-linux-musl
           cargo build --release --target x86_64-unknown-linux-musl
-          ls target/x86_64-unknown-linux-musl/release
 
       - name: Install sshpass
         run: sudo apt-get install sshpass
@@ -37,8 +35,7 @@ jobs:
           PASS: ${{ secrets.SERVER_PASS }}
         run: |
           # Copier le binaire et les fichiers nécessaires
-          pwd
-          
+          cd renamer-api
           sshpass -p "$PASS" scp -o StrictHostKeyChecking=no target/x86_64-unknown-linux-musl/release/renamer-api $USER@$HOST:/www/api/renamer/
           sshpass -p "$PASS" scp -o StrictHostKeyChecking=no .env $USER@$HOST:/www/api/renamer/
           sshpass -p "$PASS" scp -o StrictHostKeyChecking=no Dockerfile $USER@$HOST:/www/api/renamer/
