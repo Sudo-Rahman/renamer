@@ -35,9 +35,9 @@ jobs:
           PASS: ${{ secrets.SERVER_PASS }}
         run: |
           # Copier le binaire et les fichiers nécessaires
-          sshpass -p "$PASS" scp -o StrictHostKeyChecking=no renamer-api/target/x86_64-unknown-linux-musl/release/renamer-api $USER@$HOST:/www/api/renamer/renamer-api
-          sshpass -p "$PASS" scp -o StrictHostKeyChecking=no renamer-api/.env $USER@$HOST:/www/api/renamer/.env
-          sshpass -p "$PASS" scp -o StrictHostKeyChecking=no renamer-api/Dockerfile $USER@$HOST:/www/api/renamer/Dockerfile
+          sshpass -p "$PASS" scp -o StrictHostKeyChecking=no renamer-api/target/x86_64-unknown-linux-musl/release/renamer-api $USER@$HOST:/www/api/renamer/
+          sshpass -p "$PASS" scp -o StrictHostKeyChecking=no renamer-api/.env $USER@$HOST:/www/api/renamer/
+          sshpass -p "$PASS" scp -o StrictHostKeyChecking=no renamer-api/Dockerfile $USER@$HOST:/www/api/renamer/
           
           # Exécuter des commandes sur le serveur distant
           sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no $USER@$HOST << EOF
