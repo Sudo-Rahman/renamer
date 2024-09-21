@@ -16,7 +16,7 @@ use tauri_plugin_store::{with_store, StoreCollection};
 pub const API_URL: &str = "http://localhost:3000/";
 
 #[cfg(not(debug_assertions))]
-pub const API_URL: &str = "https://api.votreapp.com";
+pub const API_URL: &str = "https://api.renamer.sudo-rahman.fr";
 
 
 #[tauri::command]
