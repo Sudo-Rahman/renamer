@@ -168,16 +168,9 @@ export class FormatterList {
                     });
                 }
                 this.format();
-                toast.success("Files renamed successfully");
             },
             (error) => {
-                if (error as number === 1) {
-                    message("you dont have a license", {kind: "error"}).then(
-                        (res) => {
-                            goto("settings?page=1");
-                        }
-                    )
-                }
+                throw error;
             }
         );
     }

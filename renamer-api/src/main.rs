@@ -27,7 +27,7 @@ async fn main() {
     let config = ServerConfig { db };
 
     let mut app = Router::new()
-        .route("/license", get(get_license))
+        .route("/license", post(get_license))
         .route("/activate_license", post(activate_licence))
         .route("/clear_license", post(clear_license))
         .route("/create", post(create_user));

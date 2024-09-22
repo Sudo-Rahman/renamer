@@ -11,6 +11,7 @@
     import CreatePreset from "$lib/components/SavePresetDialog.svelte";
     import PresetListDialog from "$lib/components/PresetListDialog.svelte";
     import {goto} from "$app/navigation";
+    import {message} from "@tauri-apps/plugin-dialog";
 
     export let files: RenamerFile[] = [];
 
@@ -84,7 +85,18 @@
                 toast.success($t('toast.rename_files.success'));
             },
             (error) => {
-                toast.error($t('toast.rename_files.error'));
+                if (error as number === 1) {
+                    message($t('message.no_license.message'), {
+                        title: $t('message.no_license.title'),
+                        kind: "error"
+                    }).then(
+                        (res) => {
+                            goto("settings?page=1");
+                        }
+                    )
+                } else {
+                    toast.error($t('toast.rename_files.error'));
+                }
                 console.error(error);
             }
         );
@@ -151,7 +163,7 @@
                         {$t('menu_bar.preset.save')}
                         <Menubar.Shortcut>⌘S</Menubar.Shortcut>
                     </Menubar.Item>
-                    <Menubar.Item disabled={$formatters.formatters.length === 0 ?? false} on:click={onSaveAsPreset}>
+                    <Menubar.Item disabled={$formatters.formatters.length === 0} on:click={onSaveAsPreset}>
                         {$t('menu_bar.preset.save_as')}
                         <Menubar.Shortcut>⌘⇧S</Menubar.Shortcut>
                     </Menubar.Item>

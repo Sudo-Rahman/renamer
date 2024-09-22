@@ -134,27 +134,40 @@ export const en = {
             },
         },
         size: {
-            title : "Size",
-            unit : {
-                Byte : "Byte",
-                KB : "KB",
-                MB : "MB",
-                GB : "GB",
+            title: "Size",
+            unit: {
+                Byte: "Byte",
+                KB: "KB",
+                MB: "MB",
+                GB: "GB",
             },
-            unit_label : "Unit",
-            text_input : {
-                label : "Text",
-                placeholder : "Text after the size",
+            unit_label: "Unit",
+            text_input: {
+                label: "Text",
+                placeholder: "Text after the size",
             },
-            digits_of_precision_label : "Digits after the decimal",
+            digits_of_precision_label: "Digits after the decimal",
         },
     },
     settings: {
         title: "Settings",
-        select_language: {
-            title: "Language",
+        general: {
+            title: "General",
+            select_language: {
+                title: "Language",
+            },
         },
-        save_btn: "Save",
+        license: {
+            title: "License",
+            key: {
+                label: "License Key",
+                activate_btn: "Activate",
+            },
+            valid: {
+                message: "Active License",
+                desactivate_btn: "Deactivate on this computer",
+            }
+        }
     },
     toast: {
         save_as_preset: {
@@ -177,29 +190,46 @@ export const en = {
             success: "Files imported successfully",
             error: "Error importing files",
         },
+        desactivate_license: {
+            success: "License desactivated successfully",
+            error: "Error desactivating license",
+        }
     },
     file_status: {
         error: {
-            0 : "",
+            0: "",
             1: "The file name already exists in the directory.",
             2: "The file does not exist.",
         }
     },
-    ask_dialog : {
-        delete_preset : {
-            title : "Delete Preset",
-            message : "Are you sure you want to delete the preset %s ?",
-            ok_btn : "Yes",
-            cancel_btn : "No",
+    ask_dialog: {
+        delete_preset: {
+            title: "Delete Preset",
+            message: "Are you sure you want to delete the preset %s ?",
+            ok_btn: "Yes",
+            cancel_btn: "No",
         }
     },
-    updater : {
-        title : "Update Available",
+    message: {
+        no_license: {
+            title: "No License",
+            message: "Please activate your license to use the application."
+        },
+        activate_license: {
+            error: "Error activating license",
+            no_valid_or_used: "The license key is not valid or has already been used",
+        },
+        check_license: {
+            error: "Error checking license",
+        }
+    },
+    updater: {
+        title: "Update Available",
         yes_btn: 'Update',
         cancel_btn: 'Cancel',
-        message : "A new version of the application is available. Do you want to update to version %s ?"
+        message: "A new version of the application is available. Do you want to update to version %s ?"
     },
-    bottom_info : {
-        files_infos : "{0} file(s) selected - {1} error(s)",
+    bottom_info: {
+        files_infos: "{0} file(s) selected - {1} error(s)",
     }
 }

@@ -13,17 +13,17 @@ use tauri::{Manager, Wry};
 use tauri_plugin_store::{with_store, StoreCollection};
 
 #[cfg(debug_assertions)]
-pub const API_URL: &str = "http://localhost:3000/";
+pub const API_URL: &str = "http://localhost:3000";
 
 #[cfg(not(debug_assertions))]
-pub const API_URL: &str = "https://api.renamer.sudo-rahman.fr/";
+pub const API_URL: &str = "https://api.renamer.sudo-rahman.fr";
 
 #[tauri::command]
 pub async fn check_licence(user: Value) -> Result<String, String> {
     let client = Client::new();
 
     let res = client
-        .get(format!("{}license", API_URL))
+        .post(format!("{}/license", API_URL))
         .json(&user)
         .send()
         .await
@@ -128,7 +128,7 @@ pub(crate) async fn activate_license(app: tauri::AppHandle, key: String) -> Resu
     });
 
     let res = client
-        .post(format!("{}activate_license", API_URL))
+        .post(format!("{}/activate_license", API_URL))
         .json(&license)
         .send()
         .await
@@ -164,7 +164,7 @@ pub(crate) async fn remove_license(app: tauri::AppHandle) -> Result<bool, i8> {
     let json = serde_json::Value::from_str(license.unwrap().as_str()).unwrap();
     let client = Client::new();
     let res = client
-        .post(format!("{}clear_license", API_URL))
+        .post(format!("{}/clear_license", API_URL))
         .json(&json!({
             "email": json["email"].as_str(),
             "key": json["key"].as_str()

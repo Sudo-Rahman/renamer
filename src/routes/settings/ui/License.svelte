@@ -8,6 +8,7 @@
     import {message} from "@tauri-apps/plugin-dialog";
     import {onMount} from "svelte";
     import {toast} from "svelte-sonner";
+    import {t} from "$lib/translations";
 
     let key: string = '';
     let valide: boolean | null = null;
@@ -30,7 +31,7 @@
                     case 1:
                         break;
                     default:
-                        await message('An error occurred', {kind: 'error'});
+                        await message($t('message.check_license.error'), {kind: 'error'});
 
                 }
                 console.log(e);
@@ -45,15 +46,16 @@
         invoke("activate_license", {"key": key}).then(
             (response) => {
                 valide = response as boolean;
+                key = '';
             },
             async (error) => {
                 console.log(error);
                 switch (error) {
                     case 1:
-                        await message('An error occurred', {kind: 'error'});
+                        await message($t('message.activate_license.error'), {kind: 'error'});
                         break;
                     default :
-                        await message('The license is not valid or already used', {kind: 'error'});
+                        await message($t('message.activate_license.no_valid_or_used'), {kind: 'error'});
                 }
             }
         )
@@ -61,15 +63,13 @@
 
     function remove_license() {
         invoke("remove_license").then(
-            (response) => {
+            (_) => {
                 valide = false
-                toast.success("Event has been created", {
-                    description: "Sunday, December 03, 2023 at 9:00 AM",
-                })
+                toast.success($t('toast.desactivate_license.success'))
             },
             async (error) => {
                 console.log(error);
-                await message('An error occurred', {kind: 'error'});
+                await message($t('toast.desactivate_license.error'), {kind: 'error'});
             }
         )
     }
@@ -85,21 +85,22 @@
     <div class="flex flex-col space-y-2">
         <SettingsItemCard>
             <div class="grid w-full max-w-sm  gap-1.5">
-                <Label class="pl-1">License Key</Label>
+                <Label class="pl-1">{$t('settings.license.key.label')}</Label>
             </div>
 
             <div class="flex w-full space-x-5">
                 <Input bind:value={key} type="text" class="min-w-80"
                        placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"/>
-                <Button class="w-1/4" on:click={activate_license}>Check</Button>
+                <Button class="w-1/4" on:click={activate_license}>{$t('settings.license.key.activate_btn')}</Button>
             </div>
         </SettingsItemCard>
     </div>
 {:else}
     <SettingsItemCard>
         <div class="flex justify-between items-center w-full h-full">
-            <span class="text-green-500">License Key is valid</span>
-            <Button class="w-1/4" on:click={remove_license}>Remove license</Button>
+            <span class="text-green-500">{$t('settings.license.valid.message')}</span>
+            <Button class="min-w-1/4 w-fit"
+                    on:click={remove_license}>{$t('settings.license.valid.desactivate_btn')}</Button>
         </div>
     </SettingsItemCard>
 {/if}

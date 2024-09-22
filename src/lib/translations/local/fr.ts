@@ -159,8 +159,15 @@ export const fr = {
         },
         license: {
             title: "Licence",
+            key: {
+                label: "Clé de licence",
+                activate_btn: "Activer",
+            },
+            valid: {
+                message: "Licence active",
+                desactivate_btn: "Désactiver sur cet ordinateur",
+            }
         }
-
     },
     toast: {
         save_as_preset: {
@@ -182,6 +189,10 @@ export const fr = {
         import_files: {
             success: "Fichiers importés avec succès",
             error: "Erreur lors de l'importation des fichiers",
+        },
+        desactivate_license: {
+            success: "Licence désactivée avec succès",
+            error: "Erreur lors de la désactivation de la licence",
         }
     },
     file_status: {
@@ -197,6 +208,19 @@ export const fr = {
             message: "Êtes-vous sûr de vouloir supprimer le préréglage %s ?",
             ok_btn: "Oui",
             cancel_btn: "Non",
+        }
+    },
+    message: {
+        no_license: {
+            title: "Licence non trouvée",
+            message: "Veuillez activer votre licence pour utiliser l'application."
+        },
+        activate_license: {
+            error: "Erreur lors de l'activation de la licence",
+            no_valid_or_used: "La clé de licence n'est pas valide ou est déjà utilisée sur un autre appareil",
+        },
+        check_license: {
+            error: "Erreur lors de la vérification de la licence",
         }
     },
     updater: {
