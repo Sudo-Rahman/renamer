@@ -1,15 +1,15 @@
 <script lang="ts">
     import MixerHorizontal from "svelte-radix/MixerHorizontal.svelte";
-    import type { TableViewModel } from "svelte-headless-table";
-    import { Button } from "$lib/components/ui/button/index.js";
+    import type {TableViewModel} from "svelte-headless-table";
+    import {Button} from "$lib/components/ui/button/index.js";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
-    import {RenamerFile,store} from "$models";
+    import {RenamerFile, store} from "$models";
     import {t} from "$lib/translations";
     import {onMount} from "svelte";
 
     export let tableModel: TableViewModel<RenamerFile>;
-    const { pluginStates, flatColumns } = tableModel;
-    const { hiddenColumnIds } = pluginStates.hide;
+    const {pluginStates, flatColumns} = tableModel;
+    const {hiddenColumnIds} = pluginStates.hide;
 
     function handleHide(id: string) {
         hiddenColumnIds.update((ids: string[]) => {
@@ -25,25 +25,28 @@
         const hiddenCols = await store.get("hiddenCols");
         if (hiddenCols) {
             hiddenColumnIds.set(hiddenCols);
-        }else{
-            hiddenColumnIds.set(["size","modificationDate"]);
+        } else {
+            hiddenColumnIds.set(["size", "modificationDate",]);
         }
     });
 
-    const hidableCols = ["size","modificationDate"];
+    const hidableCols = ["size", "modificationDate", "status"];
 
 </script>
 
 <DropdownMenu.Root>
     <DropdownMenu.Trigger asChild let:builder>
-        <Button variant="outline" size="sm" class="ml-auto opacity-0 pointer-events-none h-8 lg:opacity-100 flex lg:pointer-events-auto transition-all duration-300 ease-in-out" builders={[builder]}>
-            <MixerHorizontal class="mr-2 h-4 w-4" />
+        <Button builders={[builder]}
+                class="ml-auto opacity-0 pointer-events-none h-8 lg:opacity-100 flex lg:pointer-events-auto transition-all duration-300 ease-in-out"
+                size="sm"
+                variant="outline">
+            <MixerHorizontal class="mr-2 h-4 w-4"/>
             {$t('data_table.view_options.btn')}
         </Button>
     </DropdownMenu.Trigger>
     <DropdownMenu.Content>
         <DropdownMenu.Label> {$t('data_table.view_options.title')}</DropdownMenu.Label>
-        <DropdownMenu.Separator />
+        <DropdownMenu.Separator/>
         {#each flatColumns as col}
             {#if hidableCols.includes(col.id)}
                 <DropdownMenu.CheckboxItem

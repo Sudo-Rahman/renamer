@@ -30,6 +30,7 @@
     "svelte-dnd-action": "^0.9.50",
     "svelte-radix": "^1.1.1",
     "svelte-sonner": "^0.3.28",
+    "svelte-tiny-virtual-list": "^2.1.2",
     "sveltekit-i18n": "^2.4.2",
     "tailwind-merge": "^2.5.2",
     "tailwind-variants": "^0.2.1",

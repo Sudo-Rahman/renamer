@@ -3,21 +3,21 @@
     import ChevronLeft from "svelte-radix/ChevronLeft.svelte";
     import DoubleArrowRight from "svelte-radix/DoubleArrowRight.svelte";
     import DoubleArrowLeft from "svelte-radix/DoubleArrowLeft.svelte";
-    import type { TableViewModel } from "svelte-headless-table";
+    import type {TableViewModel} from "svelte-headless-table";
     import * as Select from "$lib/components/ui/select/index.js";
-    import { Button } from "$lib/components/ui/button/index.js";
+    import {Button} from "$lib/components/ui/button/index.js";
     import {RenamerFile} from "$models";
     import {get} from "svelte/store";
     import {t} from "$lib/translations";
 
     export let tableModel: TableViewModel<RenamerFile>;
 
-    const { pageRows, pluginStates, rows } = tableModel;
+    const {pageRows, pluginStates, rows} = tableModel;
 
-    const { hasNextPage, hasPreviousPage, pageIndex, pageCount, pageSize } = pluginStates.page;
+    const {hasNextPage, hasPreviousPage, pageIndex, pageCount, pageSize} = pluginStates.page;
 
 
-    const { selectedDataIds } = pluginStates.select;
+    const {selectedDataIds} = pluginStates.select;
 </script>
 
 <div class="flex items-center justify-between px-2">
@@ -32,13 +32,13 @@
                     selected={{ value: get(pageSize), label: get(pageSize).toString() }}
             >
                 <Select.Trigger class="h-8 w-[70px]">
-                    <Select.Value placeholder="Select page size" />
+                    <Select.Value placeholder="Select page size"/>
                 </Select.Trigger>
                 <Select.Content>
                     <Select.Item value={20}>20</Select.Item>
                     <Select.Item value={30}>30</Select.Item>
                     <Select.Item value={50}>50</Select.Item>
-                    <Select.Item value={100}>100</Select.Item>
+                    <Select.Item value={10000}>100</Select.Item>
                 </Select.Content>
             </Select.Root>
         </div>
@@ -47,40 +47,40 @@
         </div>
         <div class="flex items-center space-x-2 transition-all duration-300 ease-in-out">
             <Button
-                    variant="outline"
                     class="hidden h-8 w-8 p-0 lg:flex"
-                    on:click={() => ($pageIndex = 0)}
                     disabled={!$hasPreviousPage}
+                    on:click={() => ($pageIndex = 0)}
+                    variant="outline"
             >
                 <span class="sr-only">Go to first page</span>
-                <DoubleArrowLeft size={15} />
+                <DoubleArrowLeft size={15}/>
             </Button>
             <Button
-                    variant="outline"
                     class="h-8 w-8 p-0"
-                    on:click={() => ($pageIndex = $pageIndex - 1)}
                     disabled={!$hasPreviousPage}
+                    on:click={() => ($pageIndex = $pageIndex - 1)}
+                    variant="outline"
             >
                 <span class="sr-only">Go to previous page</span>
-                <ChevronLeft size={15} />
+                <ChevronLeft size={15}/>
             </Button>
             <Button
-                    variant="outline"
                     class="h-8 w-8 p-0"
                     disabled={!$hasNextPage}
                     on:click={() => ($pageIndex = $pageIndex + 1)}
+                    variant="outline"
             >
                 <span class="sr-only">Go to next page</span>
-                <ChevronRight size={15} />
+                <ChevronRight size={15}/>
             </Button>
             <Button
-                    variant="outline"
                     class="hidden h-8 w-8 p-0 lg:flex"
                     disabled={!$hasNextPage}
                     on:click={() => ($pageIndex = Math.ceil($rows.length / $pageRows.length) - 1)}
+                    variant="outline"
             >
                 <span class="sr-only">Go to last page</span>
-                <DoubleArrowRight size={15} />
+                <DoubleArrowRight size={15}/>
             </Button>
         </div>
     </div>

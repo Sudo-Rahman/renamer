@@ -151,7 +151,7 @@
                                 {#each headerRow.cells as cell (cell.id)}
                                     <Subscribe attrs={cell.attrs()} let:attrs props={cell.props()} let:props>
                                         <Table.Head {...attrs}>
-                                            {#if cell.id === "name" || cell.id === "newName" || cell.id === "size" || cell.id === "modificationDate"}
+                                            {#if cell.id === "name" || cell.id === "newName" || cell.id === "size" || cell.id === "modificationDate" || cell.id === "status"}
                                                 <Button variant="ghost" on:click={props.sort.toggle}>
                                                     <Render of={cell.render()}/>
                                                     <ArrowUpDown class={"ml-2 h-4 w-4"}/>
