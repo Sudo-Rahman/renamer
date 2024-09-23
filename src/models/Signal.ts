@@ -1,11 +1,11 @@
-
 export type Listener<T> = (value: T) => void;
 
 export class Signal<T> {
     private listeners: Listener<T>[] = [];
 
-    public connect(listener: Listener<T>): void {
+    public connect(listener: Listener<T>): Listener<T> {
         this.listeners.push(listener);
+        return listener;
     }
 
     public disconnect(listener: Listener<T>): void {
