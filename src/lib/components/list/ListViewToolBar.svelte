@@ -42,7 +42,7 @@
         <DropdownMenu.Content>
             <DropdownMenu.Label> {$t('data_table.view_options.title')}</DropdownMenu.Label>
             <DropdownMenu.Separator/>
-            {#each collumns.filter(v => {
+            {#each $collumns.filter(v => {
                 return v.visible !== undefined
             }) as col}
                 <DropdownMenu.CheckboxItem
