@@ -110,12 +110,12 @@
 
 </script>
 
-<div class="w-full px-2 flex py-1 justify-evenly text-center items-center {$$props.class}">
+<div class="w-full flex py-1 justify-evenly text-center items-center {$$props.class}">
     <div class="w-full items-center flex">
         {#each notResizableCols as col, i}
             <div class="w-fit px-2" bind:this={divs[i]}>
                 {#if col.headerComponent !== undefined}
-                    <svelte:component files={files} this={col.headerComponent}
+                    <svelte:component column={col} files={files} this={col.headerComponent}
                                       on:action={event => dispatch('action', event.detail)}/>
                 {:else}
                     <Button variant="ghost" on:click={() => sortToggle(col)}>

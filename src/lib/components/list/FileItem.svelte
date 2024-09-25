@@ -46,7 +46,7 @@
                 {#each cols as col, i (col.accessor)}
 
                     <div bind:this={divs[i]}
-                         class="flex px-2 w-[{col.width}px]">
+                         class="flex w-[{col.width}px]">
 
                         <div class="line-clamp-1 flex w-full">
                             <svelte:component file={file} this={col.customComponent}/>

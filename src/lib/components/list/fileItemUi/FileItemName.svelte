@@ -13,6 +13,6 @@
 </script>
 
 
-<span class="select-text line-clamp-1">
+<span class="select-text line-clamp-1 px-2">
 {name}
 </span>

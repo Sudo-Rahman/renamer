@@ -4,7 +4,7 @@ export class RenamerFile {
     onNewNameChanged: Signal<string>;
     onStatusChanged: Signal<string>;
     onRenamed: Signal<void>;
-    selected: boolean;
+    onSelect: Signal<boolean>;
     private readonly _uuid: string = "";
     private readonly _path: string;
     private readonly _size: number;
@@ -25,13 +25,25 @@ export class RenamerFile {
         this._creationDate = new Date(params.creation_date * 1000);
         this._modificationDate = new Date(params.last_modified_date * 1000);
         this._newName = this._name;
-        this.selected = true;
+        this._selected = true;
         this.onNewNameChanged = new Signal<string>();
         this.onStatusChanged = new Signal<string>();
         this.onRenamed = new Signal<void>();
+        this.onSelect = new Signal<boolean>();
         this._uuid = params.uuid;
         this._status = "None";
         this._statusCode = 0;
+    }
+
+    private _selected: boolean;
+
+    get selected(): boolean {
+        return this._selected;
+    }
+
+    set selected(value: boolean) {
+        this._selected = value;
+        this.onSelect.emit(value);
     }
 
     get uuid(): string {

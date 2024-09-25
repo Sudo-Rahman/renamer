@@ -26,10 +26,11 @@ export const columns: Writable<Column[]> = writable([
         name: "",
         accessor: "selected",
         sort: 'desc',
+        onCheck: () => {
+        },
         resizable: false,
         customComponent: FileItemCheckbox,
         headerComponent: HeaderCheckbox,
-
     },
     {
         name: "status",
