@@ -1,5 +1,4 @@
 <script lang="ts">
-
     import {RenamerFile} from "$models";
     import {type Column, columns} from "$lib/components/list/store";
     import {Button} from "$lib/components/ui/button";
@@ -7,80 +6,121 @@
     import {createEventDispatcher, onMount} from "svelte";
     import * as Resizable from "$lib/components/ui/resizable";
     import {Separator} from "$lib/components/ui/separator";
+    import {tick} from 'svelte';
 
     export let files: RenamerFile[];
-    let dispatch = createEventDispatcher();
+    const dispatch = createEventDispatcher();
     let panel: HTMLDivElement;
     let timeout: any;
+    let timeoutResize: any;
 
+    // Réactifs pour les colonnes visibles, redimensionnables et non redimensionnables
     $: visibleCols = $columns.filter(c => c.visible || c.visible === undefined);
-
     $: resizableCols = visibleCols.filter(c => c.resizable);
-
     $: notResizableCols = visibleCols.filter(c => !c.resizable);
 
+    // Références aux éléments DOM des colonnes
+    let divs: HTMLDivElement[] = [];
+    let divs2: HTMLDivElement[] = [];
 
-    function sortToggle(collumn: Column) {
-        let sortMode = collumn.sort;
+    // Fonction pour gérer le tri des colonnes
+    function sortToggle(column: Column) {
+        let sortMode = column.sort;
         let sortFun: any;
 
         if (sortMode === 'asc') {
             sortFun = (a: RenamerFile, b: RenamerFile) => {
-                if (typeof a[collumn.accessor] === 'string') return a[collumn.accessor].localeCompare(b[collumn.accessor]);
-                else return a[collumn.accessor] < b[collumn.accessor];
+                if (typeof a[column.accessor] === 'string') return a[column.accessor].localeCompare(b[column.accessor]);
+                else return a[column.accessor] < b[column.accessor] ? -1 : 1;
             }
-            collumn.sort = 'desc';
+            column.sort = 'desc';
         } else {
             sortFun = (a: RenamerFile, b: RenamerFile) => {
-                if (typeof a[collumn.accessor] === 'string') return b[collumn.accessor].localeCompare(a[collumn.accessor]);
-                else return b[collumn.accessor] < a[collumn.accessor];
+                if (typeof a[column.accessor] === 'string') return b[column.accessor].localeCompare(a[column.accessor]);
+                else return b[column.accessor] < a[column.accessor] ? -1 : 1;
             }
-            collumn.sort = 'asc';
+            column.sort = 'asc';
         }
 
-        let sort = files.sort(sortFun);
-
-        dispatch('sort', sort);
+        let sorted = [...files].sort(sortFun); // Utiliser une copie pour éviter de muter directement les props
+        dispatch('sort', sorted);
     }
 
-    function handleResize(size: number, prevSize: number | undefined, collumn: Column) {
+    // Fonction pour gérer le redimensionnement des colonnes
+    function handleResize(size: number, prevSize: number | undefined, column: Column) {
         const panelWidth = panel.getBoundingClientRect().width;
-        collumn.width = size * panelWidth / 100;
+        column.width = (size / 100) * panelWidth;
 
-        // timeout to prevent multiple resize events
+        // Timeout pour éviter plusieurs événemen3ts de redimensionnement
         clearTimeout(timeout);
         timeout = setTimeout(() => {
             columns.update(c => {
                 return c;
             });
         }, 100);
-
     }
 
-    let divs: HTMLDivElement[] = [];
+    // onMount pour mesurer les largeurs après le rendu initial
+    onMount(async () => {
+        await tick(); // Attendre que le DOM soit mis à jour
 
-
-    onMount(() => {
-        divs.forEach((div, i) => {
-            let col = notResizableCols[i];
-            $columns.find(c => c.accessor === col.accessor).width = div.getBoundingClientRect().width;
+        // Utilisation de ResizeObserver pour détecter les changements de taille du panel
+        const resizeObserver = new ResizeObserver(() => {
+            clearTimeout(timeoutResize);
+            timeoutResize = setTimeout(() => {
+                resizeColumns();
+            }, 30);
         });
+
+        if (panel) {
+            resizeObserver.observe(panel); // Observer le panel pour les changements de taille
+        }
+
+        // Mesurer les colonnes non redimensionnables
+        notResizableCols.forEach((col, i) => {
+            const div = divs[i];
+            if (div) {
+                const width = div.getBoundingClientRect().width;
+                columns.update(c => {
+                    const column = c.find(colItem => colItem.accessor === col.accessor);
+                    if (column) column.width = width;
+                    return c;
+                });
+            }
+        });
+
+        // Mesurer les colonnes redimensionnables
+        resizeColumns();
     });
+
+
+    function resizeColumns() {
+        resizableCols.forEach((col, i) => {
+            const div = divs2[i];
+            if (div) {
+                const width = div.getBoundingClientRect().width;
+                columns.update(c => {
+                    const column = c.find(colItem => colItem.accessor === col.accessor);
+                    if (column) column.width = width;
+                    return c;
+                });
+            }
+        });
+    }
 
 </script>
 
 <div class="w-full px-2 flex py-1 justify-evenly text-center items-center {$$props.class}">
-
     <div class="w-full items-center flex">
-        {#each notResizableCols as collumn, i}
+        {#each notResizableCols as col, i}
             <div class="w-fit px-2" bind:this={divs[i]}>
-                {#if collumn.headerComponent !== undefined}
-                    <svelte:component files={files} this={collumn.headerComponent}
+                {#if col.headerComponent !== undefined}
+                    <svelte:component files={files} this={col.headerComponent}
                                       on:action={event => dispatch('action', event.detail)}/>
                 {:else}
-                    <Button variant="ghost" on:click={() => sortToggle(collumn)}>
-                        {collumn.name}
-                        <ArrowUpDown class={"ml-2 h-4 w-4"}/>
+                    <Button variant="ghost" on:click={() => sortToggle(col)}>
+                        {col.name}
+                        <ArrowUpDown class="ml-2 h-4 w-4"/>
                     </Button>
                 {/if}
             </div>
@@ -88,18 +128,17 @@
         {/each}
 
         <Resizable.PaneGroup direction="horizontal">
-
             <div bind:this={panel} class="px-2 w-full flex">
                 {#each resizableCols as col, i}
-                    <Resizable.Pane onResize={(s,p)=>handleResize(s,p,col)} minSize={col.minSize ?? 1}
+                    <Resizable.Pane onResize={(s, p) => handleResize(s, p, col)} minSize={col.minSize ?? 1}
                                     defaultSize={col.minSize ?? 10}>
-                        <div class="px-2">
+                        <div class="px-2" bind:this={divs2[i]}>
                             {#if col.headerComponent !== undefined}
                                 <svelte:component files={files} this={col.headerComponent}/>
                             {:else}
                                 <Button variant="ghost" class="p-2" on:click={() => sortToggle(col)}>
                                     {col.name}
-                                    <ArrowUpDown class={"ml-2 h-4 w-4"}/>
+                                    <ArrowUpDown class="ml-2 h-4 w-4"/>
                                 </Button>
                             {/if}
                         </div>
@@ -109,7 +148,6 @@
                     {/if}
                 {/each}
             </div>
-
         </Resizable.PaneGroup>
     </div>
 </div>

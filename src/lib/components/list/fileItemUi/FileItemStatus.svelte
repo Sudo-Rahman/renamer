@@ -17,7 +17,7 @@
     )
 </script>
 
-<div class="flex items-center">
+<div class="flex items-center justify-center w-full">
     {#if status === "None"}
         <Button variant="ghost" class="p-0 w-7 h-7 rounded">
             <Minus class="w-5 h-5"/> <!-- Fixe la taille de l'icône Minus -->

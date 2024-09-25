@@ -59,39 +59,41 @@
 
 </script>
 
-<div class="overflow-x-scroll w-full h-full flex flex-col">
+<div class="overflow-x-scroll w-full h-full">
+    <div class="w-full h-full flex flex-col min-w-[40rem]">
 
-    <div class="px-3">
-        <div class="py-2">
-            <ListViewToolBar bind:files={files} on:filter={onFilter}/>
+        <div class="px-3 flex-col flex w-full">
+            <div class="py-2">
+                <ListViewToolBar bind:files={files} on:filter={onFilter}/>
+            </div>
+            <ListViewHeader bind:files={files} on:action={event => action = event.detail} on:sort={onSorted}/>
         </div>
-        <ListViewHeader bind:files={files} on:action={event => action = event.detail} on:sort={onSorted}/>
-    </div>
 
-    <div bind:this={div} class="flex flex-col w-full h-full overflow-y-hidden min-w-[40rem]">
-        <VirtualList
-                bind:height={height}
-                bind:itemCount={filteredFiles.length}
-                bind:this={virtualList}
-                itemSize={42}
-                width="100%">
+        <div bind:this={div} class="flex flex-col w-full h-full overflow-y-hidden">
+            <VirtualList
+                    bind:height={height}
+                    bind:itemCount={filteredFiles.length}
+                    bind:this={virtualList}
+                    itemSize={42}
+                    width="100%">
 
-            <div class="h-4" slot="header"/>
+                <div class="h-4" slot="header"/>
 
-            <div class="border-box" in:fade={{duration: 100, delay: 0, easing: quadInOut}} let:index let:style
-                 out:slide={{
+                <div class="border-box" in:fade={{duration: 100, delay: 0, easing: quadInOut}} let:index let:style
+                     out:slide={{
             duration: 300,
             delay: 0}} slot="item" {style}>
-                {#key action}
-                    <FileItem class="{index % 2 === 0 ? 'bg-accent' : ''} mx-3" file={filteredFiles[index]}
-                              on:remove={remove}/>
-                {/key}
-            </div>
+                    {#key action}
+                        <FileItem class="{index % 2 === 0 ? 'bg-accent' : ''} mx-3" file={filteredFiles[index]}
+                                  on:remove={remove}/>
+                    {/key}
+                </div>
 
-            <div slot="footer">
-                <div class="h-4"/>
-            </div>
+                <div slot="footer">
+                    <div class="h-4"/>
+                </div>
 
-        </VirtualList>
+            </VirtualList>
+        </div>
     </div>
 </div>

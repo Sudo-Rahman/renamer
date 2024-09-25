@@ -41,22 +41,16 @@
     <ContextMenu.Root>
         <ContextMenu.Trigger>
 
-            <div aria-label="File Item"
-                 class="flex py-1 text-xs px-2 items-center hover:bg-primary hover:rounded-[10px]"
-                 on:mouseenter={() => hover = true}
-                 on:mouseleave={() => hover = false} role="listitem">
+            <div class="flex py-1 text-xs items-center px-2 hover:bg-primary hover:rounded-[10px]">
 
                 {#each cols as col, i (col.accessor)}
-                    <div bind:this={divs[i]}
-                         class="flex px-2 text-center justify-center">
 
-                        {#if col.customComponent !== undefined}
-                            <div class="w-[{col.width ?? 1000}px] line-clamp-1">
-                                <svelte:component file={file} this={col.customComponent}/>
-                            </div>
-                        {:else}
-                            <span class="line-clamp-1">{file[col.accessor]}</span>
-                        {/if}
+                    <div bind:this={divs[i]}
+                         class="flex px-2 w-[{col.width}px]">
+
+                        <div class="line-clamp-1 flex w-full">
+                            <svelte:component file={file} this={col.customComponent}/>
+                        </div>
 
                     </div>
                 {/each}

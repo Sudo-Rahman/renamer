@@ -17,7 +17,7 @@ export interface Column {
     minSize?: number;
     resizable?: boolean;
     visible?: boolean;
-    customComponent?: ComponentType;
+    customComponent: ComponentType;
     headerComponent?: ComponentType;
 }
 
