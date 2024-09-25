@@ -1,6 +1,6 @@
 <script lang="ts">
 
-    import { RenamerFile} from "$models";
+    import {RenamerFile} from "$models";
 
     export let file: RenamerFile;
 

@@ -31,11 +31,7 @@ async fn main() {
         .route("/activate_license", post(activate_licence))
         .route("/clear_license", post(clear_license))
         .route("/create", post(create_user));
-
-    if cfg!(debug_assertions) {
-        app = app.route("/users", get(get_all_users));
-    }
-
+    
     let app = app.with_state(config)
         .layer(
             ServiceBuilder::new()

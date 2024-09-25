@@ -6,15 +6,26 @@
     import MixerHorizontal from "svelte-radix/MixerHorizontal.svelte";
     import {Button} from "$lib/components/ui/button";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
-    import {collumns} from "$lib/components/list/store";
+    import {type Column, columns} from "$lib/components/list/store";
     import {get} from "svelte/store";
 
     let dispatch = createEventDispatcher();
     export let files: RenamerFile[];
     let filterValue = '';
 
+    let cols = $columns.filter(v => {
+        return v.visible !== undefined
+    });
+
     $: {
         dispatch('filter', files.filter(file => file.name.toLowerCase().includes(filterValue.toLowerCase())));
+    }
+
+    function onToggleCollumn(collumn: Column) {
+        collumn.visible = !collumn.visible;
+        columns.update(c => {
+            return c;
+        });
     }
 
 </script>
@@ -42,12 +53,10 @@
         <DropdownMenu.Content>
             <DropdownMenu.Label> {$t('data_table.view_options.title')}</DropdownMenu.Label>
             <DropdownMenu.Separator/>
-            {#each $collumns.filter(v => {
-                return v.visible !== undefined
-            }) as col}
+            {#each cols as col}
                 <DropdownMenu.CheckboxItem
                         bind:checked={col.visible}
-                        on:click={() => col.visible = !col.visible}>
+                        on:click={() =>onToggleCollumn(col)}>
                     {col.name}
                 </DropdownMenu.CheckboxItem>
             {/each}

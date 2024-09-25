@@ -1,29 +1,32 @@
 import {writable, type Writable} from "svelte/store";
 import type {ComponentType} from "svelte";
-import FileItemCheckbox from "$lib/components/list/FileItemCheckbox.svelte";
+import FileItemCheckbox from "./fileItemUi/FileItemCheckbox.svelte";
 import HeaderCheckbox from "$lib/components/list/HeaderCheckbox.svelte";
-import FileItemStatus from "$lib/components/list/FileItemStatus.svelte";
+import FileItemStatus from "./fileItemUi/FileItemStatus.svelte";
+import FileItemName from "./fileItemUi/FileItemName.svelte";
+import FileItemNewName from "./fileItemUi/FileItemNewName.svelte";
+import FileItemSize from "./fileItemUi/FileItemSize.svelte";
+import FileItemCreationDate from "$lib/components/list/fileItemUi/FileItemCreationDate.svelte";
+import FileItemModDate from "$lib/components/list/fileItemUi/FileItemModDate.svelte";
 
-export interface Collumn {
+export interface Column {
     name: string;
     accessor: string;
     width?: number;
     sort?: 'asc' | 'desc';
     minSize?: number;
-    sortable: boolean;
     resizable?: boolean;
     visible?: boolean;
     customComponent?: ComponentType;
     headerComponent?: ComponentType;
 }
 
-export const collumns: Writable<Collumn[]> = writable([
+export const columns: Writable<Column[]> = writable([
     {
         name: "",
         accessor: "selected",
         sort: 'desc',
         resizable: false,
-        sortable: false,
         customComponent: FileItemCheckbox,
         headerComponent: HeaderCheckbox,
 
@@ -33,7 +36,6 @@ export const collumns: Writable<Collumn[]> = writable([
         accessor: "status",
         sort: 'desc',
         resizable: false,
-        sortable: true,
         customComponent: FileItemStatus,
     },
     {
@@ -42,7 +44,7 @@ export const collumns: Writable<Collumn[]> = writable([
         sort: 'desc',
         resizable: true,
         minSize: 20,
-        sortable: true,
+        customComponent: FileItemName
     },
     {
         name: "new Name",
@@ -50,7 +52,7 @@ export const collumns: Writable<Collumn[]> = writable([
         sort: 'desc',
         minSize: 20,
         resizable: true,
-        sortable: true,
+        customComponent: FileItemNewName
     },
     {
         name: "Size",
@@ -58,7 +60,7 @@ export const collumns: Writable<Collumn[]> = writable([
         sort: 'desc',
         resizable: true,
         visible: false,
-        sortable: true,
+        customComponent: FileItemSize
     },
     {
         name: "Creation Date",
@@ -66,7 +68,7 @@ export const collumns: Writable<Collumn[]> = writable([
         sort: 'desc',
         resizable: true,
         visible: false,
-        sortable: true,
+        customComponent: FileItemCreationDate
     },
     {
         name: "Modification Date",
@@ -74,6 +76,6 @@ export const collumns: Writable<Collumn[]> = writable([
         sort: 'desc',
         resizable: true,
         visible: false,
-        sortable: true,
+        customComponent: FileItemModDate
     },
 ]);

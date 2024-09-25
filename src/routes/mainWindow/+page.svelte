@@ -3,7 +3,6 @@
     import {files, formatString, formatters, information, preset, RenamerFile} from "$models";
     import Menubar from "$lib/components/MenuBar.svelte";
     import FormattersComponent from "$lib/components/FormattersComponent.svelte";
-    import DataTable from "$lib/components/fileTable/data-table.svelte";
     import {onMount} from "svelte";
     import {listen} from "@tauri-apps/api/event";
     import {invoke} from "@tauri-apps/api/core";
@@ -95,11 +94,6 @@
                 <Separator class="flex-col w-full"/>
                 <ListView bind:files={$files}/>
             </div>
-
-
-            <!--{#key $files || $t}-->
-            <!--    <DataTable filesList={$files}/>-->
-            <!--{/key}-->
         </Resizable.Pane>
     </Resizable.PaneGroup>
 
