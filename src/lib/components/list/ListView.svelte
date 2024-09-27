@@ -44,6 +44,7 @@
 
     function onFilter(event: CustomEvent<RenamerFile[]>) {
         filteredFiles = event.detail;
+        action = event.detail;
     }
 
     function remove(event: CustomEvent<RenamerFile>) {
@@ -66,7 +67,7 @@
             <div class="py-2">
                 <ListViewToolBar bind:files={files} on:filter={onFilter}/>
             </div>
-            <ListViewHeader bind:files={files} on:action={event => action = event.detail} on:sort={onSorted}/>
+            <ListViewHeader bind:files={filteredFiles} on:action={event => action = event.detail} on:sort={onSorted}/>
         </div>
 
         <div bind:this={div} class="flex flex-col w-full h-full overflow-y-hidden">
@@ -83,7 +84,7 @@
                      out:slide={{
             duration: 300,
             delay: 0}} slot="item" {style}>
-                    {#key action}
+                    {#key action || files}
                         <FileItem class="{index % 2 === 0 ? 'bg-accent' : ''} mx-3" file={filteredFiles[index]}
                                   on:remove={remove}/>
                     {/key}

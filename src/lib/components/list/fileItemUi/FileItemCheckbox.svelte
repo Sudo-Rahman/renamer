@@ -15,7 +15,6 @@
     });
 
     function handleClick() {
-        console.log('handleClick');
         file.selected = !selected;  // Toggle the selection
         $columns[0].onCheck();
         $formatters.format();

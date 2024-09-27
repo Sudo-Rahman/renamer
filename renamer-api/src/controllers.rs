@@ -1,7 +1,8 @@
 #![allow(unused)]
 
 use crate::db::Mongo;
-use crate::models::{ServerConfig, User};
+use crate::mailgun::MailgunEmail;
+use crate::models::{Log, ServerConfig, User};
 use axum::extract::{ConnectInfo, State};
 use axum::http::StatusCode;
 use axum::Json;
@@ -54,14 +55,11 @@ pub async fn create_user(
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
     Json(payload): Json<Value>,
 ) -> Result<(StatusCode, String), (StatusCode, String)> {
-    println!("{:?}", addr);
     if (addr.ip().is_loopback()) {
         let email = payload["email"].as_str().ok_or_else(|| {
             (StatusCode::BAD_REQUEST, "Invalid or missing email".to_string())
         })?;
-        if user_exists(&email, &config.db).await {
-            return Err((StatusCode::CONFLICT, "User already exists".to_string()));
-        }
+
         let user = User {
             _id: bson::oid::ObjectId::new(),
             email: email.to_string(),
@@ -69,8 +67,29 @@ pub async fn create_user(
             machine_id: "".to_string(),
         };
         match config.db.insert_user(&user).await {
-            Ok(_) => Ok((StatusCode::CREATED, json!(user).to_string())),
-            Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to create user".to_string())),
+            Ok(_) => {
+                let email = MailgunEmail {
+                    from: "noreply@renamer.sudo-rahman.fr".to_string(),
+                    to: email.to_string(),
+                    subject: "Your license key".to_string(),
+                    text: "Here is your license key: ".to_string() + &user.key.to_string(),
+                };
+                match email.send().await {
+                    Ok(_) => {}
+                    Err(log) => {
+                        config.db.insert_log(log).await;
+                    }
+                }
+                Ok((StatusCode::CREATED, json!(user).to_string()))
+            }
+            Err(_) => {
+                config.db.insert_log(Log {
+                    _id: bson::oid::ObjectId::new(),
+                    date_time: bson::DateTime::now(),
+                    message: format!("Failed to create user: {}", email),
+                }).await;
+                Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to create user".to_string()))
+            }
         }
     } else {
         Err((StatusCode::NOT_FOUND, "".to_string()))
@@ -134,5 +153,19 @@ pub(crate) async fn clear_license(
     ).await {
         Ok(_) => Ok((StatusCode::OK, "License cleared".to_string())),
         Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to clear license".to_string()))
+    }
+}
+
+pub(crate) async fn get_all_logs(
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    State(config): State<ServerConfig>,
+) -> Result<(StatusCode, String), (StatusCode, String)> {
+    if (addr.ip().is_loopback()) {
+        match config.db.get_all_logs().await {
+            Ok(logs) => Ok((StatusCode::OK, serde_json::to_string(&logs).unwrap())),
+            Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to get logs".to_string()))
+        }
+    } else {
+        Err((StatusCode::NOT_FOUND, "".to_string()))
     }
 }

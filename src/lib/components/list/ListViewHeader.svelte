@@ -7,6 +7,8 @@
     import * as Resizable from "$lib/components/ui/resizable";
     import {Separator} from "$lib/components/ui/separator";
     import {tick} from 'svelte';
+    import {store} from "$models";
+    import {t} from "$lib/translations";
 
     export let files: RenamerFile[];
     const dispatch = createEventDispatcher();
@@ -76,6 +78,24 @@
             resizeObserver.observe(panel); // Observer le panel pour les changements de taille
         }
 
+        store.get('listColumns').then((cols) => {
+            if (cols) {
+                (cols as Column[]).forEach(
+                    (col) => {
+                        const colum = $columns.find(c => c.accessor === col.accessor);
+                        if (colum) {
+                            colum.visible = col.visible;
+                        }
+                    }
+                );
+            }
+        });
+
+        columns.subscribe((cols) => {
+            store.set('listColumns', cols);
+            store.save();
+        });
+
         // Mesurer les colonnes non redimensionnables
         notResizableCols.forEach((col, i) => {
             const div = divs[i];
@@ -119,7 +139,7 @@
                                       on:action={event => dispatch('action', event.detail)}/>
                 {:else}
                     <Button variant="ghost" on:click={() => sortToggle(col)}>
-                        {col.name}
+                        {$t(col.name)}
                         <ArrowUpDown class="ml-2 h-4 w-4"/>
                     </Button>
                 {/if}
@@ -137,7 +157,7 @@
                                 <svelte:component files={files} this={col.headerComponent}/>
                             {:else}
                                 <Button variant="ghost" class="p-2" on:click={() => sortToggle(col)}>
-                                    {col.name}
+                                    {$t(col.name)}
                                     <ArrowUpDown class="ml-2 h-4 w-4"/>
                                 </Button>
                             {/if}

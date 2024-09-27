@@ -35,7 +35,7 @@
         <Input
                 bind:value={filterValue}
                 class="h-9 w-[200px] lg:w-[300px] transition-all duration-300 ease-in-out"
-                placeholder={$t('data_table.filter.placeholder')}
+                placeholder={$t('list_view.filter.placeholder')}
                 type="search"
         />
     </div>
@@ -47,17 +47,17 @@
                     size="sm"
                     variant="outline">
                 <MixerHorizontal class="mr-2 h-4 w-4"/>
-                {$t('data_table.view_options.btn')}
+                {$t('list_view.view_options.btn')}
             </Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
-            <DropdownMenu.Label> {$t('data_table.view_options.title')}</DropdownMenu.Label>
+            <DropdownMenu.Label> {$t('list_view.view_options.title')}</DropdownMenu.Label>
             <DropdownMenu.Separator/>
             {#each cols as col}
                 <DropdownMenu.CheckboxItem
                         bind:checked={col.visible}
                         on:click={() =>onToggleCollumn(col)}>
-                    {col.name}
+                    {$t(col.name)}
                 </DropdownMenu.CheckboxItem>
             {/each}
         </DropdownMenu.Content>

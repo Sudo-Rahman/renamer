@@ -4,17 +4,11 @@ import lang from './lang.json';
 export const en = {
     lang,
     drag_drop_zone: "Click here to select a directory or drag and drop files",
-    data_table: {
+    list_view: {
         filter: {
             placeholder: "Filter files ..."
         },
-        pagination: {
-            rows_per_page: "Rows per page",
-            of: "of",
-            rows_selected: "row(s) selected.",
-            page: "Page"
-        },
-        table_header: {
+        header: {
             status: "Status",
             name: "Name",
             new_name: "New Name",
@@ -24,6 +18,9 @@ export const en = {
         view_options: {
             btn: "Columns",
             title: "Switch Columns",
+        },
+        item_context_menu: {
+            remove: "Remove",
         }
     },
     menu_bar: {

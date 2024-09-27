@@ -1,11 +1,12 @@
 #![allow(unused)]
 
-use crate::models::User;
+use crate::models::{Log, User};
 use mongodb::{Client, Collection, Database, error::Result, bson::*, bson, Cursor};
 use std::env;
 use dotenv::dotenv;
 use futures::stream::{StreamExt, TryStreamExt};
 use serde_json::{Map, Value};
+use crate::utils;
 
 #[derive(Clone)]
 pub(crate) struct Mongo {
@@ -100,5 +101,31 @@ impl Mongo {
             Ok(_) => Ok(()),
             Err(e) => Err(e),
         }
+    }
+
+    pub(crate) async fn insert_log(&self, log: Log) -> Result<()> {
+        utils::insert_log(log.clone()).await;
+        match self.database.collection::<Log>("logs").insert_one(
+            log.clone(),
+        ).await {
+            Ok(_) => Ok(()),
+            Err(e) => {
+                eprintln!("Failed to insert log: {}", e);
+                Err(e)
+            }
+        }
+    }
+
+    pub(crate) async fn get_all_logs(&self) -> Result<Vec<Log>> {
+        let collection = self.database.collection::<Log>("logs");
+
+        // Collecter les résultats dans un vecteur
+        let mut cursor = match collection.find(Document::new()).await {
+            Ok(cursor) => cursor,
+            Err(_) => return Err(mongodb::error::Error::from(std::io::Error::new(std::io::ErrorKind::Other, "Failed to find logs"))),
+        };
+        let vec = cursor.try_collect::<Vec<Log>>().await?;
+
+        Ok(vec)
     }
 }

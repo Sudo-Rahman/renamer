@@ -12,6 +12,8 @@ futures = "0.3"
 serde_json = "1"
 uuid = { version = "1", features = ["v7"] }
 tower = { version = "0.5", features = ["buffer", "limit"] }
+reqwest = { version = "0.12.7", features = ["multipart"] }
+chrono = "0.4.38"
 
 [dependencies.mongodb]
 version = "3"

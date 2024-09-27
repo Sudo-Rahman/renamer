@@ -2,9 +2,9 @@
 <script lang="ts">
     import {RenamerFile} from "$models";
     import * as ContextMenu from "$lib/components/ui/context-menu";
-    import {onMount} from "svelte";
     import {createEventDispatcher} from "svelte";
-    import {type Column, columns} from "./store";
+    import {columns} from "./store";
+    import {t} from "$lib/translations";
 
     export let file: RenamerFile;
     let dispatch = createEventDispatcher();
@@ -59,7 +59,7 @@
         </ContextMenu.Trigger>
         <ContextMenu.Content>
             <ContextMenu.Item on:click={remove}>
-                Remove
+                {$t('list_view.item_context_menu.remove')}
             </ContextMenu.Item>
         </ContextMenu.Content>
     </ContextMenu.Root>
