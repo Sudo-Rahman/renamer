@@ -1,10 +1,11 @@
-import {env} from '$env/dynamic/private';
+import {STRIPE_WEBHOOK_SECRET} from '$env/static/private';
+import {API_URL} from '$env/static/private';
 import {type RequestHandler} from '@sveltejs/kit';
 import {stripe} from '$lib/server/Stripe';
 
 
 // Clé de signature du webhook à obtenir dans votre Dashboard Stripe
-const endpointSecret = env.STRIPE_WEBHOOK_SECRET;
+const endpointSecret = STRIPE_WEBHOOK_SECRET;
 
 export const POST: RequestHandler = async ({request}) => {
     const sig = request.headers.get('stripe-signature')!;
@@ -31,7 +32,7 @@ export const POST: RequestHandler = async ({request}) => {
 
         if (session.customer_details && session.customer_details.email) {
             await fetch(
-                "http://localhost:3000/create",
+                API_URL + "/create",
                 {
                     method: "POST",
                     headers: {

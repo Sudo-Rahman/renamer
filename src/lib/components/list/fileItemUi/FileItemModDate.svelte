@@ -7,6 +7,6 @@
 </script>
 
 
-<span class="select-text px-2">
+<span class="select-text px-2 line-clamp-1">
 {file.getFormatedModDate()}
 </span>

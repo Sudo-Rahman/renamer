@@ -73,6 +73,7 @@ impl Mongo {
     }
 
     pub(crate) async fn clear_license(&self, user: &Document) -> Result<()> {
+        self.find_user(user).await?;
         match self.database.collection::<User>("users").update_one(
             user.clone(),
             doc! {
