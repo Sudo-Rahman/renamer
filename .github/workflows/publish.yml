@@ -160,8 +160,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y gcc-aarch64-linux-gnu
           sudo dpkg --add-architecture arm64
-          sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.0-dev:arm64 libwebkit2gtk-4.1-dev:arm64 libappindicator3-dev:arm64 librsvg2-dev:arm64 patchelf:arm64
+          sudo apt install libwebkit2gtk-4.0-dev:arm64 libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+          export PKG_CONFIG_SYSROOT_DIR=/usr/aarch64-linux-gnu/
 
       - uses: pnpm/action-setup@v4
         name: Install pnpm
