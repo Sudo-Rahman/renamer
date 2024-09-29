@@ -135,7 +135,7 @@ pub async fn activate_licence(
     }
 }
 
-pub(crate) async fn clear_license(
+pub(crate) async fn reset_license(
     State(config): State<ServerConfig>,
     Json(payload): Json<Value>,
 ) -> Result<(StatusCode, String), (StatusCode, String)> {
@@ -157,8 +157,22 @@ pub(crate) async fn clear_license(
             "key": parsed_key,
         }
     ).await {
-        Ok(_) => Ok((StatusCode::OK, "License cleared".to_string())),
-        Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to clear license".to_string()))
+        Ok(_) => {
+            let email = MailgunEmail {
+                from: "noreply@renamer.sudo-rahman.fr".to_string(),
+                to: email.to_string(),
+                subject: "License key".to_string(),
+                text: format!("Your license key {} has been reset", key),
+            };
+            match email.send().await {
+                Ok(_) => {}
+                Err(log) => {
+                    config.db.insert_log(log).await;
+                }
+            }
+            Ok((StatusCode::OK, "License has been reset".to_string()))
+        }
+        Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to reset license".to_string()))
     }
 }
 

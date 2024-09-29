@@ -31,7 +31,8 @@ fn main() {
             save_license,
             is_license_ok,
             activate_license,
-            remove_license
+            remove_license,
+            set_system_language
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -1,6 +1,6 @@
 use crate::rename_file::RenameFile;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use sys_locale::get_locale;
 
 #[tauri::command]
@@ -38,8 +38,12 @@ pub fn files_from_vec(files: Vec<String>) -> Result<Vec<RenameFile>, String> {
     Ok(files_vec)
 }
 
-use crate::app::APPLICATION;
+use crate::app::{App, APPLICATION};
 use serde::{Deserialize, Serialize};
+use serde_json::json;
+use serde_json::Value::Null;
+use tauri::{Manager, Wry};
+use tauri_plugin_store::{with_store, StoreCollection};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct FileRenameInfo {
@@ -160,12 +164,58 @@ pub async fn check_files_names(files: Vec<FileRenameInfo>) -> Result<Vec<FileSta
     Ok(files_vec)
 }
 
-#[tauri::command]
-pub fn get_system_language() -> String {
-    get_locale()
+const LOCAL: fn() -> String = || {
+    return get_locale()
         .unwrap_or_else(|| String::from("en-US"))
         .split('-')
         .next()
         .unwrap()
-        .to_string()
+        .to_string();
+};
+#[tauri::command]
+pub fn get_system_language(app: tauri::AppHandle) -> String {
+    let stores = app.try_state::<StoreCollection<Wry>>();
+
+    if stores.is_none() {
+        return LOCAL();
+    }
+
+    let lang = with_store(
+        app.clone(),
+        stores.unwrap(),
+        PathBuf::from(App::name_store()),
+        |store| {
+            let lang = store.get("lang").cloned();
+            match lang {
+                Some(lang) => Ok(lang),
+                None => Ok(Null),
+            }
+        },
+    );
+
+    match lang {
+        Ok(lang) => {
+            if lang.is_null() {
+                return LOCAL();
+            }
+            lang.to_string()
+        }
+        Err(_) => LOCAL(),
+    }
+}
+
+#[tauri::command]
+pub fn set_system_language(app: tauri::AppHandle, lang: String) -> Result<bool, i8> {
+    let stores = app.try_state::<StoreCollection<Wry>>().ok_or(1)?;
+    let lang = with_store(
+        app.clone(),
+        stores,
+        PathBuf::from(App::name_store()),
+        |store| {
+            store.insert("lang".to_string(), json!(lang))?;
+            store.save()?;
+            Ok(true)
+        },
+    );
+    Ok(lang.unwrap())
 }

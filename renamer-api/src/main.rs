@@ -32,7 +32,7 @@ async fn main() {
     let mut app = Router::new()
         .route("/license", post(get_license))
         .route("/activate_license", post(activate_licence))
-        .route("/clear_license", post(clear_license))
+        .route("/reset_license", post(reset_license))
         .route("/create", post(create_user))
         .route("/logs", get(get_all_logs));
 

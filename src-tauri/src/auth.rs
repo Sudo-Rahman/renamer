@@ -164,7 +164,7 @@ pub(crate) async fn remove_license(app: tauri::AppHandle) -> Result<bool, i8> {
     let json = serde_json::Value::from_str(license.unwrap().as_str()).unwrap();
     let client = Client::new();
     let res = client
-        .post(format!("{}/clear_license", API_URL))
+        .post(format!("{}/reset_license", API_URL))
         .json(&json!({
             "email": json["email"].as_str(),
             "key": json["key"].as_str()

@@ -1,8 +1,7 @@
 import i18n from 'sveltekit-i18n';
 import translations from './translations';
 import {invoke} from "@tauri-apps/api/core";
-import {get} from "svelte/store";
-
+import {json} from "@sveltejs/kit";
 
 
 const config = {
@@ -10,26 +9,26 @@ const config = {
     translations,
 };
 
-export const { t, l, locales, locale } = new i18n(config);
+export const {t, l, locales, locale} = new i18n(config);
 
 
 export const available_locales = {
     en: {
-        name : 'English',
-        icon : '🇬🇧'
+        name: 'English',
+        icon: '🇬🇧'
     },
     fr: {
-        name : 'Français',
-        icon : '🇫🇷'
+        name: 'Français',
+        icon: '🇫🇷'
     }
 };
 
 
 invoke('get_system_language').then((l) => {
-    let lang = "en";
-    if (l === 'fr') {
-        lang = "fr";
-    }
-    locale.set(lang);
+    locale.set(JSON.parse(l));
+
+    locale.subscribe((value) => {
+        invoke('set_system_language', {lang: value});
+    });
 });
 
