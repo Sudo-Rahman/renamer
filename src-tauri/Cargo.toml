@@ -28,6 +28,7 @@ online = { version = "4" }
 reqwest = { version = "0", features = ["json"] }
 lazy_static = "1"
 tokio = { version = "1.0", features = ["full"] }
+openssl = { version = "0.10", features = ["vendored"] }
 
 
 
