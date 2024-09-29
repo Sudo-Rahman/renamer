@@ -1,4 +1,5 @@
 name: APP Publish
+
 on:
   workflow_dispatch:
 
@@ -15,8 +16,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Cache Rust build
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
       - name: Install Rust Stable
         uses: dtolnay/rust-toolchain@stable
+
+      - name: Install dependencies
+        run: |
+          rustup target add x86_64-apple-darwin
+          rustup target add aarch64-apple-darwin
 
       - uses: pnpm/action-setup@v4
         name: Install pnpm
@@ -49,11 +65,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Cache Rust build
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
       - name: Install Rust Stable
         uses: dtolnay/rust-toolchain@stable
-      - name: install dependencies
+
+      - name: Install dependencies
         run: |
-          rustup target add ${{ matrix.target }}
+          rustup target add ${{ matrix.arch }}
 
       - uses: pnpm/action-setup@v4
         name: Install pnpm
@@ -86,11 +113,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Cache Rust build
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
       - name: Install Rust Stable
         uses: dtolnay/rust-toolchain@stable
-      - name: install dependencies
+
+      - name: Install dependencies
         run: |
-          rustup target add ${{ matrix.target }}
+          rustup target add ${{ matrix.arch }}
 
       - uses: pnpm/action-setup@v4
         name: Install pnpm
