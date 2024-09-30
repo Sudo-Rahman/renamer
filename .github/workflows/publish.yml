@@ -159,7 +159,19 @@ jobs:
         if: matrix.arch == 'aarch64-unknown-linux-gnu'
         run: |
           sudo dpkg --add-architecture arm64
-          sudo apt-get update
+          sudo tee /etc/apt/sources.list <<EOF
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy main restricted
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy-updates main restricted
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy universe
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy-updates universe
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy multiverse
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy-updates multiverse
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy-backports main restricted universe multiverse
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy-security main restricted
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy-security universe
+          deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports jammy-security multiverse
+          EOF
+          sudo apt-get update && sudo apt-get upgrade -y
           sudo apt-get install -y gcc-aarch64-linux-gnu
           sudo apt-get install -y libgtk-3-dev:arm64 libwebkit2gtk-4.0-dev:arm64 \
                                   libappindicator3-dev:arm64 librsvg2-dev:arm64
