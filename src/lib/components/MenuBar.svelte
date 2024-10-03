@@ -177,7 +177,10 @@
 
 
         <div class="flex w-full justify-end">
-            <Button class="h-9 w-10 active:bg-primary" disabled="{!($renamable)}" on:click={onRenameFiles} size="icon"
+            <Button class="h-9 w-10 active:bg-primary {$renamable ? 'animate-shine border border-foreground/30 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] transition-colors': ''}"
+                    disabled="{!($renamable)}"
+                    on:click={onRenameFiles}
+                    size="icon"
                     variant="outline">
                 <Play/>
             </Button>

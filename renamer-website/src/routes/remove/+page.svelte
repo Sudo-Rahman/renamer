@@ -8,7 +8,7 @@
     import {Label} from "$lib/components/ui/label";
     import {Input} from "$lib/components/ui/input";
     import CircularProgress from "$lib/components/CircularProgress.svelte";
-    import * as Card from "$lib/components/ui/card";
+    import Card from "$lib/components/CardRevealedPointer.svelte";
     import {toast} from "svelte-sonner";
 
 
@@ -36,6 +36,8 @@
             });
 
             post = "none";
+            licenseKey = '';
+            email = '';
         } catch (error) {
             post = "none";
             toast.error("Failed to reset license");
@@ -45,18 +47,12 @@
 
 <div class="flex items-center justify-center h-full">
 
-    <Card.Root class="w-[80%] sm:w-fit">
-        <Card.Header>
-            <Card.Title>
-                <h2 class="text-2xl font-semibold text-center">Reset your License</h2>
-            </Card.Title>
-            <Card.Description>
-                <p class="text-sm text-accent-foreground/60 text-center">
-                    Enter your email and license key to reset your license and reuse it on another machine.
-                </p>
-            </Card.Description>
-        </Card.Header>
-        <Card.Content>
+    <Card class="mx-2 sm:w-fit">
+        <div class="h-full w-full flex flex-col space-y-5">
+            <h2 class="text-2xl font-semibold text-center">Reset your License</h2>
+            <p class="text-sm text-accent-foreground/60 text-center">
+                Enter your email and license key to reset your license and reuse it on another machine.
+            </p>
             <div class="flex flex-col space-y-2">
                 <!-- Email Input -->
                 <div class="flex flex-col gap-1 mb-3">
@@ -83,8 +79,6 @@
                 </div>
 
             </div>
-        </Card.Content>
-        <Card.Footer>
             <Button class="w-full"
                     on:click={resetLicense}>
                 {#if post === "loading"}
@@ -93,7 +87,7 @@
                     Reset License
                 {/if}
             </Button>
-        </Card.Footer>
-    </Card.Root>
+        </div>
+    </Card>
 
 </div>

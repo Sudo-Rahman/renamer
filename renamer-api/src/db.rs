@@ -1,6 +1,6 @@
 #![allow(unused)]
 
-use crate::models::{Log, User};
+use crate::models::{Log, Machine, User};
 use mongodb::{Client, Collection, Database, error::Result, bson::*, bson, Cursor};
 use std::env;
 use dotenv::dotenv;
@@ -38,9 +38,9 @@ impl Mongo {
         }
     }
 
-    pub async fn find_user(&self, payload: &Document) -> Result<Option<User>> {
+    pub async fn find_user(&self, data: &Document) -> Result<Option<User>> {
         match self.database.collection::<User>("users").find_one(
-            payload.clone(),
+            data.clone(),
         ).await {
             Ok(response) => Ok(response),
             Err(e) => Err(e),
@@ -72,13 +72,15 @@ impl Mongo {
         Ok(vec)
     }
 
-    pub(crate) async fn clear_license(&self, user: &Document) -> Result<()> {
-        self.find_user(user).await?;
+    pub(crate) async fn clear_license(&self, doc: &Document, machine: &Machine) -> Result<()> {
+        let user = self.find_user(doc).await?.ok_or_else(|| mongodb::error::Error::from(std::io::Error::new(std::io::ErrorKind::Other, "User not found")))?;
+        let mut machines = self.find_user(doc).await?.unwrap().machines.clone();
+        machines.retain(|m| m.id != machine.id);
         match self.database.collection::<User>("users").update_one(
-            user.clone(),
+            doc.clone(),
             doc! {
                 "$set": {
-                    "machine_id": ""
+                    "machines": to_bson(&machines)?
                 }
             },
         ).await {
@@ -95,7 +97,7 @@ impl Mongo {
             },
             doc! {
                 "$set": {
-                    "machine_id": &user.machine_id
+                    "machines": to_bson(&user.machines)?
                 }
             },
         ).await {

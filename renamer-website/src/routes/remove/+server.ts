@@ -15,7 +15,7 @@ export const POST: RequestHandler = async ({request}) => {
     }
 
     let response = await fetch(
-        API_URL + "/clear_license",
+        API_URL + "/reset_license",
         {
             method: "POST",
             headers: {

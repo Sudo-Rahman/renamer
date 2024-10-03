@@ -1,1 +1,6 @@
 2024-09-28 14:31:49.693 +00:00:00: Failed to send email to stripe@example.com: {"message":"to parameter is missing"}
+2024-10-03 7:18:12.284 +00:00:00: Failed to send email to stripe@example.com: {"message":"to parameter is missing"}
+2024-10-03 7:18:23.337 +00:00:00: Failed to send email to stripe@example.com: {"message":"to parameter is missing"}
+2024-10-03 7:19:30.354 +00:00:00: Failed to send email to stripe@example.com: {"message":"to parameter is missing"}
+2024-10-03 7:19:58.083 +00:00:00: Failed to send email to stripe@example.com: {"message":"to parameter is missing"}
+2024-10-03 19:55:31.884 +00:00:00: Failed to send email to test@test1.com: {"message":"to parameter is missing"}
