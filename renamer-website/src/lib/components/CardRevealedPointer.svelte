@@ -10,7 +10,7 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
-        class="group relative w-fit overflow-hidden rounded-xl bg-card {$$props.class}"
+        class="group relative overflow-hidden rounded-xl bg-card {$$props.class}"
         on:mousemove={(e) => {
     const { left, top } = e.currentTarget.getBoundingClientRect();
 

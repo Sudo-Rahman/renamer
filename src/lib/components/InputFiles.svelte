@@ -4,7 +4,7 @@
     import {onMount} from 'svelte';
     import {files, getFilesFromFileDialog, RenamerFile} from '$models';
     import {invoke} from "@tauri-apps/api/core";
-    import { t} from '$lib/translations';
+    import {t} from '$lib/translations';
     import {toast} from "svelte-sonner";
 
 
@@ -23,23 +23,23 @@
     onMount(async () => {
         const dropListen = await listen('tauri://drag-drop', async (event: any) => {
             if (dragActive) {
-                try{
-                const droppedFiles = event.payload.paths as string[];
-                let new_files: RenamerFile[] = [];
+                try {
+                    const droppedFiles = event.payload.paths as string[];
+                    let new_files: RenamerFile[] = [];
 
-                let tmp_files: any[] = await invoke('files_from_vec', {files: droppedFiles})
-                tmp_files.forEach(
-                    (file) => {
-                        new_files.push(new RenamerFile(file));
-                    }
-                );
+                    let tmp_files: any[] = await invoke('files_from_vec', {files: droppedFiles})
+                    tmp_files.forEach(
+                        (file) => {
+                            new_files.push(new RenamerFile(file));
+                        }
+                    );
 
-                new_files = new_files.sort((a, b) => a.name.localeCompare(b.name));
-                $files = new_files;
-                toast.success($t('toast.import_files.success'));
-                dragActive = false;
-                await goto('/mainWindow');
-                }catch(e){
+                    new_files = new_files.sort((a, b) => a.name.localeCompare(b.name));
+                    $files = new_files;
+                    toast.success($t('toast.import_files.success'));
+                    dragActive = false;
+                    await goto('/mainWindow');
+                } catch (e) {
                     toast.error($t('toast.import_files.error'));
                     console.error(e);
                 }
@@ -89,13 +89,13 @@
 
 </script>
 
-<div id="dropzone"
-     class="flex p-10 h-[200px] w-[350px] items-center justify-center rounded-md border-2 border-dashed text-sm"
+<div class="flex p-10 h-[200px] w-[350px] items-center justify-center rounded-md border-2 border-dashed text-sm"
      class:bg-primary={dragActive}
      class:border-secondary={dragActive}
-     on:dragover={handleDragOver}
-     on:dragleave={handleDragLeave}>
-    <button class="h-full w-full" type="button" on:click={getFolder}>
+     id="dropzone"
+     on:dragleave={handleDragLeave}
+     on:dragover={handleDragOver}>
+    <button class="h-full w-full" on:click={getFolder} type="button">
         {$t('drag_drop_zone')}
     </button>
 </div>

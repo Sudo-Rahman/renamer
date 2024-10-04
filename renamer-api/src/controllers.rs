@@ -271,3 +271,29 @@ pub(crate) async fn get_all_logs(
         Err((StatusCode::NOT_FOUND, "".to_string()))
     }
 }
+
+pub(crate) async fn get_user(
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    State(config): State<ServerConfig>,
+    Json(body): Json<Value>)
+    -> Result<(StatusCode, String), (StatusCode, String)> {
+    let email = extract_field::<String>(&body, "email")?;
+    let key = extract_field::<String>(&body, "key")?;
+    let user = config.db.find_user(
+        &bson::doc! {
+            "email": email.clone(),
+            "key": Uuid::parse_str(key.clone()).unwrap(),
+        }
+    ).await.unwrap();
+
+    match user {
+        Some(user) => {
+            if user.key.to_string() == key.clone() {
+                Ok((StatusCode::OK, serde_json::to_string(&user).unwrap()))
+            } else {
+                Err((StatusCode::UNAUTHORIZED, "Invalid key".to_string()))
+            }
+        }
+        None => Err((StatusCode::NOT_FOUND, "User not found".to_string()))
+    }
+}

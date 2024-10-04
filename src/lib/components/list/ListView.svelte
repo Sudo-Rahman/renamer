@@ -7,13 +7,12 @@
     import ListViewHeader from "$lib/components/list/ListViewHeader.svelte";
     import {fade, slide} from 'svelte/transition';
     import {quadInOut} from 'svelte/easing';
-    import type {Column} from "$lib/components/list/store";
 
     let height = 0;
     let div: HTMLDivElement;
     let virtualList: VirtualList;
     export let files: RenamerFile[];
-    let filteredFiles: RenamerFile[] = files;
+    $: filteredFiles = files;
     let action: any;
 
     let resizeTimeout: number;
@@ -57,7 +56,6 @@
         files = event.detail;
         action = event.detail;
     }
-
 </script>
 
 <div class="overflow-x-scroll w-full h-full">

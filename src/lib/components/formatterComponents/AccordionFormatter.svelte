@@ -11,10 +11,10 @@
 </script>
 
 <Accordion.Root id={id}>
-    <Accordion.Item value="item-{id}" class="border-none">
+    <Accordion.Item class="border-none" value="item-{id}">
 
         <div class="flex h-6 mb-1 w-full items-center relative">
-            <div class="z-10" aria-label="">
+            <div aria-label="" class="z-10">
                 <GripVertical class="h-5 w-5"/>
             </div>
             <Accordion.Trigger
@@ -23,8 +23,8 @@
             </Accordion.Trigger>
 
             <div class="ml-auto z-0">
-                <Button variant="outline" class="w-6 h-6 p-0"
-                        on:click={() => $formatters.removeFormatter(id)}>
+                <Button class="w-6 h-6 p-0" on:click={() => $formatters.removeFormatter(id)}
+                        variant="outline">
                     <X size="16px"/>
                 </Button>
             </div>

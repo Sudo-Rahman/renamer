@@ -19,13 +19,13 @@
 
 <div class="flex items-center justify-center w-full">
     {#if status === "None"}
-        <Button variant="ghost" class="p-0 w-7 h-7 rounded">
+        <Button variant="ghost" class="p-0 w-7 h-7 rounded-sm">
             <Minus class="w-5 h-5"/> <!-- Fixe la taille de l'icône Minus -->
         </Button>
     {:else}
         <Popover.Root>
             <Popover.Trigger class="w-7 h-7 p-0">
-                <Button variant="ghost" class="p-0 w-7 h-7 rounded">
+                <Button variant="ghost" class="p-0 w-7 h-7 rounded-sm">
                     {#if status === "Error"}
                         <X class="w-5 h-5 stroke-red-700"/> <!-- Taille fixe pour X -->
                     {:else if status === "Success"}

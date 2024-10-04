@@ -7,15 +7,13 @@ mod utils;
 
 use std::net::{IpAddr, SocketAddr};
 use tower::{buffer::BufferLayer, limit::RateLimitLayer, BoxError, ServiceBuilder};
-use axum::{
-    http::StatusCode,
-    routing::{get}, Router,
-};
+use axum::{http, http::StatusCode, routing::{get}, Router};
 use std::process::exit;
 use std::time::Duration;
 use axum::error_handling::HandleErrorLayer;
 use axum::routing::post;
 use reqwest::multipart;
+use tower_http::cors::{Any, CorsLayer};
 use crate::controllers::*;
 use crate::db::*;
 use crate::models::ServerConfig;
@@ -31,10 +29,19 @@ async fn main() {
 
     let mut app = Router::new()
         .route("/license", post(get_license))
+        .route("/get_user", post(get_user))
         .route("/activate_license", post(activate_licence))
         .route("/remove_machine", post(remove_machine))
         .route("/create", post(create_user))
         .route("/logs", get(get_all_logs));
+
+    if cfg!(debug_assertions) {
+        app = app.layer(CorsLayer::new()
+                            .allow_origin(Any) // Autorise toutes les origines
+                            .allow_methods(Any) // Autorise toutes les méthodes HTTP
+                            .allow_headers([http::header::CONTENT_TYPE]) // Autorise l'en-tête Content-Type
+        )
+    }
 
     let app = app.with_state(config)
         .layer(

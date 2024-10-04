@@ -117,7 +117,6 @@ export class FormatterList {
     }
 
     format(): void {
-        if (this._renamerFiles.length === 0) return;
         this.renamable.set(false);
         this._renamerFiles.forEach((file) => {
             if (!file.selected) {

@@ -12,6 +12,9 @@ pub async fn list_files_in_directory(dir: String) -> Result<Vec<RenameFile>, Str
         for entry in fs::read_dir(path).map_err(|e| e.to_string())? {
             let entry = entry.map_err(|e| e.to_string())?;
             let path = entry.path();
+            if path.file_name().unwrap().to_str().unwrap().starts_with(".") {
+                continue;
+            }
 
             if path.is_file() {
                 match RenameFile::new(path.to_string_lossy().to_string()) {
@@ -29,10 +32,15 @@ pub async fn list_files_in_directory(dir: String) -> Result<Vec<RenameFile>, Str
 #[tauri::command]
 pub fn files_from_vec(files: Vec<String>) -> Result<Vec<RenameFile>, String> {
     let mut files_vec = Vec::new();
-    for file in files {
-        match RenameFile::new(file) {
-            Ok(file) => files_vec.push(file),
-            Err(err) => eprintln!("Error reading file metadata: {}", err),
+    let binding = files.first().unwrap();
+    let dir = Path::new(&binding).parent().unwrap();
+    for file in &files {
+        let path = Path::new(file);
+        if path.is_file() && path.parent().unwrap() == dir {
+            match RenameFile::new(path.to_string_lossy().to_string()) {
+                Ok(file) => files_vec.push(file),
+                Err(err) => eprintln!("Error reading file metadata: {}", err),
+            }
         }
     }
     Ok(files_vec)

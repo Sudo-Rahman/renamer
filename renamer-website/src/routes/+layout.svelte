@@ -1,22 +1,13 @@
 <script lang="ts">
     import "../app.css";
     import {ModeWatcher} from "mode-watcher";
-    import NavBar from "$lib/components/NavBar.svelte";
-    import Footer from "$lib/components/Footer.svelte";
     import {Toaster} from "$lib/components/ui/sonner";
-
 
 </script>
 
-<Toaster/>
+<ModeWatcher/>
 
-<div class="h-svh flex flex-col relative">
-    <div class="absolute flex w-full top-5">
-        <NavBar/>
-    </div>
-    <ModeWatcher/>
+<div class="w-full h-screen cursor-default" spellcheck="false">
+    <Toaster/>
     <slot/>
-    <div class="sticky top-[100vh]">
-        <Footer/>
-    </div>
 </div>

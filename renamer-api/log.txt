@@ -8,3 +8,10 @@
 2024-10-04 7:14:03.733 +00:00:00: Failed to send email to test@test.com: {"message":"to parameter is missing"}
 2024-10-04 7:21:42.539 +00:00:00: Failed to send email to tessst@test1.com: {"message":"to parameter is missing"}
 2024-10-04 9:54:02.058 +00:00:00: Failed to send email to tessst@test1.com: {"message":"to parameter is missing"}
+2024-10-04 18:14:42.47 +00:00:00: Failed to send email to test@test.com: {"message":"to parameter is missing"}
+2024-10-04 18:15:55.368 +00:00:00: Failed to send email to test@test.com: {"message":"to parameter is missing"}
+2024-10-04 18:17:16.289 +00:00:00: Failed to send email to test@test.com: {"message":"to parameter is missing"}
+2024-10-04 18:17:17.898 +00:00:00: Failed to send email to test@test.com: {"message":"to parameter is missing"}
+2024-10-04 18:18:36.027 +00:00:00: Failed to send email to test@test.com: {"message":"to parameter is missing"}
+2024-10-04 18:19:48.168 +00:00:00: Failed to send email to test@test.com: {"message":"to parameter is missing"}
+2024-10-04 19:17:36.176 +00:00:00: Failed to send email to test@test.com: {"message":"to parameter is missing"}
