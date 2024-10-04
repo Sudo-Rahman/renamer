@@ -1,9 +1,10 @@
 use axum::Json;
 use chrono::Utc;
 use mongodb::bson::oid::ObjectId;
-use mongodb::bson::{DateTime, Uuid};
+use mongodb::bson::{bson, DateTime, Uuid};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
+use renamer_shared::{Machine, UserMachine};
 use crate::db::Mongo;
 
 #[derive(Clone)]
@@ -21,22 +22,17 @@ pub struct User {
     pub(crate) machines: Vec<Machine>,
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct Machine {
-    pub(crate) id: String,
-    pub(crate) device_name: String,
+pub(crate) fn user_to_user_machine(user: User, machine: Machine) -> UserMachine {
+    UserMachine {
+        email: user.email,
+        key: user.key,
+        machine,
+    }
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct UserMachine {
-    pub(crate) email: String,
-    pub(crate) key: Uuid,
-    pub(crate) machine: Machine,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct Log {
-    pub(crate) _id: ObjectId,
-    pub(crate) date_time: DateTime,
-    pub(crate) message: String,
+pub(crate) struct Log {
+    pub _id: ObjectId,
+    pub date_time: DateTime,
+    pub message: String,
 }

@@ -15,6 +15,7 @@ tower = { version = "0.5", features = ["buffer", "limit"] }
 reqwest = { version = "0.12.7", features = ["multipart"] }
 chrono = "0.4.38"
 openssl = { version = "0.10", features = ["vendored"] }
+renamer-shared = { path = "../shared" }
 
 [dependencies.mongodb]
 version = "3"

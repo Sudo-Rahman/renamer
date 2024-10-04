@@ -6,11 +6,13 @@ use serde_json::Value::Null;
 use serde_json::{json, Value};
 use std::path::PathBuf;
 use std::str::FromStr;
+use whoami;
 use std::thread::available_parallelism;
 
 extern crate mid;
 use tauri::{Manager, Wry};
 use tauri_plugin_store::{with_store, StoreCollection};
+use renamer_shared::UserMachine;
 
 #[cfg(debug_assertions)]
 pub const API_URL: &str = "http://localhost:3000";
@@ -19,7 +21,7 @@ pub const API_URL: &str = "http://localhost:3000";
 pub const API_URL: &str = "https://api.renamer.sudo-rahman.fr";
 
 #[tauri::command]
-pub async fn check_licence(user: Value) -> Result<String, String> {
+pub async fn check_licence(user: UserMachine) -> Result<String, String> {
     let client = Client::new();
 
     let res = client
@@ -91,25 +93,18 @@ pub(crate) async fn is_license_ok(app: tauri::AppHandle) -> Result<bool, i8> {
                 return Err(2);
             }
 
-            let user = serde_json::Value::from_str(license.as_str()).unwrap();
-            let machine_id = user["machine_id"].as_str();
+            let user = match serde_json::from_str::<UserMachine>(license.as_str()) {
+                Ok(user) => user,
+                Err(_) => return Err(1)
+            };
             if (online::check(None).is_ok()) {
-                let res = check_licence(json!({
-                    "email": user["email"],
-                    "key": user["key"]
-                }))
-                    .await;
+                let res = check_licence(user.clone()).await;
                 match res {
                     Ok(res) => Ok(res == license),
                     Err(_) => Err(1),
                 }
             } else {
-                if machine_id.is_none() {
-                    return Err(1);
-                }
-                Ok(machine_id.unwrap() == get_machine_id()
-                    && user["email"].as_str().is_some()
-                    && user["key"].as_str().is_some())
+                Ok(user.machine.id == get_machine_id())
             }
         }
         Err(_) => Err(1),
@@ -124,7 +119,10 @@ pub(crate) async fn activate_license(app: tauri::AppHandle, key: String) -> Resu
 
     let license = json!({
        "key" : key,
-        "machine_id": get_machine_id()
+        "machine" : json!({
+            "id" : get_machine_id(),
+            "device_name" : whoami::devicename()
+        })
     });
 
     let res = client
@@ -161,14 +159,11 @@ pub(crate) async fn remove_license(app: tauri::AppHandle) -> Result<bool, i8> {
     if license.is_err() {
         return Err(1);
     }
-    let json = serde_json::Value::from_str(license.unwrap().as_str()).unwrap();
+    let json = serde_json::from_str::<UserMachine>(license.unwrap().as_str()).unwrap();
     let client = Client::new();
     let res = client
-        .post(format!("{}/reset_license", API_URL))
-        .json(&json!({
-            "email": json["email"].as_str(),
-            "key": json["key"].as_str()
-        }))
+        .post(format!("{}/remove_machine", API_URL))
+        .json(&json)
         .send()
         .await
         .or_else(|_| Err(1))?;

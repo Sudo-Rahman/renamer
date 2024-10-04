@@ -1,11 +1,12 @@
 #![allow(unused)]
 
-use crate::models::{Log, Machine, User};
+use crate::models::{Log, User};
+use renamer_shared::Machine;
 use mongodb::{Client, Collection, Database, error::Result, bson::*, bson, Cursor};
 use std::env;
 use dotenv::dotenv;
 use futures::stream::{StreamExt, TryStreamExt};
-use serde_json::{Map, Value};
+use serde_json::{json, Map, Value};
 use crate::utils;
 
 #[derive(Clone)]
@@ -43,7 +44,10 @@ impl Mongo {
             data.clone(),
         ).await {
             Ok(response) => Ok(response),
-            Err(e) => Err(e),
+            Err(e) => {
+                eprintln!("Failed to find user: {}", e);
+                Err(e)
+            }
         }
     }
 
@@ -72,10 +76,7 @@ impl Mongo {
         Ok(vec)
     }
 
-    pub(crate) async fn clear_license(&self, doc: &Document, machine: &Machine) -> Result<()> {
-        let user = self.find_user(doc).await?.ok_or_else(|| mongodb::error::Error::from(std::io::Error::new(std::io::ErrorKind::Other, "User not found")))?;
-        let mut machines = self.find_user(doc).await?.unwrap().machines.clone();
-        machines.retain(|m| m.id != machine.id);
+    pub(crate) async fn update_machines(&self, doc: &Document, machines: &Vec<Machine>) -> Result<()> {
         match self.database.collection::<User>("users").update_one(
             doc.clone(),
             doc! {
