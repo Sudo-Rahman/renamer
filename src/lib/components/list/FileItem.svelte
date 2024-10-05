@@ -41,14 +41,14 @@
     <ContextMenu.Root>
         <ContextMenu.Trigger>
 
-            <div class="flex py-1 text-xs items-center px-2 hover:bg-primary hover:rounded-[10px]">
+            <div class="flex py-1 text-xs items-center hover:bg-primary hover:rounded-[10px]">
 
                 {#each cols as col, i (col.accessor)}
 
                     <div bind:this={divs[i]}
                          class="flex w-[{col.width}px]">
 
-                        <div class="line-clamp-1 flex w-full">
+                        <div class="line-clamp-1 px-2 flex w-full">
                             <svelte:component file={file} this={col.customComponent}/>
                         </div>
 

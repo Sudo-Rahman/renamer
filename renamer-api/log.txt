@@ -15,3 +15,4 @@
 2024-10-04 18:18:36.027 +00:00:00: Failed to send email to test@test.com: {"message":"to parameter is missing"}
 2024-10-04 18:19:48.168 +00:00:00: Failed to send email to test@test.com: {"message":"to parameter is missing"}
 2024-10-04 19:17:36.176 +00:00:00: Failed to send email to test@test.com: {"message":"to parameter is missing"}
+2024-10-05 10:57:00.184 +00:00:00: Failed to send email to test@test.com: {"message":"to parameter is missing"}

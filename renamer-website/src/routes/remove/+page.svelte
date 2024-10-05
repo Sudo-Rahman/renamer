@@ -29,6 +29,10 @@
     } | null = null;
 
     function getUser() {
+        if (email === "" || licenseKey === "") {
+            toast.error("Please fill all fields");
+            return;
+        }
         getPosts = true;
         fetch(PUBLIC_API_URL + "/get_user", {
             method: 'POST',
@@ -95,7 +99,6 @@
         }
     }
 
-    getUser();
 </script>
 
 <div class="overflow-scroll">
