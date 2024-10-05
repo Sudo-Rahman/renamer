@@ -122,52 +122,66 @@ jobs:
   #          path: |
   #            src-tauri/target/${{ matrix.arch }}/release/bundle/msi/*.msi*
   #            src-tauri/target/${{ matrix.arch }}/release/bundle/nsis/*.exe*
-  
-  
-  
-  build-for-linux:
+
+
+
+  build-linux:
+    name: Build for Linux (x86 and ARM)
+    runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
-        platform: [ ubuntu-latest ]
-        target:
-          [
-            x86_64-unknown-linux-gnu,
-            aarch64-unknown-linux-gnu,
-          ]
-        include:
-          - os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            toolchain: stable-x86_64-unknown-linux-gnu
-          - os: ubuntu-latest
-            target: aarch64-unknown-linux-gnu
-            toolchain: stable-aarch64-unknown-linux-gnu
-    runs-on: ${{ matrix.platform }}
+        arch: [ x86_64-unknown-linux-gnu ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build for Linux
-        uses: ./actions/build-for-linux
+      - name: Cache Rust build
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Install Rust Stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install dependencies
+        run: |
+          rustup target add ${{ matrix.arch }}
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libayatana-appindicator3-dev librsvg2-dev patchelf libxdo-dev libxcb1 libxrandr2 libdbus-1-3
+
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 9
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build for Linux ${{ matrix.arch }}
+        run: pnpm tauri build --target ${{ matrix.arch }}
         env:
-          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v3
         with:
-          target: ${{ matrix.target }}
-          toolchain: ${{ matrix.toolchain }}
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux_${{ matrix.target }}_deb
-          path: src-tauri/target/${{ matrix.target }}/release/bundle/deb/*.deb
-          if-no-files-found: error
-      - name: Upload Artifacts
-        if: matrix.target == 'x86_64-unknown-linux-gnu'
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux_${{ matrix.target }}_appimage
-          path: src-tauri/target/${{ matrix.target }}/release/bundle/appimage/*.AppImage*
-          if-no-files-found: error
+          name: linux-app-${{ matrix.arch }}
+          path: src-tauri/target/${{ matrix.arch }}/release/bundle/appimage/*.AppImage
+
 
 
   create-release:
@@ -176,7 +190,7 @@ jobs:
     needs: [
       #      build-darwin,
       #      build-windows,
-      build-for-linux
+      build-linux
     ]
     steps:
       - name: Download artifacts
