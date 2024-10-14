@@ -5,8 +5,6 @@ import {Signal} from "$models/Signal";
 import {invoke} from "@tauri-apps/api/core";
 import {get, writable} from "svelte/store";
 import {message} from "@tauri-apps/plugin-dialog";
-import {goto} from "$app/navigation";
-import {toast} from "svelte-sonner";
 
 
 export abstract class Formatter {
@@ -61,11 +59,25 @@ export abstract class Formatter {
 
 }
 
+function createWritableWithUpdate(value) {
+    const {subscribe, set, update} = writable(value);
+
+    return {
+        subscribe,
+        set: (newValue) => {
+            // Toujours déclencher la mise à jour même si la valeur est la même
+            set();
+            setTimeout(() => set(newValue), 0);
+        },
+        update
+    };
+}
+
 export class FormatterList {
     public onFormattedSignal = new Signal<RenamerFile[]>();
     public onListChangedSignal = new Signal<Formatter[]>();
     readonly renamable = writable<boolean>(false);
-    readonly errors = writable<number>(0);
+    readonly errors = createWritableWithUpdate(0);
     private _renamerFiles: RenamerFile[] = [];
     private _timer: any;
 
@@ -154,19 +166,20 @@ export class FormatterList {
         await invoke('rename_files', {fileInfos: fileInfos}).then(
             (res) => {
                 if (res && (res as any[]).length > 0) {
-                    (res as { status: boolean, error: number, uuid: string }[]).forEach((file) => {
+                    (res as { status: boolean, error: number, uuid: string, new_path: string }[]).forEach((file) => {
                         const f = this._renamerFiles.find((f) => f.uuid === file.uuid);
                         if (f) {
                             f.statusCode = file.status ? 0 : 1;
                             f.status = file.status ? "Success" : "Error";
                             if (file.status) {
                                 f.name = f.newName;
+                                f.path = file.new_path;
                                 f.onRenamed.emit();
                             }
                         }
                     });
                 }
-                this.format();
+                this.renamable.set(false);
             },
             (error) => {
                 throw error;

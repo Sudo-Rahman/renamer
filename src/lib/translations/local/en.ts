@@ -41,6 +41,7 @@ export const en = {
                 placeholder: "Insert preset name",
                 save_btn: "Save",
                 cancel_btn: "Cancel",
+                warning: "Minimum 3 characters required",
             },
             list_dialog: {
                 title: "Presets",
@@ -194,7 +195,7 @@ export const en = {
     },
     file_status: {
         error: {
-            0: "",
+            0: "File renamed successfully",
             1: "The file name already exists in the directory.",
             2: "The file does not exist.",
         }

@@ -12,6 +12,7 @@
     import AddFormatterButton from "$lib/components/formatterComponents/AddFormatterButton.svelte";
     import {Button} from "$lib/components/ui/button";
     import ListView from "$lib/components/list/ListView.svelte";
+    import {get} from "svelte/store";
 
 
     let dragActive = false;
@@ -64,9 +65,19 @@
     });
 
     $formatters.errors.subscribe(value => {
-        let seletedFiles = $files.filter(file => file.selected).length;
-        $information = `<span>${formatString($t('bottom_info.files_infos'), seletedFiles, value)}</span>`;
+        showInfoMessage();
     });
+
+    files.subscribe(value => {
+        showInfoMessage();
+    });
+
+    function showInfoMessage() {
+        let seletedFiles = $files.filter(file => file.selected).length;
+        $information = `<span>${formatString($t('bottom_info.files_infos'), seletedFiles, get($formatters.errors))}</span>`;
+
+    }
+
 
 </script>
 
@@ -99,11 +110,9 @@
 
     <Separator class="w-full"/>
 
-    <div class="flex w-full p-1 text-sm h-fit px-3 space-x-5 items-center justify-end">
+    <div class="flex w-full p-1 text-sm h-fit px-3 space-x-5 items-center justify-between">
 
-        {#if $preset}
-            <span class="px-2 font-medium">{$preset ? `Preset : ${$preset?.name}` : ''}</span>
-        {/if}
+        <span class="px-2 font-medium">{$preset ? `Preset : ${$preset?.name}` : ''}</span>
 
         <div class="flex items-center">
             {#key $information}

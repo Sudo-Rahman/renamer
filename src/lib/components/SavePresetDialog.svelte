@@ -9,11 +9,13 @@
 
     export let open = false;
     let name = "";
+    $: disableBtn = name.length < 3;
+    $: showWarning = name.length < 3; // Afficher l'avertissement si la longueur est < 3
 
     function onCreate() {
-        let preset = new Preset(name,$formatters.formatters);
+        let preset = new Preset(name, $formatters.formatters);
         savePreset(preset).then((value) => {
-            if(value) {
+            if (value) {
                 toast.success($t('toast.save_as_preset.success').replace("%s", name));
             } else {
                 toast.error($t('toast.save_as_preset.error').replace("%s", name));
@@ -21,29 +23,34 @@
         });
         open = false;
     }
-
 </script>
 
-
 <Dialog.Root bind:open={open}>
-    <Dialog.Content >
+    <Dialog.Content>
         <Dialog.Header>
             <Dialog.Title class="text-center">{$t('menu_bar.preset.save_as_dialog.title')}</Dialog.Title>
         </Dialog.Header>
 
         <div class="flex justify-center flex-col space-y-6 pt-5">
 
-            <div class="flex w-full justify-between space-x-4 items-center">
+            <div class="grid w-full max-w-sm items-center gap-1.5">
                 <Label>{$t('menu_bar.preset.save_as_dialog.input')}</Label>
-                <Input placeholder={$t('menu_bar.preset.save_as_dialog.placeholder')} type="text" bind:value={name}/>
+                <Input bind:value={name} placeholder={$t('menu_bar.preset.save_as_dialog.placeholder')}
+                       type="text"/>
+                {#if showWarning}
+                    <p class="text-red-500 text-sm">{$t('menu_bar.preset.save_as_dialog.warning')}</p>
+                {/if}
             </div>
 
+
             <div class="flex w-full justify-end items-center space-x-5">
-                <Button variant="outline" on:click={()=>open = false}>{$t('menu_bar.preset.save_as_dialog.cancel_btn')}</Button>
-                <Button on:click={onCreate}>{$t('menu_bar.preset.save_as_dialog.save_btn')}</Button>
+                <Button on:click={() => open = false}
+                        variant="outline">{$t('menu_bar.preset.save_as_dialog.cancel_btn')}</Button>
+                <Button disabled={disableBtn}
+                        on:click={onCreate}>{$t('menu_bar.preset.save_as_dialog.save_btn')}</Button>
             </div>
 
         </div>
 
-    </Dialog.Content >
+    </Dialog.Content>
 </Dialog.Root>

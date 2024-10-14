@@ -23,6 +23,10 @@ pub async fn list_files_in_directory(dir: String) -> Result<Vec<RenameFile>, Str
                 }
             }
         }
+        // no licence max 5 files
+        if !APPLICATION.lock().await.license {
+            files.truncate(5);
+        }
         Ok(files)
     } else {
         Err("The provided path is not a directory".to_string())
@@ -30,7 +34,7 @@ pub async fn list_files_in_directory(dir: String) -> Result<Vec<RenameFile>, Str
 }
 
 #[tauri::command]
-pub fn files_from_vec(files: Vec<String>) -> Result<Vec<RenameFile>, String> {
+pub async fn files_from_vec(files: Vec<String>) -> Result<Vec<RenameFile>, String> {
     let mut files_vec = Vec::new();
     let binding = files.first().unwrap();
     let dir = Path::new(&binding).parent().unwrap();
@@ -42,6 +46,10 @@ pub fn files_from_vec(files: Vec<String>) -> Result<Vec<RenameFile>, String> {
                 Err(err) => eprintln!("Error reading file metadata: {}", err),
             }
         }
+    }
+    // no licence max 5 files
+    if !APPLICATION.lock().await.license {
+        files_vec.truncate(5);
     }
     Ok(files_vec)
 }
@@ -65,14 +73,11 @@ pub struct RenameStatus {
     status: bool,
     error: String,
     uuid: String, // ou un autre type de données
+    new_path: String,
 }
 
 #[tauri::command]
 pub async fn rename_files(file_infos: Vec<FileRenameInfo>) -> Result<Vec<RenameStatus>, i8> {
-    if !APPLICATION.lock().await.license {
-        return Err(1);
-    }
-
     let mut vec = Vec::new();
 
     for FileRenameInfo {
@@ -87,6 +92,7 @@ pub async fn rename_files(file_infos: Vec<FileRenameInfo>) -> Result<Vec<RenameS
                     status: true,
                     error: "".to_string(),
                     uuid: uuid.to_string(),
+                    new_path: new_path.to_string(),
                 });
             }
             Err(err) => {
@@ -94,6 +100,7 @@ pub async fn rename_files(file_infos: Vec<FileRenameInfo>) -> Result<Vec<RenameS
                     status: false,
                     error: err.to_string(),
                     uuid: uuid.to_string(),
+                    new_path: new_path.to_string(),
                 });
                 eprintln!("Error renaming file {}: {}", path, err);
             }

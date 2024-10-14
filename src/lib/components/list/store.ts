@@ -51,7 +51,6 @@ export const columns: Writable<Column[]> = writable([
     {
         name: "list_view.header.new_name",
         accessor: "newName",
-        sort: 'desc',
         minSize: 20,
         defaultSize: 50,
         resizable: true,

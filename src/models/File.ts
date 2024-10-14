@@ -6,7 +6,6 @@ export class RenamerFile {
     onRenamed: Signal<void>;
     onSelect: Signal<boolean>;
     private readonly _uuid: string = "";
-    private readonly _path: string;
     private readonly _size: number;
     private readonly _creationDate: Date;
     private readonly _modificationDate: Date;
@@ -35,6 +34,16 @@ export class RenamerFile {
         this._statusCode = 0;
     }
 
+    private _path: string;
+
+    get path(): string {
+        return this._path;
+    }
+
+    set path(value: string) {
+        this._path = value;
+    }
+
     private _selected: boolean;
 
     get selected(): boolean {
@@ -48,10 +57,6 @@ export class RenamerFile {
 
     get uuid(): string {
         return this._uuid;
-    }
-
-    get path(): string {
-        return this._path;
     }
 
     get size(): number {

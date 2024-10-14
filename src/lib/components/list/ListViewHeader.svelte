@@ -152,14 +152,20 @@
                 {#each resizableCols as col, i}
                     <Resizable.Pane onResize={(s, p) => handleResize(s, p, col)} minSize={col.minSize ?? 1}
                                     defaultSize={col.minSize ?? 10}>
-                        <div class="px-2" bind:this={divs2[i]}>
+                        <div class="px-2 font-medium text-sm" bind:this={divs2[i]}>
                             {#if col.headerComponent !== undefined}
                                 <svelte:component files={files} this={col.headerComponent}/>
                             {:else}
-                                <Button variant="ghost" class="p-2" on:click={() => sortToggle(col)}>
-                                    {$t(col.name)}
-                                    <ArrowUpDown class="ml-2 h-4 w-4"/>
-                                </Button>
+                                {#if col.sort}
+                                    <Button variant="ghost" class="p-2" on:click={() => sortToggle(col)}>
+                                        {$t(col.name)}
+                                        <ArrowUpDown class="ml-2 h-4 w-4"/>
+                                    </Button>
+                                {:else}
+                                    <p class="p-2">
+                                        {$t(col.name)}
+                                    </p>
+                                {/if}
                             {/if}
                         </div>
                     </Resizable.Pane>

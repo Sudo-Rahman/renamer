@@ -41,6 +41,7 @@ export const fr = {
                 placeholder: "Insérer le nom du préréglage",
                 save_btn: "Enregistrer",
                 cancel_btn: "Annuler",
+                warning: "Un minimum de 3 caractères est requis",
             },
             list_dialog: {
                 title: "Préréglages",
@@ -194,7 +195,7 @@ export const fr = {
     },
     file_status: {
         error: {
-            0: "",
+            0: "Fichié renommé avec succès",
             1: "Le nom du fichier existe déjà dans le répertoire.",
             2: "Le fichier n'existe pas.",
         }
