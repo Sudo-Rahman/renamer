@@ -11,9 +11,6 @@ importers:
       '@sveltejs/adapter-node':
         specifier: ^5.2.5
         version: 5.2.5(@sveltejs/kit@2.6.1(@sveltejs/vite-plugin-svelte@3.1.2(svelte@4.2.19)(vite@5.4.8(@types/node@22.7.4)))(svelte@4.2.19)(vite@5.4.8(@types/node@22.7.4)))
-      bits-ui:
-        specifier: ^0.21.16
-        version: 0.21.16(svelte@4.2.19)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -29,9 +26,6 @@ importers:
       svelte-motion:
         specifier: ^0.12.2
         version: 0.12.2(svelte@4.2.19)
-      svelte-radix:
-        specifier: ^1.1.1
-        version: 1.1.1(svelte@4.2.19)
       svelte-sonner:
         specifier: ^0.3.28
         version: 0.3.28(svelte@4.2.19)
@@ -54,12 +48,18 @@ importers:
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.47)
+      bits-ui:
+        specifier: ^0.21.16
+        version: 0.21.16(svelte@4.2.19)
       svelte:
         specifier: ^4.2.19
         version: 4.2.19
       svelte-check:
         specifier: ^4.0.4
         version: 4.0.4(picomatch@2.3.1)(svelte@4.2.19)(typescript@5.6.2)
+      svelte-radix:
+        specifier: ^1.1.1
+        version: 1.1.1(svelte@4.2.19)
       tailwindcss:
         specifier: ^3.4.13
         version: 3.4.13

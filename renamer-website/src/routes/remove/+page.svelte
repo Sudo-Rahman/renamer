@@ -90,8 +90,7 @@
                 description: "The machine has been removed from your license"
             });
 
-
-            user.machines = user.machines.filter(m => m.id !== machine.id);
+            user!.machines = user!.machines.filter(m => m.id !== machine.id);
             posts = posts.filter(p => p !== machine.id);
         } catch (error) {
             machine.post = "error";
@@ -101,8 +100,8 @@
 
 </script>
 
-<div class="overflow-scroll">
-    <div class="flex flex-col items-center justify-center h-full p-5 space-y-10">
+<div class="overflow-scroll h-full">
+    <div class="flex flex-col items-center  h-full p-5 space-y-10">
 
         <Card class="mx-2 sm:w-fit">
             <div class="h-full w-full flex flex-col space-y-5">

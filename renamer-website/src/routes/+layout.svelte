@@ -13,7 +13,7 @@
 <div class="h-screen">
     <NavBar/>
     <ModeWatcher/>
-    <div class="px-5 py-10">
+    <div class="py-20">
         <slot/>
     </div>
     <div class="sticky top-[100vh]">

@@ -59,7 +59,7 @@ export abstract class Formatter {
 
 }
 
-function createWritableWithUpdate(value) {
+function createWritableWithUpdate(value: any) {
     const {subscribe, set, update} = writable(value);
 
     return {
