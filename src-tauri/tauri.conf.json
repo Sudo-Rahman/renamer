@@ -10,10 +10,13 @@
     "frontendDist": "../build"
   },
   "app": {
+    "macOSPrivateApi": true,
     "windows": [
       {
         "title": "renamer",
         "width": 1200,
+        "decorations": true,
+        "shadow": false,
         "height": 600,
         "minWidth": 1000,
         "minHeight": 600,

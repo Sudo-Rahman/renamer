@@ -2,7 +2,7 @@ import {get, type Writable, writable} from 'svelte/store';
 import type {RenamerFile} from "$models/File";
 import {FormatterList} from "$models/Formatter";
 import {Preset} from "$models/Preset";
-import {Store} from "@tauri-apps/plugin-store";
+import {LazyStore} from "@tauri-apps/plugin-store";
 
 export const files: Writable<RenamerFile[]> = writable([]);
 
@@ -25,6 +25,6 @@ export const options = writable({
 });
 
 // info component for bottom of the page
-export const information : Writable<string> = writable("");
+export const information: Writable<string> = writable("");
 
-export const store = new Store("renamer");
+export const store = new LazyStore('renamer_store.json');

@@ -33,7 +33,8 @@ fn main() {
             is_license_ok,
             activate_license,
             remove_license,
-            set_system_language
+            set_system_language,
+            open_browser_url
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

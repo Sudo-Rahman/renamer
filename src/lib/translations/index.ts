@@ -25,7 +25,7 @@ export const available_locales = {
 
 
 invoke('get_system_language').then((l) => {
-    locale.set(JSON.parse(l));
+    locale.set(l);
 
     locale.subscribe((value) => {
         invoke('set_system_language', {lang: value});

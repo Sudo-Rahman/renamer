@@ -165,6 +165,20 @@ export const en = {
                 message: "Active License",
                 desactivate_btn: "Deactivate on this computer",
             }
+        },
+        about: {
+            title: "About",
+            update: {
+                label: "Software Update",
+                available: "Found a new version %s",
+                not_available: "You have the latest version",
+                btn: "Download and install",
+                check: "Check for updates at startup",
+            },
+            others: {
+                label: "Other informations",
+                website: "Website",
+            }
         }
     },
     toast: {

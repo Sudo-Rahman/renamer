@@ -165,6 +165,20 @@ export const fr = {
                 message: "Licence active",
                 desactivate_btn: "Désactiver sur cet ordinateur",
             }
+        },
+        about: {
+            title: "À propos",
+            update: {
+                label: "Mise à jour",
+                available: "Nouvelle version trouvée %s",
+                not_available: "Vous avez la dernière version",
+                btn: "Télécharger et installer",
+                check: "Vérifier les mises à jour au démarrage",
+            },
+            others: {
+                label: "Autres informations",
+                website: "Site web",
+            }
         }
     },
     toast: {

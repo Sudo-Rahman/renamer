@@ -1,6 +1,6 @@
 use crate::rename_file::RenameFile;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use sys_locale::get_locale;
 
 #[tauri::command]
@@ -24,7 +24,7 @@ pub async fn list_files_in_directory(dir: String) -> Result<Vec<RenameFile>, Str
             }
         }
         // no licence max 5 files
-        if !APPLICATION.lock().await.license {
+        if !APPLICATION.lock().await.license() {
             files.truncate(5);
         }
         Ok(files)
@@ -48,18 +48,15 @@ pub async fn files_from_vec(files: Vec<String>) -> Result<Vec<RenameFile>, Strin
         }
     }
     // no licence max 5 files
-    if !APPLICATION.lock().await.license {
+    if !APPLICATION.lock().await.license() {
         files_vec.truncate(5);
     }
     Ok(files_vec)
 }
 
-use crate::app::{App, APPLICATION};
+use crate::app::APPLICATION;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use serde_json::Value::Null;
-use tauri::{Manager, Wry};
-use tauri_plugin_store::{with_store, StoreCollection};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct FileRenameInfo {
@@ -188,49 +185,35 @@ const LOCAL: fn() -> String = || {
         .to_string();
 };
 #[tauri::command]
-pub fn get_system_language(app: tauri::AppHandle) -> String {
-    let stores = app.try_state::<StoreCollection<Wry>>();
-
-    if stores.is_none() {
+pub async fn get_system_language(app: tauri::AppHandle) -> String {
+    let store = APPLICATION.lock().await.get_store(app.clone()).await;
+    if store.is_err() {
         return LOCAL();
     }
 
-    let lang = with_store(
-        app.clone(),
-        stores.unwrap(),
-        PathBuf::from(App::name_store()),
-        |store| {
-            let lang = store.get("lang").cloned();
-            match lang {
-                Some(lang) => Ok(lang),
-                None => Ok(Null),
-            }
-        },
-    );
-
+    let lang = store.unwrap().get("lang");
     match lang {
-        Ok(lang) => {
-            if lang.is_null() {
-                return LOCAL();
-            }
-            lang.to_string()
-        }
-        Err(_) => LOCAL(),
+        Some(lang) => lang.as_str().unwrap().to_string(),
+        None => LOCAL()
     }
 }
 
 #[tauri::command]
-pub fn set_system_language(app: tauri::AppHandle, lang: String) -> Result<bool, i8> {
-    let stores = app.try_state::<StoreCollection<Wry>>().ok_or(1)?;
-    let lang = with_store(
-        app.clone(),
-        stores,
-        PathBuf::from(App::name_store()),
-        |store| {
-            store.insert("lang".to_string(), json!(lang))?;
-            store.save()?;
-            Ok(true)
-        },
-    );
-    Ok(lang.unwrap())
+pub async fn set_system_language(app: tauri::AppHandle, lang: String) -> Result<bool, i8> {
+    let store = APPLICATION.lock().await.get_store(app.clone()).await;
+    if store.is_err() {
+        return Err(1);
+    }
+    store.unwrap().set("lang".to_string(), json!(lang));
+
+    Ok(true)
+}
+
+#[tauri::command]
+pub async fn open_browser_url(url: &str) -> Result<(), String> {
+    if webbrowser::open(url).is_ok() {
+        Ok(())
+    } else {
+        Err("Failed to open the browser".to_string())
+    }
 }

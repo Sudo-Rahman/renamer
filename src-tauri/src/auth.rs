@@ -1,18 +1,17 @@
 #![allow(unused)]
 
-use crate::app::{App, APPLICATION};
+extern crate mid;
+use crate::app::{APPLICATION};
 use reqwest::{Client, StatusCode};
 use serde_json::Value::Null;
 use serde_json::{json, Value};
 use std::path::PathBuf;
 use std::str::FromStr;
 use whoami;
-use std::thread::available_parallelism;
 
-extern crate mid;
-use tauri::{Manager, Wry};
-use tauri_plugin_store::{with_store, StoreCollection};
 use renamer_shared::UserMachine;
+use tauri::{Manager, Wry};
+use tauri_plugin_store::StoreExt;
 
 #[cfg(debug_assertions)]
 pub const API_URL: &str = "http://localhost:3000";
@@ -42,46 +41,23 @@ pub async fn check_licence(user: UserMachine) -> Result<String, String> {
 
 #[tauri::command]
 pub(crate) async fn get_license(app: tauri::AppHandle) -> Result<String, String> {
-    let stores = app
-        .try_state::<StoreCollection<Wry>>()
-        .ok_or(Null.to_string())?;
-    let license = with_store(
-        app.clone(),
-        stores,
-        PathBuf::from(App::name_store()),
-        |store| {
-            let license = store.get("license").cloned();
-            match license {
-                Some(license) => Ok(license),
-                None => Ok(Null),
-            }
-        },
-    );
-    match license {
-        Ok(license) => {
-            if license.is_null() {
-                return Err(Null.to_string());
-            }
-            Ok(license.to_string())
+    let store = APPLICATION.lock().await.get_store(app.clone()).await;
+    match store {
+        Ok(store) => {
+            let license = store.get("license").map(|value| value.to_string()).ok_or_else(|| "License key not found in store".to_string())?;
+            Ok(license)
         }
-        Err(_) => Err(Null.to_string()),
+        Err(_) => Err("Error getting store".to_string())
     }
 }
 
 #[tauri::command]
 pub(crate) async fn save_license(app: tauri::AppHandle, user: Value) -> Result<bool, i8> {
-    let stores = app.try_state::<StoreCollection<Wry>>().ok_or(1)?;
-    let license = with_store(
-        app.clone(),
-        stores,
-        PathBuf::from(App::name_store()),
-        |store| {
-            store.insert("license".to_string(), json!(user))?;
-            store.save()?;
-            Ok(true)
-        },
-    );
-    Ok(license.unwrap())
+    let store = APPLICATION.lock().await.get_store(app.clone()).await.map_err(
+        |_| 1
+    )?;
+    store.set("license".to_string(), json!(user));
+    Ok(true)
 }
 
 #[tauri::command]
@@ -168,17 +144,8 @@ pub(crate) async fn remove_license(app: tauri::AppHandle) -> Result<bool, i8> {
         .await
         .or_else(|_| Err(1))?;
 
-    let stores = app.try_state::<StoreCollection<Wry>>().ok_or(1)?;
-    let license = with_store(
-        app.clone(),
-        stores,
-        PathBuf::from(App::name_store()),
-        |store| {
-            store.insert("license".to_string(), json!(null))?;
-            store.save()?;
-            Ok(true)
-        },
-    );
+    let store = APPLICATION.lock().await.get_store(app.clone()).await.or_else(|_| Err(1))?;
+    store.set("license".to_string(), json!(null));
     APPLICATION.lock().await.set_license(false);
-    Ok(license.unwrap())
+    Ok(true)
 }
