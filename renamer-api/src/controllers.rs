@@ -54,12 +54,10 @@ pub async fn get_license(
         Ok(user) => {
             if user.is_none() {
                 Err((StatusCode::NOT_FOUND, "User not found".to_string()))
+            } else if user.unwrap().machines.iter().any(|m| m.id == user_machine.machine.id) {
+                Ok((StatusCode::OK, json!(user_machine).to_string()))
             } else {
-                if user.unwrap().machines.iter().any(|m| m.id == user_machine.machine.id) {
-                    Ok((StatusCode::OK, json!(user_machine).to_string()))
-                } else {
-                    Err((StatusCode::UNAUTHORIZED, "Machine not found".to_string()))
-                }
+                Err((StatusCode::UNAUTHORIZED, "Machine not found".to_string()))
             }
         }
         Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to find user".to_string()))
@@ -103,7 +101,7 @@ pub async fn create_user(
                     text: "Here is your license key: ".to_string() + &user.key.to_string(),
                 };
                 match email.send().await {
-                    Ok(_) => {}
+                    Ok(()) => {}
                     Err(log) => {
                         config.db.insert_log(log).await;
                     }
@@ -192,7 +190,7 @@ pub async fn activate_licence(
                 let mut updated_user = user.clone();
                 activate_licence_plan(&mut updated_user, user.plan, Json(body))?;
                 match config.db.activate_licence(&updated_user).await {
-                    Ok(_) => Ok((StatusCode::OK, json!(
+                    Ok(()) => Ok((StatusCode::OK, json!(
                         user_to_user_machine(updated_user, machine)
                     ).to_string())),
                     Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to update user".to_string())),
@@ -205,7 +203,7 @@ pub async fn activate_licence(
     }
 }
 
-pub(crate) async fn remove_machine(
+pub async fn remove_machine(
     State(config): State<ServerConfig>,
     Json(body): Json<Value>,
 ) -> Result<(StatusCode, String), (StatusCode, String)> {
@@ -239,7 +237,7 @@ pub(crate) async fn remove_machine(
         doc,
         &machines,
     ).await {
-        Ok(_) => {
+        Ok(()) => {
             let email = MailgunEmail {
                 from: "noreply@renamer.sudo-rahman.fr".to_string(),
                 to: email.to_string(),
@@ -247,7 +245,7 @@ pub(crate) async fn remove_machine(
                 text: format!("Machine name {} removed", machine.device_name),
             };
             match email.send().await {
-                Ok(_) => {}
+                Ok(()) => {}
                 Err(log) => {
                     config.db.insert_log(log).await;
                 }
@@ -258,7 +256,7 @@ pub(crate) async fn remove_machine(
     }
 }
 
-pub(crate) async fn get_all_logs(
+pub async fn get_all_logs(
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
     State(config): State<ServerConfig>,
 ) -> Result<(StatusCode, String), (StatusCode, String)> {
@@ -272,7 +270,7 @@ pub(crate) async fn get_all_logs(
     }
 }
 
-pub(crate) async fn get_user(
+pub async fn get_user(
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
     State(config): State<ServerConfig>,
     Json(body): Json<Value>)

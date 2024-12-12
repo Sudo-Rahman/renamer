@@ -10,13 +10,13 @@ use serde_json::{json, Map, Value};
 use crate::utils;
 
 #[derive(Clone)]
-pub(crate) struct Mongo {
+pub struct Mongo {
     client: Client,
     database: Database,
 }
 
 impl Mongo {
-    pub(crate) async fn new() -> Result<Self> {
+    pub async fn new() -> Result<Self> {
         dotenv().ok();
 
         // Replace the placeholder with your Atlas connection string
@@ -76,7 +76,7 @@ impl Mongo {
         Ok(vec)
     }
 
-    pub(crate) async fn update_machines(&self, doc: &Document, machines: &Vec<Machine>) -> Result<()> {
+    pub async fn update_machines(&self, doc: &Document, machines: &Vec<Machine>) -> Result<()> {
         match self.database.collection::<User>("users").update_one(
             doc.clone(),
             doc! {
@@ -90,7 +90,7 @@ impl Mongo {
         }
     }
 
-    pub(crate) async fn activate_licence(&self, user: &User) -> Result<()> {
+    pub async fn activate_licence(&self, user: &User) -> Result<()> {
         match self.database.collection::<User>("users").update_one(
             doc! {
                 "key": &user.key,
@@ -107,7 +107,7 @@ impl Mongo {
         }
     }
 
-    pub(crate) async fn insert_log(&self, log: Log) -> Result<()> {
+    pub async fn insert_log(&self, log: Log) -> Result<()> {
         utils::insert_log(log.clone()).await;
         match self.database.collection::<Log>("logs").insert_one(
             log.clone(),
@@ -120,7 +120,7 @@ impl Mongo {
         }
     }
 
-    pub(crate) async fn get_all_logs(&self) -> Result<Vec<Log>> {
+    pub async fn get_all_logs(&self) -> Result<Vec<Log>> {
         let collection = self.database.collection::<Log>("logs");
 
         // Collecter les résultats dans un vecteur

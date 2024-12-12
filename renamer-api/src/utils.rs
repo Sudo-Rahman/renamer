@@ -2,7 +2,7 @@ use tokio::fs::OpenOptions;
 use tokio::io::AsyncWriteExt;
 use crate::models::Log;
 
-pub(crate) async fn insert_log(log: Log) {
+pub async fn insert_log(log: Log) {
     //     write in the log file
     let mut file = OpenOptions::new()
         .create(true)

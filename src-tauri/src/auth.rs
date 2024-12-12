@@ -40,7 +40,7 @@ pub async fn check_licence(user: UserMachine) -> Result<String, String> {
 }
 
 #[tauri::command]
-pub(crate) async fn get_license(app: tauri::AppHandle) -> Result<String, String> {
+pub async fn get_license(app: tauri::AppHandle) -> Result<String, String> {
     let store = APPLICATION.lock().await.get_store(app.clone()).await;
     match store {
         Ok(store) => {
@@ -52,7 +52,7 @@ pub(crate) async fn get_license(app: tauri::AppHandle) -> Result<String, String>
 }
 
 #[tauri::command]
-pub(crate) async fn save_license(app: tauri::AppHandle, user: Value) -> Result<bool, i8> {
+pub async fn save_license(app: tauri::AppHandle, user: Value) -> Result<bool, i8> {
     let store = APPLICATION.lock().await.get_store(app.clone()).await.map_err(
         |_| 1
     )?;
@@ -61,7 +61,7 @@ pub(crate) async fn save_license(app: tauri::AppHandle, user: Value) -> Result<b
 }
 
 #[tauri::command]
-pub(crate) async fn is_license_ok(app: tauri::AppHandle) -> Result<bool, i8> {
+pub async fn is_license_ok(app: tauri::AppHandle) -> Result<bool, i8> {
     let license = get_license(app.clone()).await;
     match license {
         Ok(license) => {
@@ -88,7 +88,7 @@ pub(crate) async fn is_license_ok(app: tauri::AppHandle) -> Result<bool, i8> {
 }
 
 #[tauri::command]
-pub(crate) async fn activate_license(app: tauri::AppHandle, key: String) -> Result<bool, i8> {
+pub async fn activate_license(app: tauri::AppHandle, key: String) -> Result<bool, i8> {
     let application = APPLICATION.clone();
     application.lock().await.set_license(false);
     let client = Client::new();
@@ -125,12 +125,12 @@ pub(crate) async fn activate_license(app: tauri::AppHandle, key: String) -> Resu
     }
 }
 
-pub(crate) fn get_machine_id() -> String {
+pub fn get_machine_id() -> String {
     mid::get("383441314b796e4723444550584a656d664056436566442e5b2532655b44473e23436273713345794558572855547140545766344545735b70786e6a30364250").unwrap()
 }
 
 #[tauri::command]
-pub(crate) async fn remove_license(app: tauri::AppHandle) -> Result<bool, i8> {
+pub async fn remove_license(app: tauri::AppHandle) -> Result<bool, i8> {
     let license = get_license(app.clone()).await;
     if license.is_err() {
         return Err(1);

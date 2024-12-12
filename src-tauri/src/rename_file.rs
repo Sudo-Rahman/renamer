@@ -14,7 +14,7 @@ pub struct RenameFile {
 
 impl RenameFile {
     // Méthode pour créer une nouvelle instance de RenameFile
-    pub(crate) fn new(path: String) -> std::io::Result<Self> {
+    pub fn new(path: String) -> std::io::Result<Self> {
         let metadata = std::fs::metadata(&path)?;
         let name = std::path::Path::new(&path)
             .file_name()

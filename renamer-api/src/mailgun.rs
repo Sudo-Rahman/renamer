@@ -8,7 +8,7 @@ use mongodb::bson;
 use tokio::io::AsyncWriteExt;
 use crate::models::Log;
 
-pub(crate) struct MailgunEmail {
+pub struct MailgunEmail {
     pub from: String,
     pub to: String,
     pub subject: String,
@@ -16,7 +16,7 @@ pub(crate) struct MailgunEmail {
 }
 
 impl MailgunEmail {
-    pub(crate) async fn send(&self) -> Result<(), Log> {
+    pub async fn send(&self) -> Result<(), Log> {
         let client = Client::builder()
             .redirect(reqwest::redirect::Policy::none())
             .build()
@@ -51,9 +51,7 @@ impl MailgunEmail {
 
     #[cfg(debug_assertions)]
     fn get_api_key(&self) -> Result<String, String> {
-        std::env::var("MAILGUN_API_KEY_DEV").or_else(|_| {
-            Err("MAILGUN_API_KEY environment variable not found".to_string())
-        })
+        std::env::var("MAILGUN_API_KEY_DEV").map_err(|_| "MAILGUN_API_KEY environment variable not found".to_string())
     }
 
     #[cfg(not(debug_assertions))]

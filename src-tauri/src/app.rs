@@ -11,31 +11,31 @@ use tauri_plugin_store::{Store, StoreExt};
 use tokio::sync::Mutex;
 
 #[derive(Clone, Deserialize, Serialize, Debug)]
-pub(crate) struct User {
-    pub(crate) license_key: String,
-    pub(crate) email: String,
+pub struct User {
+    pub license_key: String,
+    pub email: String,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-pub(crate) struct App {
+pub struct App {
     license: bool,
     store_name: String,
 }
 
 lazy_static! {
-    pub(crate) static ref APPLICATION: Arc<Mutex<App>> = Arc::new(Mutex::new(App::default()));
+    pub static ref APPLICATION: Arc<Mutex<App>> = Arc::new(Mutex::new(App::default()));
 }
 
 impl App {
-    pub(crate) fn set_license(&mut self, license: bool) {
+    pub fn set_license(&mut self, license: bool) {
         self.license = license;
     }
 
-    pub(crate) fn license(&mut self) -> bool {
+    pub fn license(&mut self) -> bool {
         self.license
     }
 
-    pub(crate) async fn get_store(&mut self, app: tauri::AppHandle) -> tauri_plugin_store::Result<Arc<Store<Wry>>> {
+    pub async fn get_store(&mut self, app: tauri::AppHandle) -> tauri_plugin_store::Result<Arc<Store<Wry>>> {
         let store_name = self.store_name.clone();
         app.store(store_name)
     }

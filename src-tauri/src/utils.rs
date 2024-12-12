@@ -84,7 +84,7 @@ pub async fn rename_files(file_infos: Vec<FileRenameInfo>) -> Result<Vec<RenameS
     } in &file_infos
     {
         match fs::rename(path, new_path) {
-            Ok(_) => {
+            Ok(()) => {
                 vec.push(RenameStatus {
                     status: true,
                     error: "".to_string(),
