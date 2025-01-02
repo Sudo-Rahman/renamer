@@ -83,7 +83,7 @@
 
 <div class="flex flex-col w-full h-full overflow-hidden">
 
-    <Resizable.PaneGroup class="h-full p-0 flex" direction="horizontal">
+    <Resizable.PaneGroup class="h-full p-0" direction="horizontal">
         <Resizable.Pane defaultSize={30}>
             <div class="flex flex-col h-full transition-all duration-300 ease-in-out">
                 <div class="h-16 flex min-w-72 items-center px-2 justify-between">
@@ -91,7 +91,6 @@
                          font-bold">{$t('formatter.panel.title')}</Label>
                     <AddFormatterButton/>
                 </div>
-                <Separator class="flex-col w-full"/>
                 <FormattersComponent/>
             </div>
         </Resizable.Pane>
@@ -102,7 +101,6 @@
                 <div class="flex h-16 items-center">
                     <Menubar bind:files={$files} class="w-full px-4"/>
                 </div>
-                <Separator class="flex-col w-full"/>
                 <ListView bind:files={$files}/>
             </div>
         </Resizable.Pane>
@@ -110,7 +108,7 @@
 
     <Separator class="w-full"/>
 
-    <div class="flex w-full p-1 text-sm h-fit px-3 space-x-5 items-center justify-between">
+    <div class="flex w-full p-1 text-sm px-3 space-x-5 items-center justify-between">
 
         <span class="px-2 font-medium">{$preset ? `Preset : ${$preset?.name}` : ''}</span>
 

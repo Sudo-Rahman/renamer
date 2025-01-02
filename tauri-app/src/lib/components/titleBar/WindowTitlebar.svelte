@@ -3,15 +3,20 @@
     import {cn} from "./utils/utils"
     import type {WindowControlsProps} from "./types"
     import WindowControls from "./WindowControls.svelte"
+    import {onMount} from "svelte";
 
     export let controlsOrder = "system"
     export let windowControlsProps: WindowControlsProps = {}
 
-    const left =
+
+    let left =
         controlsOrder === "left" ||
         (controlsOrder === "platform" &&
-            windowControlsProps?.platform === "macos") ||
-        (controlsOrder === "system" && osType === "macos")
+            windowControlsProps?.platform === "macos")
+
+    osType.then((osType) => {
+        left = left || (controlsOrder === "system" && osType === "macos") ||  (controlsOrder === "system" && osType === "linux")
+    })
 
     const props = (ml: string) => {
         if (windowControlsProps?.justify !== undefined) return windowControlsProps
@@ -32,7 +37,7 @@
 <div
         {...$$props}
         class={cn(
-    "bg-background flex select-none flex-row overflow-hidden",
+    "bg-background flex select-none flex-row overflow-hidden relative items-center",
     $$props.class
   )}
         data-tauri-drag-region

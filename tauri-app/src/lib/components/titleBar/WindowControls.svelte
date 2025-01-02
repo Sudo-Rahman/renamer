@@ -5,29 +5,31 @@
     import MacOs from "./controls/MacOs.svelte"
     import Windows from "./controls/Windows.svelte"
 
-    export let platform = null
+    export let platform : string | null = "linux"
     export let hide = false
     export let hideMethod = "display"
     export let justify = false
 
     const customClass = cn(
-        "flex",
+        "flex z-50",
         $$props.class,
         hide && (hideMethod === "display" ? "hidden" : "invisible")
     )
 
     // Determine the default platform based on the operating system if platform not specified
     if (!platform) {
-        switch (osType) {
-            case "macos":
-                platform = "macos"
-                break
-            case "linux":
-                platform = "gnome"
-                break
-            default:
-                platform = "windows"
-        }
+        osType.then((osType) => {
+            switch (osType) {
+                case "macos":
+                    platform = "macos"
+                    break
+                case "linux":
+                    platform = "gnome"
+                    break
+                default:
+                    platform = "gnome"
+            }
+        })
     }
 </script>
 
@@ -36,7 +38,7 @@
 {:else if platform === "macos"}
     <MacOs {...$$props} class={cn(customClass, justify && "ml-0")}/>
 {:else if platform === "gnome"}
-    <Gnome {...$$props} class={cn(customClass, justify && "ml-auto")}/>
+    <Gnome {...$$props} class={cn(customClass, justify && "ml-0")}/>
 {:else}
-    <Windows {...$$props} class={cn(customClass, justify && "ml-auto")}/>
+    <Gnome {...$$props} class={cn(customClass, justify && "ml-0")}/>
 {/if}

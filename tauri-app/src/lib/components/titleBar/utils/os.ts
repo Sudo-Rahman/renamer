@@ -1,10 +1,7 @@
 import type {OsType} from "@tauri-apps/plugin-os"
 
-export let osType: OsType
+export let osType: Promise<OsType> = import("@tauri-apps/plugin-os").then((module) => {
+    // @ts-ignore
+    return module.platform() as OsType;
+})
 
-if (typeof window !== "undefined") {
-    import("@tauri-apps/plugin-os").then((module) => {
-        // @ts-ignore
-        osType = module.platform();
-    })
-}
