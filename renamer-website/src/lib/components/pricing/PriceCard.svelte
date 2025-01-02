@@ -8,19 +8,21 @@
     import {redirect} from "@sveltejs/kit";
     import {goto} from "$app/navigation";
 
-    export let title: string;
-    export let description: string;
-    export let priceId: string | null;
-    export let features: string[];
-    export let btnText: string;
+    type Props = {
+        title: string,
+        description: string,
+        priceId?: string | null,
+        features: string[],
+        btnText: string
+    }
 
-    let fetchOk: boolean = false;
+    let {title, description, priceId, features, btnText}: Props = $props();
 
-    let price: number | string = "Loading...";
+    let fetchOk = $state(false);
 
-    let product: Stripe.Price | null = null;
+    let price: number | string = $state("Loading...");
 
-    let dispatch = createEventDispatcher();
+    let product: Stripe.Price | null = $state(null);
 
     onMount(() => {
         if (!priceId) {
@@ -39,7 +41,8 @@
                 res.json().then(
                     body => {
                         product = body[0];
-                        price = (product.unit_amount / 100).toFixed(2);
+                        if (!product) return;
+                        price = (product.unit_amount! / 100).toFixed(2);
                         fetchOk = true;
                     }
                 );
@@ -90,7 +93,7 @@
             </ul>
         </Card.Content>
         <Card.Footer class="flex items-end">
-            <Button class="w-full" disabled={!fetchOk} on:click={handleClick}>
+            <Button class="w-full" disabled={!fetchOk} onclick={handleClick}>
                 {btnText}
             </Button>
         </Card.Footer>

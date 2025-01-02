@@ -2,10 +2,10 @@
 
     import {quintOut} from "svelte/easing";
 
-    let email = "";
-    let licenseKey = "";
-    let posts = new Array<string>();
-    let getPosts = false;
+    let email = $state("");
+    let licenseKey =  $state("");
+    let posts = $state(new Array<string>())
+    let getPosts = $state(false);
 
     import {Button} from "$lib/components/ui/button";
     import {Label} from "$lib/components/ui/label";
@@ -26,7 +26,7 @@
             device_name: string,
             post: "none" | "loading" | "error"
         }[]
-    } | null = null;
+    } | null = $state(null);
 
     function getUser() {
         if (email === "" || licenseKey === "") {
@@ -69,7 +69,6 @@
         // Exemple d'appel d'une API de réinitialisation de licence
         machine.post = "loading";
         posts = [...posts, machine.id];
-        console.log(machine);
         await new Promise(resolve => setTimeout(resolve, 2000));
         try {
             const response = await fetch(PUBLIC_API_URL + "/remove_machine", {
@@ -100,10 +99,10 @@
 
 </script>
 
-<div class="overflow-scroll h-full">
-    <div class="flex flex-col items-center  h-full p-5 space-y-10">
+<div class="h-full w-full">
+    <div class="max-w-5xl mx-auto flex flex-col space-y-12 p-4">
 
-        <Card class="mx-2 sm:w-fit">
+        <Card>
             <div class="h-full w-full flex flex-col space-y-5">
                 <h2 class="text-2xl font-semibold text-center">Remove Machine</h2>
                 <p class="text-sm text-accent-foreground/60 text-center">
@@ -131,12 +130,17 @@
                                 class="w-full transition-all duration-300 ease-in-out"
                                 placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
                                 type="text"
+                                onkeydown={(e) => {
+                                    if (e.key === "Enter") {
+                                        getUser();
+                                    }
+                                }}
                         />
                     </div>
 
                 </div>
                 <Button class="w-full"
-                        on:click={getUser}>
+                        onclick={getUser}>
                     {#if getPosts}
                         <CircularProgress circleColor="secondary" class="w-5 h-5"/>
                     {:else}
@@ -146,14 +150,14 @@
             </div>
         </Card>
 
-        <div class="flex flex-wrap justify-center items-center">
+        <div class="grid grid-cols-1  items-stretch md:grid-cols-2 lg:grid-cols-3 gap-8">
             {#if user !== null}
                 {#each user.machines as machine (machine.id)}
-                    <div class="p-2" animate:flip={{ duration: 300, easing: quintOut }} transition:fly>
-                        <Card class="w-fit sm:w-80">
+                    <div animate:flip={{ duration: 300, easing: quintOut }} transition:fly>
+                        <Card class="h-full">
                             <div class="h-full w-full flex flex-col space-y-5">
-                                <h2 class="text-2xl font-semibold text-center">Machine: {machine.device_name}</h2>
-                                <Button class="w-full" on:click={() => removeMachine(machine)}>
+                                <h2 class="text-2xl font-semibold text-center">{machine.device_name}</h2>
+                                <Button class="w-full" onclick={() => removeMachine(machine)}>
                                     {#if posts.find(p => p === machine.id)}
                                         <CircularProgress circleColor="secondary" class="w-5 h-5"/>
                                     {:else}

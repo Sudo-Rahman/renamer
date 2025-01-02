@@ -2,7 +2,7 @@
     import * as Select from "$lib/components/ui/select/index.js";
     import {Button} from "$lib/components/ui/button";
 
-    let selected = {value: "x86", label: ".exe (Windows x86)"};
+    let selected = $state({value: "x86", label: ".exe (Windows x86)"});
 
     function download() {
         const url = selected.value === "x86" ? "/renamer-setup.exe" : "/renamer-setup-arm64.exe";
@@ -18,7 +18,7 @@
 
     <div class="flex">
 
-        <Select.Root bind:selected={selected}>
+        <Select.Root type="single" bind:value={selected.value}>
             <Select.Trigger class="w-52" value="x86">
                 {selected.label}
             </Select.Trigger>

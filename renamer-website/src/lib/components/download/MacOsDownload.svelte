@@ -2,7 +2,7 @@
     import * as Select from "$lib/components/ui/select/index.js";
     import {Button} from "$lib/components/ui/button";
 
-    let selected = {value: "universal", label: ".dmg (Universal)"};
+    let selected = $state({value: "universal", label: ".dmg (Universal)"});
 
     function download() {
         const url = ""
@@ -18,7 +18,7 @@
 
     <div class="flex">
 
-        <Select.Root bind:selected={selected}>
+        <Select.Root type="single" bind:value={selected.value}>
             <Select.Trigger class="w-52" value="x86">
                 {selected.label}
             </Select.Trigger>

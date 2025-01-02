@@ -3,7 +3,8 @@
     import {resetMode, setMode} from "mode-watcher";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
     import {Button} from "$lib/components/ui/button/index.js";
-    import {Mail, Sun, Moon} from "lucide-svelte";
+    import {Sun, Moon} from "lucide-svelte";
+    import { buttonVariants } from "$lib/components/ui/button/index.js";
 
     function handleAnchorClick(event) {
         event.preventDefault()
@@ -11,7 +12,7 @@
         const anchorId = new URL(link.href).hash.replace('#', '')
         const anchor = document.getElementById(anchorId)
         window.scrollTo({
-            top: anchor.offsetTop,
+            top: anchor?.offsetTop,
             behavior: 'smooth'
         })
     }
@@ -36,25 +37,22 @@
         </div>
 
         <DropdownMenu.Root>
-            <DropdownMenu.Trigger asChild let:builder>
-                <Button builders={[builder]}
-                        class="border border-accent-foreground border-opacity-10 "
-                        size="icon"
-                        variant="outline">
-                    <Sun
-                            class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
-                    />
-                    <Moon
-                            class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
-                    />
-                    <span class="sr-only">Toggle theme</span>
-                </Button>
+            <DropdownMenu.Trigger
+                    class={buttonVariants({ variant: "outline", size: "icon" })}
+            >
+                <Sun
+                        class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
+                />
+                <Moon
+                        class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
+                />
+                <span class="sr-only">Toggle theme</span>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content align="end" class="rounded-2xl">
-                <DropdownMenu.Item on:click={() => setMode("light")}>Light
-                </DropdownMenu.Item>
-                <DropdownMenu.Item on:click={() => setMode("dark")}>Dark</DropdownMenu.Item>
-                <DropdownMenu.Item on:click={() => resetMode()}>System</DropdownMenu.Item>
+                <DropdownMenu.Item onclick={() => setMode("light")}>Light</DropdownMenu.Item
+                >
+                <DropdownMenu.Item onclick={() => setMode("dark")}>Dark</DropdownMenu.Item>
+                <DropdownMenu.Item onclick={() => resetMode()}>System</DropdownMenu.Item>
             </DropdownMenu.Content>
         </DropdownMenu.Root>
     </nav>

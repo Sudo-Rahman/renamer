@@ -10,17 +10,15 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
-        class="group relative overflow-hidden rounded-xl bg-card {$$props.class}"
+        class="group relative overflow-hidden rounded-xl bg-card h-full"
         on:mousemove={(e) => {
     const { left, top } = e.currentTarget.getBoundingClientRect();
 
     mouseX.set(e.clientX - left);
     mouseY.set(e.clientY - top);
-  }}
->
-    <div
-            class="absolute right-5 top-0 h-px w-80 bg-gradient-to-l from-transparent via-white/30 via-10% to-transparent"
-    />
+  }}>
+
+    <div class="absolute right-5 top-0 h-px w-80 bg-gradient-to-l from-transparent via-white/30 via-10% to-transparent"></div>
     <Motion
             let:motion
             style={{
@@ -32,7 +30,7 @@
                 use:motion
         ></div>
     </Motion>
-    <div class="relative flex flex-col gap-3 rounded-xl border border-white/10 px-4 py-5">
+    <div class="relative h-full flex flex-col gap-3 rounded-xl border border-white/10 px-4 py-5">
         <slot/>
     </div>
 </div>

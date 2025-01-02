@@ -5,16 +5,19 @@
     import NavBar from "$lib/components/NavBar.svelte";
     import Footer from "$lib/components/Footer.svelte";
 
+    let {children} = $props();
 </script>
 
 <ModeWatcher/>
+
+
 <Toaster spellcheck={true}/>
 
 <div class="h-screen">
     <NavBar/>
     <ModeWatcher/>
     <div class="py-20">
-        <slot/>
+        {@render children()}
     </div>
     <div class="sticky top-[100vh]">
         <Footer/>
