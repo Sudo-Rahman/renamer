@@ -17,5 +17,5 @@ latest.json
 
 shared/target/
 
-*/.env
-*/.env.*
+
+mails.txt
