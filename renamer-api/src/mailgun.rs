@@ -21,18 +21,18 @@ impl MailgunEmail {
             .redirect(reqwest::redirect::Policy::none())
             .build()
             .unwrap();
-        let url = format!("https://api.eu.mailgun.net/{}/messages", self.get_domain());
+        let url = format!("https://api.eu.mailgun.net/{}/messages", MailgunEmail::get_domain());
 
         let api_key = self.get_api_key().expect("Failed to get API key");
 
         // Créer un formulaire multipart
         let form = multipart::Form::new()
             .text("from", self.from.clone())
-            // .text("to", self.to.clone())
+            .text("to", self.to.clone())
             .text("subject", self.subject.clone())
             .text("text", self.text.clone());
 
-        let response = client.post(format!("https://api.eu.mailgun.net/v3/{}/messages", self.get_domain()))
+        let response = client.post(format!("https://api.eu.mailgun.net/v3/{}/messages", MailgunEmail::get_domain()))
             .basic_auth("api", Some(api_key))
             .multipart(form)
             .send().await.unwrap();
@@ -61,7 +61,7 @@ impl MailgunEmail {
         })
     }
 
-    fn get_domain(&self) -> String {
-        "renamer.sudo-rahman.fr".to_string()
+    pub(crate) const fn get_domain() -> &'static str {
+        "renamer.pro"
     }
 }
