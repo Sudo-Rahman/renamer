@@ -95,7 +95,7 @@ pub async fn create_user(
         match config.db.insert_user(&user).await {
             Ok(_) => {
                 let email = MailgunEmail {
-                    from: "noreply@renamer.sudo-rahman.fr".to_string(),
+                    from: format!("noreply@{domain}", domain = MailgunEmail::get_domain()),
                     to: email.to_string(),
                     subject: "Your license key".to_string(),
                     text: "Here is your license key: ".to_string() + &user.key.to_string(),
@@ -239,7 +239,7 @@ pub async fn remove_machine(
     ).await {
         Ok(()) => {
             let email = MailgunEmail {
-                from: "noreply@renamer.sudo-rahman.fr".to_string(),
+                from: format!("noreply@{domain}", domain = MailgunEmail::get_domain()),
                 to: email.to_string(),
                 subject: "License Renamer".to_string(),
                 text: format!("Machine name {} removed", machine.device_name),

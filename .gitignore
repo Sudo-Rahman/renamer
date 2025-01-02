@@ -16,3 +16,6 @@ latest.json
 /renamer-api/Cargo.lock
 
 shared/target/
+
+
+mails.txt

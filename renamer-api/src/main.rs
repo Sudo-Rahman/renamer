@@ -16,6 +16,7 @@ use reqwest::multipart;
 use tower_http::cors::{Any, CorsLayer};
 use crate::controllers::*;
 use crate::db::*;
+use crate::mailgun::MailgunEmail;
 use crate::models::ServerConfig;
 
 #[tokio::main]
