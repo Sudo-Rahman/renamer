@@ -17,9 +17,9 @@
      spellcheck="false">
     <Toaster/>
     <ModeWatcher/>
-    <div class="p-2" data-tauri-drag-region>
+    <div data-tauri-drag-region>
         <WindowTitlebar>
-            <div data-tauri-drag-region class="flex w-screen font-bold justify-center absolute">
+            <div class="flex w-screen font-bold justify-center absolute" data-tauri-drag-region>
                 <span data-tauri-drag-region>Renamer</span>
             </div>
         </WindowTitlebar>

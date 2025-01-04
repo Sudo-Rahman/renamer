@@ -5,7 +5,7 @@
     import MacOs from "./controls/MacOs.svelte"
     import Windows from "./controls/Windows.svelte"
 
-    export let platform : string | null = "linux"
+    export let platform: string | null = null
     export let hide = false
     export let hideMethod = "display"
     export let justify = false
@@ -25,6 +25,9 @@
                     break
                 case "linux":
                     platform = "gnome"
+                    break
+                case "windows":
+                    platform = "windows"
                     break
                 default:
                     platform = "gnome"

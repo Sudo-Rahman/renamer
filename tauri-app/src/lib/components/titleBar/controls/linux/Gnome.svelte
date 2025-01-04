@@ -19,7 +19,7 @@
 
 <div
         {...$$props}
-        class={cn("mr-[10px] h-auto items-center space-x-[13px]", $$props.class)}
+        class={cn("mr-[10px] px-3 py-2 h-auto items-center space-x-[13px]", $$props.class)}
 >
     <Button
             class="m-0 aspect-square h-6 w-6 cursor-default rounded-full  bg-foreground/10 border p-0 text-foreground hover:bg-foreground/20 active:bg-foreground/30"

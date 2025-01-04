@@ -8,14 +8,13 @@
     export let controlsOrder = "system"
     export let windowControlsProps: WindowControlsProps = {}
 
-
-    let left =
-        controlsOrder === "left" ||
-        (controlsOrder === "platform" &&
-            windowControlsProps?.platform === "macos")
+    let left = false
+    controlsOrder === "left" ||
+    (controlsOrder === "platform" &&
+        windowControlsProps?.platform === "macos")
 
     osType.then((osType) => {
-        left = left || (controlsOrder === "system" && osType === "macos") ||  (controlsOrder === "system" && osType === "linux")
+        left = left || (controlsOrder === "system" && osType === "macos") || (controlsOrder === "system" && osType === "linux")
     })
 
     const props = (ml: string) => {

@@ -46,7 +46,7 @@
 <div
         {...$$props}
         class={cn(
-    "cursor-default space-x-2 px-3 text-black active:text-black dark:text-black",
+    "cursor-default space-x-2 px-3 py-2 text-black active:text-black dark:text-black",
     $$props.class
   )}
         on:mouseenter={handleMouseEnter}
