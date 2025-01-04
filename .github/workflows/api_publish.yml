@@ -12,10 +12,12 @@ jobs:
           registry: ${{ secrets.REGISTRY_URL }}
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
+      - name: Checkout project
+        uses: actions/checkout@v4
       - name: Build and push
         run: |
-          'docker build -t ${{ secrets.REGISTRY_URL }}/renamer-api -f api.Dockerfile .'
-          'docker push ${{ secrets.REGISTRY_URL }}/renamer-api'
+          docker build -t ${{ secrets.REGISTRY_URL }}/renamer-api -f api.Dockerfile .
+          docker push ${{ secrets.REGISTRY_URL }}/renamer-api
   deploy:
     runs-on: ubuntu-latest
     needs: build
