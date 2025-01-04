@@ -8,16 +8,16 @@
     import {ask} from "@tauri-apps/plugin-dialog";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 
-    export let open = false;
+    let {open = $bindable(false)} = $props();
 
-    let presets: Preset[] = [];
+    let presets: Preset[] = $state([]);
 
-    $ : {
+    $effect(() => {
         if (open)
             getPresetList().then((result) => {
                 presets = result;
             });
-    }
+    });
 
     function onLoad(p: Preset) {
         preset.set(p);
@@ -65,8 +65,8 @@
                         </DropdownMenu.Trigger>
                         <DropdownMenu.Content>
                             <DropdownMenu.Group>
-                                <DropdownMenu.Item on:click={()=>onLoad(preset)}>{$t('menu_bar.preset.list_dialog.load')}</DropdownMenu.Item>
-                                <DropdownMenu.Item on:click={()=>onDelete(preset)}>{$t('menu_bar.preset.list_dialog.delete')}</DropdownMenu.Item>
+                                <DropdownMenu.Item onclick={()=>onLoad(preset)}>{$t('menu_bar.preset.list_dialog.load')}</DropdownMenu.Item>
+                                <DropdownMenu.Item onclick={()=>onDelete(preset)}>{$t('menu_bar.preset.list_dialog.delete')}</DropdownMenu.Item>
                             </DropdownMenu.Group>
                         </DropdownMenu.Content>
                     </DropdownMenu.Root>

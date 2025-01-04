@@ -14,22 +14,24 @@
         await initializeAppWindow()
     })
 
+    let {class: className, ...restProps} = $$props
+
     const isWindowMaximized = 0
 </script>
 
 <div
-        {...$$props}
-        class={cn("mr-[10px] px-3 py-2 h-auto items-center space-x-[13px]", $$props.class)}
+        {...restProps}
+        class={cn("mr-[10px] px-3 py-2 h-auto items-center space-x-[13px]", className)}
 >
     <Button
             class="m-0 aspect-square h-6 w-6 cursor-default rounded-full  bg-foreground/10 border p-0 text-foreground hover:bg-foreground/20 active:bg-foreground/30"
-            on:click={() => closeWindow()}
+            onclick={() => closeWindow()}
     >
         <Icons class="h-2 w-2" icon="closeWin"/>
     </Button>
     <Button
             class="m-0 aspect-square h-6 w-6 cursor-default rounded-full  bg-foreground/10 border p-0 text-foreground hover:bg-foreground/20 active:bg-foreground/30"
-            on:click={() => maximizeWindow()}
+            onclick={() => maximizeWindow()}
     >
         {#if isWindowMaximized}
             <Icons icon="maximizeRestoreWin" class="h-[9px] w-[9px]"/>
@@ -40,7 +42,7 @@
 
     <Button
             class="m-0 aspect-square h-6 w-6 cursor-default rounded-full bg-foreground/10 border p-0 text-foreground hover:bg-foreground/20 active:bg-foreground/30"
-            on:click={() => minimizeWindow()}
+            onclick={() => minimizeWindow()}
     >
         <Icons class="h-[9px] w-[9px]" icon="minimizeWin"/>
     </Button>

@@ -5,8 +5,9 @@
     import {columns} from "$lib/components/list/store";
     import {onMount} from "svelte";
 
-    export let file: RenamerFile;
-    let selected = file.selected;
+    let {file} : {file: RenamerFile} = $props();
+
+    let selected = $state(file.selected);
 
     onMount(() => {
         file.onSelect.connect((bool) => {
@@ -15,10 +16,10 @@
     });
 
     function handleClick() {
-        file.selected = !selected;  // Toggle the selection
+        file.selected = selected;  // Toggle the selection
         $columns[0].onCheck();
         $formatters.format();
     }
 </script>
 
-<Checkbox bind:checked={selected} class="border-primary-foreground/10 rounded" on:click={handleClick}/>
+<Checkbox bind:checked={selected} class="border-primary-foreground/10 rounded" onCheckedChange={handleClick}/>

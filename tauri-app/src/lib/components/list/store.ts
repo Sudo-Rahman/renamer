@@ -1,5 +1,5 @@
 import {writable, type Writable} from "svelte/store";
-import type {ComponentType} from "svelte";
+import type {Component} from "svelte";
 import FileItemCheckbox from "./fileItemUi/FileItemCheckbox.svelte";
 import HeaderCheckbox from "$lib/components/list/HeaderCheckbox.svelte";
 import FileItemStatus from "./fileItemUi/FileItemStatus.svelte";
@@ -17,8 +17,8 @@ export interface Column {
     resizable?: boolean;
     visible?: boolean;
     defaultSize?: number;
-    customComponent: ComponentType;
-    headerComponent?: ComponentType;
+    customComponent: Component;
+    headerComponent?: Component;
 }
 
 export const columns: Writable<Column[]> = writable([

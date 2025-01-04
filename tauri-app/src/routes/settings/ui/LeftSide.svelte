@@ -1,8 +1,8 @@
 <script lang="ts">
-    import {type SettingsRoute, settingsRouteList, SettingsRoutes} from "../settings";
+    import {type SettingsRoute, settingsRouteList} from "../settings";
     import {t} from "$lib/translations";
 
-    export let activeRoute: SettingsRoute;
+    let {activeRoute = $bindable()} : {activeRoute: SettingsRoute} = $props();
 
 </script>
 
@@ -13,9 +13,10 @@
 
     <div class="flex flex-col space-y-3">
         {#each settingsRouteList as route}
-            <button class="p-3 rounded-xl items-center text-left w-full flex {route === activeRoute ? 'bg-primary': ''}"
-                    on:click={() => {activeRoute = route}}>
-                <svelte:component this={route.icon} class="aspect-square h-full mr-5"/>
+            {@const Component = route.icon}
+            <button class="p-3 rounded-xl items-center text-left w-full flex {route.type === activeRoute.type ? 'bg-primary': ''}"
+                    onclick={() => {activeRoute = route}}>
+                <Component class="aspect-square h-full mr-5" />
                 {$t(route.title)}
             </button>
         {/each}

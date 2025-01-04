@@ -1,30 +1,29 @@
 <script lang="ts">
-    import * as Accordion from "$lib/components/ui/accordion";
     import {Label} from "$lib/components/ui/label/index.js";
     import {Switch} from "$lib/components/ui/switch/index.js";
-    import {Input} from "$lib/components/ui/input/index.js";
     import {CasesFormatter, formatters} from "$models";
     import * as RadioGroup from "$lib/components/ui/radio-group";
-    import {Button} from "$lib/components/ui/button";
-    import {GripVertical, X} from "lucide-svelte";
     import {t} from "$lib/translations";
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    export let formatter: CasesFormatter;
+    let {formatter} :{formatter: CasesFormatter} = $props();
 
-    let checked = formatter.mode === 0;
-    let withSpaces = formatter.removeSpaces;
+
+    let checked = $state(formatter.mode === 0);
+    let withSpaces = $state(formatter.removeSpaces);
+    let caseValue = $state(formatter.case);
 
     function handleCaseChange(c: string) {
         formatter.case = c;
         $formatters.format();
     }
 
-    $: {
+    $effect(() => {
         formatter.mode = checked ? 0 : 1;
         formatter.removeSpaces = withSpaces;
+        formatter.case = caseValue;
         $formatters.format();
-    }
+    });
 
 
 </script>
@@ -36,19 +35,19 @@
 
         <div class="flex items-center space-x-3">
             <Switch bind:checked={checked}/>
-            <Label>{formatter.mode === 0 ? $t('formatter.case.name_switch.on_file_name') : $t('formatter.case.name_switch.on_formatted_name')}</Label>
+            <Label>{checked ? $t('formatter.case.name_switch.on_file_name') : $t('formatter.case.name_switch.on_formatted_name')}</Label>
         </div>
 
         <div class="flex items-center space-x-3">
             <Switch bind:checked={withSpaces}/>
-            <Label>{formatter.removeSpaces ? $t('formatter.case.space_switch.no_space') : $t('formatter.case.space_switch.space')}</Label>
+            <Label>{withSpaces ? $t('formatter.case.space_switch.no_space') : $t('formatter.case.space_switch.space')}</Label>
         </div>
 
-        <RadioGroup.Root class="grid-cols-2" bind:value={formatter.case}>
+        <RadioGroup.Root class="grid-cols-2" bind:value={caseValue}>
 
             {#each CasesFormatter.Cases as c}
                 <div class="flex items-center space-x-2">
-                    <RadioGroup.Item value={c} on:click={()=>handleCaseChange(c)}/>
+                    <RadioGroup.Item value={c} onclick={()=>handleCaseChange(c)}/>
                     <Label>{$t(`formatter.case.${c}`)}</Label>
                 </div>
             {/each}

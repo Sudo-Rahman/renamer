@@ -1,4 +1,4 @@
-import {type ComponentType} from 'svelte';
+import type { Component } from 'svelte'
 import {Icon, Settings, FileKey, Info} from "lucide-svelte";
 import General from "./ui/General.svelte";
 import License from "./ui/License.svelte";
@@ -12,12 +12,12 @@ export enum SettingsRoutes {
 
 export interface SettingsRoute {
     type: SettingsRoutes;
-    icon: ComponentType<Icon>;
+    icon:  any;
     title: string;
-    page: ComponentType;
+    page: Component;
 }
 
-export const settingsRouteList = [
+export const settingsRouteList : SettingsRoute[] = [
     {
         type: SettingsRoutes.GENERAL,
         icon: Settings,

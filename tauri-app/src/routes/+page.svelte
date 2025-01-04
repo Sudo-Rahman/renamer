@@ -11,6 +11,6 @@
 
 </script>
 
-<div class="flex justify-center items-center h-full" on:dragover={(event) => event.preventDefault()}>
+<div class="flex justify-center items-center h-full" ondragover={(event) => event.preventDefault()}>
     <InputFiles/>
 </div>

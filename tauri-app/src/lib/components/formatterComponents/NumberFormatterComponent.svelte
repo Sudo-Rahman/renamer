@@ -10,15 +10,15 @@
     import {t} from "$lib/translations";
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    export let formatter: NumberFormatter;
+    let {formatter} :{formatter: NumberFormatter} = $props();
 
-    let start = formatter.start;
-    let step = formatter.step;
-    let text = formatter.text;
-    let fill = formatter.fill.length;
-    let fillChar = formatter.fill.char;
+    let start = $state(formatter.start);
+    let step = $state(formatter.step);
+    let text = $state(formatter.text);
+    let fill = $state(formatter.fill.length);
+    let fillChar = $state(formatter.fill.char);
 
-    $: {
+   $effect(() => {
         formatter.start = start;
         formatter.step = step;
         formatter.text = text;
@@ -27,7 +27,7 @@
             length: fill
         };
         $formatters.format();
-    }
+    });
 
     function handleInputStart(event: InputEvent) {
         if ((event.target as HTMLInputElement).value.length > 0) {
@@ -91,14 +91,14 @@
             </div>
 
             <div class="flex border-input rounded-md border px-2">
-                <Input class="p-1 text-center border-none focus-visible:ring-0 shadow-none" type="number" on:input={handleInputStart}
+                <Input class="p-1 focus-visible:ring-offset-0 text-center focus:border-none border-none focus-visible:ring-0 shadow-none" type="number" oninput={handleInputStart}
                        bind:value={start}/>
-                <Input class="p-1 text-center border-none focus-visible:ring-0 shadow-none" type="number" on:input={handleInputStep}
+                <Input class="p-1 text-center focus-visible:ring-offset-0 border-none focus-visible:ring-0 shadow-none" type="number" oninput={handleInputStep}
                        bind:value={step}/>
 
-                <Input class="p-1 text-center border-none focus-visible:ring-0 shadow-none" type="text"
+                <Input class="p-1 text-center focus-visible:ring-offset-0 border-none focus-visible:ring-0 shadow-none" type="text"
                        bind:value={fillChar}/>
-                <Input class="p-1 text-center border-none focus-visible:ring-0 shadow-none" type="number" min={0} on:input={handleInputFill}
+                <Input class="p-1 text-center focus-visible:ring-offset-0 border-none focus-visible:ring-0 shadow-none" type="number" min={0} oninput={handleInputFill}
                        bind:value={fill}/>
             </div>
         </div>

@@ -1,32 +1,29 @@
 <script lang="ts">
-    import * as Accordion from "$lib/components/ui/accordion";
     import {Label} from "$lib/components/ui/label/index.js";
     import {Input} from "$lib/components/ui/input/index.js";
-    import { formatters, RegexFormatter} from "$models";
-    import {Button} from "$lib/components/ui/button";
-    import {GripVertical, X} from "lucide-svelte";
+    import {formatters, RegexFormatter, SizeFormatter} from "$models";
     import {Switch} from "$lib/components/ui/switch";
     import {slide} from "svelte/transition";
     import {t} from "$lib/translations";
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    export let formatter: RegexFormatter;
+    let {formatter} :{formatter: RegexFormatter} = $props();
 
 
-    let regex = formatter.regex;
-    let replace = formatter.replace;
-    let all = formatter.all;// replace all occurrences
-    let startPos = formatter.startPos;// start from the beginning
-    let endPos = formatter.endPos;// end at the end
+    let regex = $state(formatter.regex);
+    let replace = $state(formatter.replace);
+    let all = $state(formatter.all);// replace all occurrences
+    let startPos = $state(formatter.startPos);// start from the beginning
+    let endPos = $state(formatter.endPos);// end at the end
 
-    $: {
+    $effect(() => {
         formatter.regex = regex;
         formatter.replace = replace;
         formatter.all = all;
         formatter.startPos = startPos;
         formatter.endPos = endPos;
         $formatters.format();
-    }
+    });
 
 </script>
 

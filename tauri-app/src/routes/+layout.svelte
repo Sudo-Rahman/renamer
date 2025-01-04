@@ -9,6 +9,8 @@
         document.addEventListener('contextmenu', event => event.preventDefault());
     }
 
+    let {children} = $props();
+
 </script>
 
 <svelte:window on:scroll|preventDefault/>
@@ -25,5 +27,5 @@
         </WindowTitlebar>
     </div>
     <Separator/>
-    <slot/>
+    {@render children()}
 </div>

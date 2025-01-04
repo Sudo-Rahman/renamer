@@ -8,7 +8,7 @@
     import {toast} from "svelte-sonner";
 
 
-    let dragActive = false;
+    let dragActive = $state(false);
 
 
     function handleDragOver(event: DragEvent) {
@@ -89,13 +89,13 @@
 
 </script>
 
-<div class="flex p-10 h-[200px] w-[350px] items-center justify-center rounded-md border-2 border-dashed text-sm"
+<div class="flex p-10 h-[200px] w-[350px] items-center justify-center rounded-md border-2 border-dashed text-sm" role="button" tabindex="0"
      class:bg-primary={dragActive}
      class:border-secondary={dragActive}
      id="dropzone"
-     on:dragleave={handleDragLeave}
-     on:dragover={handleDragOver}>
-    <button class="h-full w-full" on:click={getFolder} type="button">
+     ondragleave={handleDragLeave}
+     ondragover={handleDragOver}>
+    <button class="h-full w-full" onclick={getFolder} type="button">
         {$t('drag_drop_zone')}
     </button>
 </div>

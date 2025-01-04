@@ -13,7 +13,12 @@
     import {goto} from "$app/navigation";
     import {message} from "@tauri-apps/plugin-dialog";
 
-    export let files: RenamerFile[] = [];
+    type Props = {
+        class?: string;
+        files: RenamerFile[]
+    };
+
+    let {class: className, files = $bindable()} : Props = $props();
 
     onMount(async () => {
         const handleKeyDown = async (event: KeyboardEvent) => {
@@ -123,8 +128,8 @@
     }
 
 
-    let loadPresetDialog = false;
-    let savePresetDialog = false;
+    let loadPresetDialog = $state(false);
+    let savePresetDialog = $state(false);
 
 
     function saveDisable() {
@@ -135,22 +140,22 @@
 
 </script>
 
-<div class="{$$props.class}">
+<div class="{className}">
 
     <div class="flex items-center h-10">
         <Menubar.Root>
             <Menubar.Menu>
                 <Menubar.Trigger>{$t('menu_bar.file.title')}</Menubar.Trigger>
                 <Menubar.Content>
-                    <Menubar.Item on:click={async ()=> { await goto('settings')}}>
+                    <Menubar.Item onclick={async ()=> { await goto('settings')}}>
                         {$t('menu_bar.file.settings')}
                     </Menubar.Item>
                     <Menubar.Separator/>
-                    <Menubar.Item on:click={getFiles}>
+                    <Menubar.Item onclick={getFiles}>
                         {$t('menu_bar.file.import_files')}
                         <Menubar.Shortcut>⌘N</Menubar.Shortcut>
                     </Menubar.Item>
-                    <Menubar.Item on:click={getFolder}>
+                    <Menubar.Item onclick={getFolder}>
                         {$t('menu_bar.file.import_files_from_dir')}
                         <Menubar.Shortcut class="ml-2">⌘⇧N</Menubar.Shortcut>
                     </Menubar.Item>
@@ -159,15 +164,15 @@
             <Menubar.Menu>
                 <Menubar.Trigger>{$t('menu_bar.preset.title')}</Menubar.Trigger>
                 <Menubar.Content>
-                    <Menubar.Item disabled={saveDisable()} on:click={onSavePreset}>
+                    <Menubar.Item disabled={saveDisable()} onclick={onSavePreset}>
                         {$t('menu_bar.preset.save')}
                         <Menubar.Shortcut>⌘S</Menubar.Shortcut>
                     </Menubar.Item>
-                    <Menubar.Item disabled={$formatters.formatters.length === 0} on:click={onSaveAsPreset}>
+                    <Menubar.Item disabled={$formatters.formatters.length === 0} onclick={onSaveAsPreset}>
                         {$t('menu_bar.preset.save_as')}
                         <Menubar.Shortcut>⌘⇧S</Menubar.Shortcut>
                     </Menubar.Item>
-                    <Menubar.Item on:click={onLoadPreset}>
+                    <Menubar.Item onclick={onLoadPreset}>
                         {$t('menu_bar.preset.show')}
                         <Menubar.Shortcut>⌘O</Menubar.Shortcut>
                     </Menubar.Item>
@@ -177,9 +182,9 @@
 
 
         <div class="flex w-full justify-end">
-            <Button class="h-9 w-10 active:bg-primary {renamable ? 'animate-bounce' : ''}"
-                    disabled="{!($renamable)}"
-                    on:click={onRenameFiles}
+            <Button class="h-9 w-10 active:bg-primary"
+                    disabled={!($renamable)}
+                    onclick={onRenameFiles}
                     size="icon"
                     variant="outline">
                 <Play/>

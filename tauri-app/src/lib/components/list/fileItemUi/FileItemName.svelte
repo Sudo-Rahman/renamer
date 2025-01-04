@@ -2,9 +2,9 @@
 
     import {RenamerFile} from "$models";
 
-    export let file: RenamerFile;
+    let {file} : {file: RenamerFile} = $props();
 
-    let name = file.name;
+    let name = $state(file.name);
 
     file.onRenamed.connect(() => {
         name = file.newName;

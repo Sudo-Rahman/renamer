@@ -1,7 +1,6 @@
 import i18n from 'sveltekit-i18n';
 import translations from './translations';
 import {invoke} from "@tauri-apps/api/core";
-import {json} from "@sveltejs/kit";
 
 
 const config = {

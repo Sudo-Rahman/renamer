@@ -10,10 +10,10 @@
     import {store} from "$models";
 
 
-    let version: string
-    let appName: string
-    let update = false
-    let check_update: boolean | null = null
+    let version: string = $state('')
+    let appName: string = $state('')
+    let update  = $state(false)
+    let check_update: boolean | null = $state(null)
 
     onMount(async () => {
         version = await getVersion()
@@ -23,14 +23,14 @@
     })
 
     async function onWebsiteClick() {
-        await invoke('open_browser_url', {url: 'https://www.kirillvasiltsov.com/writing/optional-arguments-in-rust/'})
+        await invoke('open_browser_url', {url: 'https://renamer.pro'})
     }
 
-    $:{
+    $effect(() => {
         if (check_update !== null) {
             store.set('check_update', check_update)
         }
-    }
+    });
 
 </script>
 
@@ -81,7 +81,7 @@
     <div class="flex flex-col">
         <span class="pb-5">{$t('settings.about.others.label')}</span>
 
-        <Button class="w-fit p-0" on:click={onWebsiteClick} variant="link">
+        <Button class="w-fit p-0" onclick={onWebsiteClick} variant="link">
             {$t('settings.about.others.website')}
         </Button>
     </div>

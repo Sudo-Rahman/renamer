@@ -5,14 +5,20 @@
     import MacOs from "./controls/MacOs.svelte"
     import Windows from "./controls/Windows.svelte"
 
-    export let platform: string | null = null
-    export let hide = false
-    export let hideMethod = "display"
-    export let justify = false
+    type Props = {
+        class?: string;
+        platform?: string;
+        hide?: boolean;
+        hideMethod?: "display" | "invisible";
+        justify?: boolean;
+    }
+
+    let {class: className, platform, hide, hideMethod = "display", justify, ...restProps }: Props = $props()
+
 
     const customClass = cn(
         "flex z-50",
-        $$props.class,
+        className,
         hide && (hideMethod === "display" ? "hidden" : "invisible")
     )
 
@@ -37,11 +43,11 @@
 </script>
 
 {#if platform === "windows"}
-    <Windows {...$$props} class={cn(customClass, justify && "ml-auto")}/>
+    <Windows {...restProps} class={cn(customClass, justify && "ml-auto")}/>
 {:else if platform === "macos"}
-    <MacOs {...$$props} class={cn(customClass, justify && "ml-0")}/>
+    <MacOs {...restProps} class={cn(customClass, justify && "ml-0")}/>
 {:else if platform === "gnome"}
-    <Gnome {...$$props} class={cn(customClass, justify && "ml-0")}/>
+    <Gnome {...restProps} class={cn(customClass, justify && "ml-0")}/>
 {:else}
-    <Gnome {...$$props} class={cn(customClass, justify && "ml-0")}/>
+    <Gnome {...restProps} class={cn(customClass, justify && "ml-0")}/>
 {/if}

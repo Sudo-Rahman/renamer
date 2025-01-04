@@ -15,7 +15,7 @@
     import {get} from "svelte/store";
 
 
-    let dragActive = false;
+    let dragActive = $state(false);
     let rightPane: HTMLElement;
 
     onMount(async () => {

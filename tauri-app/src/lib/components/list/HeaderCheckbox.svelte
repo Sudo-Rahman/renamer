@@ -5,10 +5,15 @@
     import {createEventDispatcher, onMount} from "svelte";
     import type {Column} from "$lib/components/list/store";
 
-    export let files: RenamerFile[];
-    export let column: Column;
-    let selected = files.every(f => f.selected);  // Check if all are selected
-    let dispatch = createEventDispatcher();
+   type Props = {
+        files: RenamerFile[],
+        column: Column
+        action: (selected: boolean) => void
+    };
+
+    let {files, column, action} : Props = $props();
+
+    let selected = $state(files.every(f => f.selected));  // Check if all are selected
 
     onMount(() => {
         column.onCheck = () => {
@@ -17,11 +22,10 @@
     });
 
     function handleClick() {
-        selected = !selected;  // Toggle the main checkbox
         files.forEach(f => f.selected = selected);  // Set all files to the same state
         $formatters.format();
-        dispatch('action', selected);  // Dispatch the selection action
+        action(selected);
     }
 </script>
 
-<Checkbox bind:checked={selected} class="border-primary-foreground/10 rounded" on:click={handleClick}/>
+<Checkbox bind:checked={selected} class="border-primary-foreground/10 rounded" onCheckedChange={handleClick}/>

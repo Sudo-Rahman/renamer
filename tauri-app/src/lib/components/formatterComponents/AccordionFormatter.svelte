@@ -5,8 +5,13 @@
     import {GripVertical, X} from "lucide-svelte";
 
 
-    export let title: string;
-    export let id: string;
+    type Props = {
+        children: any;
+        title: string;
+        id: string;
+    };
+
+    let {children, title, id}: Props = $props();
 
 </script>
 
@@ -23,7 +28,7 @@
             </Accordion.Trigger>
 
             <div class="ml-auto z-0">
-                <Button class="w-6 h-6 p-0" on:click={() => $formatters.removeFormatter(id)}
+                <Button class="w-6 h-6 p-0" onclick={() => $formatters.removeFormatter(id)}
                         variant="outline">
                     <X size="16px"/>
                 </Button>
@@ -32,7 +37,7 @@
 
         <Accordion.Content>
 
-            <slot/>
+            {@render children()}
 
         </Accordion.Content>
     </Accordion.Item>

@@ -2,12 +2,13 @@
     import * as Select from "$lib/components/ui/select/index.js";
     import {t, locale, available_locales} from "$lib/translations";
 
-    $: current = available_locales[$locale];
+    let current = $derived(available_locales[$locale]);
+
 </script>
 
 
-<Select.Root selected={{value : $locale}}
-             onSelectedChange={(e) => {locale.set(e.value)}}>
+<Select.Root type="single" bind:value={$locale}
+             onValueChange={(e) => { console.log(e);locale.set(e.value)}}>
     <Select.Trigger class="w-fit transition-all duration-300 ease-in-out">
         <div class="space-x-5 flex items-center">
             <span>{current.name} </span>

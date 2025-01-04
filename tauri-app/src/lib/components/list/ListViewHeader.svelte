@@ -10,16 +10,23 @@
     import {store} from "$models";
     import {t} from "$lib/translations";
 
-    export let files: RenamerFile[];
-    const dispatch = createEventDispatcher();
+    type Props = {
+        class?: string;
+        files: RenamerFile[];
+        sort: (sorted: RenamerFile[]) => void;
+        action: (event: CustomEvent) => void;
+    };
+
+    let {class: className, files = $bindable(), sort, action} : Props = $props();
+
     let panel: HTMLDivElement;
     let timeout: any;
     let timeoutResize: any;
 
     // Réactifs pour les colonnes visibles, redimensionnables et non redimensionnables
-    $: visibleCols = $columns.filter(c => c.visible || c.visible === undefined);
-    $: resizableCols = visibleCols.filter(c => c.resizable);
-    $: notResizableCols = visibleCols.filter(c => !c.resizable);
+    let visibleCols = $derived($columns.filter(c => c.visible || c.visible === undefined));
+    let  resizableCols = $derived(visibleCols.filter(c => c.resizable));
+    let notResizableCols = $derived(visibleCols.filter(c => !c.resizable));
 
     // Références aux éléments DOM des colonnes
     let divs: HTMLDivElement[] = [];
@@ -45,7 +52,7 @@
         }
 
         let sorted = [...files].sort(sortFun); // Utiliser une copie pour éviter de muter directement les props
-        dispatch('sort', sorted);
+        sort(sorted);
     }
 
     // Fonction pour gérer le redimensionnement des colonnes
@@ -130,15 +137,15 @@
 
 </script>
 
-<div class="w-full flex py-1 justify-evenly text-center items-center {$$props.class}">
+<div class="w-full flex py-1 justify-evenly text-center items-center {className}">
     <div class="w-full items-center flex">
         {#each notResizableCols as col, i}
+            {@const  Component = col.headerComponent}
             <div class="w-fit px-2" bind:this={divs[i]}>
                 {#if col.headerComponent !== undefined}
-                    <svelte:component column={col} files={files} this={col.headerComponent}
-                                      on:action={event => dispatch('action', event.detail)}/>
+                    <Component column={col} files={files} action={event => action( event.detail)}/>
                 {:else}
-                    <Button variant="ghost" on:click={() => sortToggle(col)}>
+                    <Button variant="ghost" onclick={() => sortToggle(col)}>
                         {$t(col.name)}
                         <ArrowUpDown class="ml-2 h-4 w-4"/>
                     </Button>
@@ -150,14 +157,15 @@
         <Resizable.PaneGroup direction="horizontal">
             <div bind:this={panel} class="px-2 w-full flex">
                 {#each resizableCols as col, i}
+                    {@const Component = col.headerComponent}
                     <Resizable.Pane onResize={(s, p) => handleResize(s, p, col)} minSize={col.minSize ?? 1}
                                     defaultSize={col.minSize ?? 10}>
                         <div class="px-2 font-medium text-sm" bind:this={divs2[i]}>
                             {#if col.headerComponent !== undefined}
-                                <svelte:component files={files} this={col.headerComponent}/>
+                                <Component files={files} />
                             {:else}
                                 {#if col.sort}
-                                    <Button variant="ghost" class="p-2" on:click={() => sortToggle(col)}>
+                                    <Button variant="ghost" class="p-2" onclick={() => sortToggle(col)}>
                                         {$t(col.name)}
                                         <ArrowUpDown class="ml-2 h-4 w-4"/>
                                     </Button>

@@ -16,3 +16,5 @@ latest.json
 */Cargo.lock
 
 */.svelte
+
+*/build/*

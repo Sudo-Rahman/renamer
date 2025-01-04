@@ -9,14 +9,14 @@
         maximizeWindow,
         minimizeWindow
     } from "../utils/window"
-    import {onDestroy, onMount} from "svelte"
+    import {onMount} from "svelte"
 
     onMount(async () => {
         await initializeAppWindow()
     })
 
-    const isWindowMaximized = 0
-    let isHovering = false
+    const isWindowMaximized = $state(0)
+    let isHovering = $state(false)
 
     const handleMouseEnter = () => {
         isHovering = true
@@ -25,7 +25,7 @@
     const handleMouseLeave = () => {
         isHovering = false
     }
-    let isAltKeyPressed = false
+    let isAltKeyPressed = $state(false)
 
     const key = "Alt"
 
@@ -41,22 +41,25 @@
         }
     }
 
+    let {class: className, ...restProps} = $props()
+
+
 </script>
 
 <div
-        {...$$props}
+        {...restProps}
         class={cn(
     "cursor-default space-x-2 px-3 py-2 text-black active:text-black dark:text-black",
-    $$props.class
+    className
   )}
-        on:mouseenter={handleMouseEnter}
-        on:mouseleave={handleMouseLeave}
+        onmouseenter={handleMouseEnter}
+        onmouseleave={handleMouseLeave}
         role="button"
         tabindex="0"
 >
     <Button
             class="aspect-square h-3 w-3 content-center items-center justify-center self-center rounded-full border border-black/[.12] bg-[#ff544d] text-center text-black/60 hover:bg-[#ff544d] active:bg-[#bf403a] active:text-black/60 dark:border-none"
-            on:click={closeWindow}
+            onclick={closeWindow}
     >
         {#if isHovering}
             <Icons icon="closeMac"/>
@@ -72,7 +75,7 @@
     </Button>
     <Button
             class="aspect-square h-3 w-3 content-center items-center justify-center self-center rounded-full border border-black/[.12] bg-[#28c93f] text-center text-black/60 hover:bg-[#28c93f] active:bg-[#1e9930] active:text-black/60 dark:border-none"
-            on:click={isAltKeyPressed ? maximizeWindow : fullscreenWindow}
+            onclick={isAltKeyPressed ? maximizeWindow : fullscreenWindow}
     >
         {#if isHovering}
             {#if isAltKeyPressed}

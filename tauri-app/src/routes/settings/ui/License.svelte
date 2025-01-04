@@ -10,8 +10,9 @@
     import {toast} from "svelte-sonner";
     import {t} from "$lib/translations";
 
-    let key: string = '';
-    let valide: boolean | null = null;
+
+    let key: string = $state('');
+    let valide: boolean | null = $state(null);
 
     onMount(async () => {
         await checkLicense();
@@ -91,7 +92,7 @@
             <div class="flex w-full space-x-5">
                 <Input bind:value={key} type="text" class="min-w-80"
                        placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"/>
-                <Button class="w-1/4" on:click={activate_license}>{$t('settings.license.key.activate_btn')}</Button>
+                <Button class="w-1/4" onclick={activate_license}>{$t('settings.license.key.activate_btn')}</Button>
             </div>
         </SettingsItemCard>
     </div>
@@ -100,7 +101,7 @@
         <div class="flex justify-between items-center w-full h-full">
             <span class="text-green-500">{$t('settings.license.valid.message')}</span>
             <Button class="min-w-1/4 w-fit"
-                    on:click={remove_license}>{$t('settings.license.valid.desactivate_btn')}</Button>
+                    onclick={remove_license}>{$t('settings.license.valid.desactivate_btn')}</Button>
         </div>
     </SettingsItemCard>
 {/if}

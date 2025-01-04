@@ -5,10 +5,10 @@
     import {t} from "$lib/translations";
     import * as Popover from "$lib/components/ui/popover";
 
-    export let file: RenamerFile;
+    let {file} : {file: RenamerFile} = $props();
 
-    let status: string = file.status;
-    let message: string = $t(`file_status.error.${file.statusCode}`);
+    let status: string = $state(file.status);
+    let message: string = $state($t(`file_status.error.${file.statusCode}`));
     file.onStatusChanged.connect(
         (s) => {
             status = s;

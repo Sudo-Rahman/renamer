@@ -1,26 +1,23 @@
 <script lang="ts">
-    import * as Accordion from "$lib/components/ui/accordion";
     import {Label} from "$lib/components/ui/label/index.js";
     import {Switch} from "$lib/components/ui/switch/index.js";
     import {Input} from "$lib/components/ui/input/index.js";
-    import {ExtensionFormatter, formatters} from "$models";
+    import {ExtensionFormatter, formatters, SizeFormatter} from "$models";
     import {slide} from "svelte/transition";
-    import {Button} from "$lib/components/ui/button";
-    import {GripVertical, X} from "lucide-svelte";
     import {t} from "$lib/translations";
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    export let formatter:ExtensionFormatter;
+    let {formatter} :{formatter: ExtensionFormatter} = $props();
 
 
-    let customExt = formatter.customeExt;
-    let customExtension = formatter.extension;
+    let customExt = $state(formatter.customeExt);
+    let customExtension = $state(formatter.extension);
 
-    $: {
+    $effect(() => {
         formatter.customeExt = customExt;
         formatter.extension = customExtension;
         $formatters.format();
-    }
+    });
 
 </script>
 

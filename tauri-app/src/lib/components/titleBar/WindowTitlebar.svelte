@@ -3,21 +3,27 @@
     import {cn} from "./utils/utils"
     import type {WindowControlsProps} from "./types"
     import WindowControls from "./WindowControls.svelte"
-    import {onMount} from "svelte";
+    import {onMount, type Snippet} from "svelte";
 
-    export let controlsOrder = "system"
-    export let windowControlsProps: WindowControlsProps = {}
 
-    let left = false
-    controlsOrder === "left" ||
-    (controlsOrder === "platform" &&
-        windowControlsProps?.platform === "macos")
+    type Props = {
+        children: Snippet;
+        class?: string;
+        controlsOrder?: string;
+        windowControlsProps: WindowControlsProps
+    }
+
+    let {children, class: className, controlsOrder = "system", windowControlsProps = {}, ...restProps}: Props = $props()
+
+    let left = $state(controlsOrder === "left" ||
+        (controlsOrder === "platform" &&
+            windowControlsProps?.platform === "macos"))
 
     osType.then((osType) => {
         left = left || (controlsOrder === "system" && osType === "macos") || (controlsOrder === "system" && osType === "linux")
     })
 
-    const props = (ml: string) => {
+    const restPropsFn = (ml: string) => {
         if (windowControlsProps?.justify !== undefined) return windowControlsProps
 
         const {
@@ -34,18 +40,18 @@
 </script>
 
 <div
-        {...$$props}
+        {...restProps}
         class={cn(
     "bg-background flex select-none flex-row overflow-hidden relative items-center",
-    $$props.class
+    className
   )}
         data-tauri-drag-region
 >
     {#if left}
-        <WindowControls {...props("ml-0")}/>
-        <slot/>
+        <WindowControls {...restPropsFn("ml-0")}/>
+        {@render children()}
     {:else}
-        <slot/>
-        <WindowControls {...props("ml-auto")}/>
+        {@render children()}
+        <WindowControls {...restPropsFn("ml-auto")}/>
     {/if}
 </div>

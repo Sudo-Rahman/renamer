@@ -21,7 +21,7 @@
     import RegexFormatterComponent from "$lib/components/formatterComponents/RegexFormatterComponent.svelte";
     import SizeFormatterComponent from "$lib/components/formatterComponents/SizeFormatterComponent.svelte";
 
-    export let formatter: Formatter;
+    let {formatter} :{formatter: Formatter} = $props();
 
 </script>
 

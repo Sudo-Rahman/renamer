@@ -1,19 +1,15 @@
 <script lang="ts">
-    import * as Accordion from "$lib/components/ui/accordion";
-    import {Label} from "$lib/components/ui/label/index.js";
-    import {Switch} from "$lib/components/ui/switch/index.js";
     import {Input} from "$lib/components/ui/input/index.js";
-    import {formatters, RemoveFormatter} from "$models";
-    import * as RadioGroup from "$lib/components/ui/radio-group";
+    import {formatters, NumberFormatter, RemoveFormatter} from "$models";
     import {Button} from "$lib/components/ui/button";
     import {Plus, X, GripVertical} from "lucide-svelte";
     import {type DndEvent, dndzone, type Item} from "svelte-dnd-action";
     import {t} from "$lib/translations";
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    export let formatter: RemoveFormatter;
+    let {formatter} :{formatter: RemoveFormatter} = $props();
 
-    let inputs: Item[] = formatter.text.map((value) => ({id: crypto.randomUUID(), value}));
+    let inputs: Item[] = $state(formatter.text.map((value) => ({id: crypto.randomUUID(), value})));
 
     let dropTargetStyle: any = {
         border: "none",
@@ -35,10 +31,10 @@
         inputs = e.detail.items as Item[];
     }
 
-    $: {
+   $effect(() => {
         formatter.text = inputs.map(input => input.value);
         $formatters.format();
-    }
+    });
 </script>
 
 
@@ -46,8 +42,8 @@
 
     <div class="flex flex-col space-y-2 pt-2 w-full">
         <div use:dndzone={{items: inputs, dropTargetStyle, type: "input"}}
-             on:consider={handleDndConsider}
-             on:finalize={handleDndFinalize}
+             onconsider={handleDndConsider}
+             onfinalize={handleDndFinalize}
              class="space-y-2">
             {#each inputs as input (input.id)}
                 <div class="flex items-center space-x-2 h-10 px-2">
@@ -63,7 +59,7 @@
                     <div>
                         <Button class="h-6 w-6 flex justify-center items-center p-0 active:bg-primary/50"
                                 variant="outline"
-                                on:click={() => removeInput(input.id)}>
+                                onclick={() => removeInput(input.id)}>
                             <X size="16px"/>
                         </Button>
                     </div>
@@ -72,7 +68,7 @@
         </div>
 
         <div class="flex justify-center items-center w-full">
-            <Button variant="ghost" class="h-8 w-8 rounded-full p-0 active:bg-primary/50" on:click={newInput}>
+            <Button variant="ghost" class="h-8 w-8 rounded-full p-0 active:bg-primary/50" onclick={newInput}>
                 <Plus/>
             </Button>
         </div>

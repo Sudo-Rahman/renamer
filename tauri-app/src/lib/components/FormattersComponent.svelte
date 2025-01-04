@@ -5,7 +5,7 @@
     import FormatterComponent from "$lib/components/formatterComponents/FormatterComponent.svelte";
 
 
-    let formatterList: Item[] = $formatters.formatters.map((value) => ({id: value.id, formatter: value}));
+    let formatterList: Item[] = $state($formatters.formatters.map((value) => ({id: value.id, formatter: value})));
 
 
     $formatters.onListChangedSignal.connect(list => {
@@ -34,8 +34,8 @@
 
         <div class="flex flex-col min-w-10 space-y-2 p-1"
              use:dndzone={{items: formatterList, dropTargetStyle, type: "formatter"}}
-             on:consider={handleDndConsider}
-             on:finalize={handleDndFinalize}>
+             onconsider={handleDndConsider}
+             onfinalize={handleDndFinalize}>
 
             {#key $preset}
                 {#each formatterList as item (item.id)}

@@ -7,10 +7,10 @@
     import {toast} from "svelte-sonner";
     import {t} from "$lib/translations";
 
-    export let open = false;
-    let name = "";
-    $: disableBtn = name.length < 3;
-    $: showWarning = name.length < 3; // Afficher l'avertissement si la longueur est < 3
+    let {open = $bindable(false)} = $props();
+    let name = $state('');
+    let disableBtn = $derived(name.length < 3);
+    let showWarning = $derived(false);// Afficher l'avertissement si la longueur est < 3
 
     function onCreate() {
         let preset = new Preset(name, $formatters.formatters);
@@ -44,10 +44,10 @@
 
 
             <div class="flex w-full justify-end items-center space-x-5">
-                <Button on:click={() => open = false}
+                <Button onclick={() => open = false}
                         variant="outline">{$t('menu_bar.preset.save_as_dialog.cancel_btn')}</Button>
                 <Button disabled={disableBtn}
-                        on:click={onCreate}>{$t('menu_bar.preset.save_as_dialog.save_btn')}</Button>
+                        onclick={onCreate}>{$t('menu_bar.preset.save_as_dialog.save_btn')}</Button>
             </div>
 
         </div>

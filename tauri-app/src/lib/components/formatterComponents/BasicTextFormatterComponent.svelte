@@ -1,24 +1,19 @@
 <script lang="ts">
-    import * as Accordion from "$lib/components/ui/accordion";
     import {Label} from "$lib/components/ui/label/index.js";
     import {Input} from "$lib/components/ui/input/index.js";
     import {BasicTextFormatter, formatters} from "$models";
-    import {Button} from "$lib/components/ui/button";
-    import {GripVertical, X} from "lucide-svelte";
     import {t} from "$lib/translations";
-    import {ChevronUp, ChevronDown} from 'lucide-svelte';
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
+    let {formatter} :{formatter: BasicTextFormatter} = $props();
 
-    export let formatter: BasicTextFormatter;
 
+    let text = $state(formatter.text);
 
-    let text = formatter.text;
-
-    $: {
+    $effect(() => {
         formatter.text = text;
         $formatters.format();
-    }
+    });
 
 </script>
 
