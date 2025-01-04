@@ -18,7 +18,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{vars.REGISTRY_USERNAME}}/renamer-api:latest
+          tags: ${{secrets.REGISTRY_USERNAME}}/renamer-api:latest
           file: api.Dockerfile
   deploy:
     runs-on: ubuntu-latest
