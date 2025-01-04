@@ -35,10 +35,20 @@ impl MailgunEmail {
         let response = client.post(format!("https://api.eu.mailgun.net/v3/{}/messages", MailgunEmail::get_domain()))
             .basic_auth("api", Some(api_key))
             .multipart(form)
-            .send().await.unwrap();
+            .send().await;
 
-        if response.status() != StatusCode::OK {
-            let text = response.text().await.unwrap();
+        let mut  error = response.is_err();
+        let mut text = "".to_string();
+        if error {
+            text = response.as_ref().err().unwrap().to_string();
+        }
+
+        if !error  && response.as_ref().unwrap().status() != StatusCode::OK {
+            error = true;
+            text = response.unwrap().text().await.unwrap();
+        }
+
+        if error {
             return Err(Log {
                 _id: bson::oid::ObjectId::new(),
                 date_time: bson::DateTime::now(),

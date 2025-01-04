@@ -1,0 +1,17 @@
+services:
+  api:
+    image: localhost:5000/renamer-api
+    container_name: renamer-api
+    ports:
+      - "3000:3000"
+    env_file:
+      - renamer-api/.env
+    restart: unless-stopped
+  website:
+    image: localhost:5000/renamer-website
+    container_name: renamer-website
+    ports:
+      - "3001:3000"
+    env_file:
+      - renamer-website/.env
+    restart: unless-stopped

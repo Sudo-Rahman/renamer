@@ -17,9 +17,9 @@ FROM scratch AS final
 # Exposer le port 3000
 EXPOSE 3000
 
-# Commande
-CMD ["renamer-api"]
-
 # Copier le binaire compilé depuis l'étape de construction
 COPY --from=builder /api/renamer-api/target/x86_64-unknown-linux-musl/release/renamer-api usr/local/bin/renamer-api
+
+# Exécuter le binaire
+CMD ["renamer-api"]
 
