@@ -18,7 +18,7 @@
         files: RenamerFile[]
     };
 
-    let {class: className, files = $bindable()} : Props = $props();
+    let {class: className, files = $bindable()}: Props = $props();
 
     onMount(async () => {
         const handleKeyDown = async (event: KeyboardEvent) => {

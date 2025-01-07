@@ -1,6 +1,6 @@
 <script lang="ts">
     import {Separator} from "$lib/components/ui/separator";
-    import {files, formatString, formatters, information, preset, RenamerFile} from "$models";
+    import {files, formatString, formatters, information, maxImportFilesDialog, preset, RenamerFile} from "$models";
     import Menubar from "$lib/components/MenuBar.svelte";
     import FormattersComponent from "$lib/components/FormattersComponent.svelte";
     import {onMount} from "svelte";
@@ -13,6 +13,7 @@
     import {Button} from "$lib/components/ui/button";
     import ListView from "$lib/components/list/ListView.svelte";
     import {get} from "svelte/store";
+    import {toast} from "svelte-sonner";
 
 
     let dragActive = $state(false);
@@ -24,8 +25,11 @@
                 const droppedFiles = event.payload.paths as string[];
                 let new_files: RenamerFile[] = [];
 
-                let tmp_files: any[] = await invoke('files_from_vec', {files: droppedFiles})
-                tmp_files.forEach(
+                let response: { files: any[], plan: number } = await invoke('files_from_vec', {files: droppedFiles})
+                if (response.plan === 0) {
+                    await maxImportFilesDialog();
+                }
+                response.files.forEach(
                     (file) => {
                         new_files.push(new RenamerFile(file));
                     }
@@ -34,6 +38,7 @@
                 new_files = new_files.sort((a, b) => a.name.localeCompare(b.name));
                 $files = new_files;
                 dragActive = false;
+                toast.success($t('toast.import_files.success'));
             }
         });
 

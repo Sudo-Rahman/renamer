@@ -1,11 +1,10 @@
-import {STRIPE_WEBHOOK_SECRET} from '$env/static/private';
-import {API_URL} from '$env/static/private';
+import {env} from '$env/dynamic/private';
 import {type RequestHandler} from '@sveltejs/kit';
 import {stripe} from '$lib/server/Stripe';
 
 
 // Clé de signature du webhook à obtenir dans votre Dashboard Stripe
-const endpointSecret = STRIPE_WEBHOOK_SECRET;
+const endpointSecret = env.STRIPE_WEBHOOK_SECRET;
 
 export const POST: RequestHandler = async ({request}) => {
     const sig = request.headers.get('stripe-signature')!;
@@ -31,8 +30,16 @@ export const POST: RequestHandler = async ({request}) => {
         const session = event.data.object;
 
         if (session.customer_details && session.customer_details.email) {
+            let plan = 1;
+            try {
+                const product = await stripe.products.retrieve(session.metadata.product);
+                plan = +product.metadata.plan || 1;
+            } catch (err) {
+                console.error(`⚠️  Erreur lors de la récupération du produit: ${err.message}`);
+            }
+
             await fetch(
-                API_URL + "/create",
+                env.API_URL + "/create",
                 {
                     method: "POST",
                     headers: {
@@ -40,17 +47,19 @@ export const POST: RequestHandler = async ({request}) => {
                     },
                     body: JSON.stringify({
                         email: session.customer_details.email,
+                        plan: plan
                     }),
                 }
             ).then(
-                (res) => res.json()
-            ).catch();
+                (response) => response.json()
+            ).catch(
+                (err) => {
+                    //     write in a log file
+                    console.error(`⚠️  Erreur lors de la création du compte: ${err.message}`);
+
+                }
+            );
         }
-
-        // Vous pouvez maintenant traiter la session de paiement réussie
-
-        // Ajoutez ici votre logique métier, comme la mise à jour de la base de données,
-        // l'envoi d'un email de confirmation, etc.
     }
 
     return new Response(JSON.stringify({received: true}), {

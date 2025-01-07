@@ -12,4 +12,5 @@ pub struct UserMachine {
     pub email: String,
     pub key: Uuid,
     pub machine: Machine,
+    pub plan: u8,
 }

@@ -1,10 +1,10 @@
-use crate::rename_file::RenameFile;
+use crate::entities::*;
 use std::fs;
 use std::path::Path;
 use sys_locale::get_locale;
 
 #[tauri::command]
-pub async fn list_files_in_directory(dir: String) -> Result<Vec<RenameFile>, String> {
+pub async fn list_files_in_directory(dir: String) -> Result<Value, String> {
     let path = Path::new(&dir);
 
     if path.is_dir() {
@@ -23,18 +23,23 @@ pub async fn list_files_in_directory(dir: String) -> Result<Vec<RenameFile>, Str
                 }
             }
         }
+
+        let plan = APPLICATION.lock().await.license();
         // no licence max 5 files
-        if !APPLICATION.lock().await.license() {
+        if plan == 0 {
             files.truncate(5);
         }
-        Ok(files)
+        Ok(json!({
+            "files": files,
+            "plan": plan
+        }))
     } else {
         Err("The provided path is not a directory".to_string())
     }
 }
 
 #[tauri::command]
-pub async fn files_from_vec(files: Vec<String>) -> Result<Vec<RenameFile>, String> {
+pub async fn files_from_vec(files: Vec<String>) -> Result<Value, String> {
     let mut files_vec = Vec::new();
     let binding = files.first().unwrap();
     let dir = Path::new(&binding).parent().unwrap();
@@ -47,31 +52,20 @@ pub async fn files_from_vec(files: Vec<String>) -> Result<Vec<RenameFile>, Strin
             }
         }
     }
+
+    let plan = APPLICATION.lock().await.license();
     // no licence max 5 files
-    if !APPLICATION.lock().await.license() {
+    if plan == 0 {
         files_vec.truncate(5);
     }
-    Ok(files_vec)
+    Ok(json!({
+            "files": files_vec,
+            "plan": plan
+        }))
 }
 
 use crate::app::APPLICATION;
-use serde::{Deserialize, Serialize};
-use serde_json::json;
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct FileRenameInfo {
-    path: String,
-    new_path: String,
-    uuid: String, // ou un autre type de données
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct RenameStatus {
-    status: bool,
-    error: String,
-    uuid: String, // ou un autre type de données
-    new_path: String,
-}
+use serde_json::{json, Value};
 
 #[tauri::command]
 pub async fn rename_files(file_infos: Vec<FileRenameInfo>) -> Result<Vec<RenameStatus>, i8> {
@@ -105,12 +99,6 @@ pub async fn rename_files(file_infos: Vec<FileRenameInfo>) -> Result<Vec<RenameS
     }
 
     Ok(vec)
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct FileStatus {
-    uuid: String, // ou le type approprié pour uuid
-    error: u8,
 }
 
 // check file name is unique in the directory

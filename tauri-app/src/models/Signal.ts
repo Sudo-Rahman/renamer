@@ -15,6 +15,10 @@ export class Signal<T> {
         }
     }
 
+    public disconnectAll(): void {
+        this.listeners = [];
+    }
+
     public emit(value: T): void {
         this.listeners.forEach(listener => listener(value));
     }

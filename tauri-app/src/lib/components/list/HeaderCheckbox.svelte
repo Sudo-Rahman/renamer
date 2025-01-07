@@ -5,13 +5,12 @@
     import {createEventDispatcher, onMount} from "svelte";
     import type {Column} from "$lib/components/list/store";
 
-   type Props = {
+    type Props = {
         files: RenamerFile[],
         column: Column
-        action: (selected: boolean) => void
     };
 
-    let {files, column, action} : Props = $props();
+    let {files, column}: Props = $props();
 
     let selected = $state(files.every(f => f.selected));  // Check if all are selected
 
@@ -24,7 +23,6 @@
     function handleClick() {
         files.forEach(f => f.selected = selected);  // Set all files to the same state
         $formatters.format();
-        action(selected);
     }
 </script>
 

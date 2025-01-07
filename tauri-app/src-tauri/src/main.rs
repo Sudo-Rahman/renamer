@@ -4,7 +4,7 @@ extern crate core;
 
 mod app;
 mod auth;
-mod rename_file;
+mod entities;
 mod utils;
 
 use crate::app::APPLICATION;
@@ -46,10 +46,10 @@ fn setup<'a>(app: &'a mut tauri::App) -> Result<(), Box<dyn std::error::Error>> 
     tauri::async_runtime::spawn(async move {
         let license_result = is_license_ok(handle).await;
         let application = APPLICATION.clone();
-        if let Ok(is_valid) = license_result {
-            application.lock().await.set_license(is_valid);
+        if let Ok(plan) = license_result {
+            application.lock().await.set_license(plan);
         } else {
-            application.lock().await.set_license(false);
+            application.lock().await.set_license(0);
         }
     });
     Ok(())

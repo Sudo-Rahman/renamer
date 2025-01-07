@@ -45,3 +45,25 @@ impl RenameFile {
             .as_secs()
     }
 }
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct FileRenameInfo {
+    pub path: String,
+    pub new_path: String,
+    pub uuid: String, // ou un autre type de données
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct RenameStatus {
+    pub status: bool,
+    pub error: String,
+    pub uuid: String, // ou un autre type de données
+    pub new_path: String,
+}
+
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct FileStatus {
+    pub uuid: String, // ou le type approprié pour uuid
+    pub error: u8,
+}

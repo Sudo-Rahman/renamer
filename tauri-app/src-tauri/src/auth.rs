@@ -52,7 +52,7 @@ pub async fn get_license(app: tauri::AppHandle) -> Result<String, String> {
 }
 
 #[tauri::command]
-pub async fn save_license(app: tauri::AppHandle, user: Value) -> Result<bool, i8> {
+pub async fn save_license(app: tauri::AppHandle, user: UserMachine) -> Result<bool, i8> {
     let store = APPLICATION.lock().await.get_store(app.clone()).await.map_err(
         |_| 1
     )?;
@@ -61,7 +61,7 @@ pub async fn save_license(app: tauri::AppHandle, user: Value) -> Result<bool, i8
 }
 
 #[tauri::command]
-pub async fn is_license_ok(app: tauri::AppHandle) -> Result<bool, i8> {
+pub async fn is_license_ok(app: tauri::AppHandle) -> Result<u8, i8> {
     let license = get_license(app.clone()).await;
     match license {
         Ok(license) => {
@@ -76,11 +76,11 @@ pub async fn is_license_ok(app: tauri::AppHandle) -> Result<bool, i8> {
             if (online::check(None).is_ok()) {
                 let res = check_licence(user.clone()).await;
                 match res {
-                    Ok(res) => Ok(res == license),
+                    Ok(res) => Ok(user.plan),
                     Err(_) => Err(1),
                 }
             } else {
-                Ok(user.machine.id == get_machine_id())
+                Ok(if user.machine.id == get_machine_id() { 1 } else { 0 })
             }
         }
         Err(_) => Err(1),
@@ -90,7 +90,7 @@ pub async fn is_license_ok(app: tauri::AppHandle) -> Result<bool, i8> {
 #[tauri::command]
 pub async fn activate_license(app: tauri::AppHandle, key: String) -> Result<bool, i8> {
     let application = APPLICATION.clone();
-    application.lock().await.set_license(false);
+    application.lock().await.set_license(0);
     let client = Client::new();
 
     let license = json!({
@@ -114,9 +114,9 @@ pub async fn activate_license(app: tauri::AppHandle, key: String) -> Result<bool
         if (text.is_err()) {
             return Err(1);
         }
-        let user = serde_json::Value::from_str(text.unwrap().as_str()).unwrap();
-        save_license(app.clone(), user).await?;
-        application.lock().await.set_license(true);
+        let user: UserMachine = serde_json::from_str(text.unwrap().as_str()).unwrap();
+        save_license(app.clone(), user.clone()).await?;
+        application.lock().await.set_license(user.plan);
         Ok(true)
     } else if res.status() == StatusCode::UNAUTHORIZED {
         Err(2)
@@ -146,6 +146,6 @@ pub async fn remove_license(app: tauri::AppHandle) -> Result<bool, i8> {
 
     let store = APPLICATION.lock().await.get_store(app.clone()).await.or_else(|_| Err(1))?;
     store.set("license".to_string(), json!(null));
-    APPLICATION.lock().await.set_license(false);
+    APPLICATION.lock().await.set_license(0);
     Ok(true)
 }

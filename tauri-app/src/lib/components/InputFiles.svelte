@@ -2,7 +2,7 @@
     import {goto} from '$app/navigation';
     import {listen} from "@tauri-apps/api/event";
     import {onMount} from 'svelte';
-    import {files, getFilesFromFileDialog, RenamerFile} from '$models';
+    import {files, getFilesFromFileDialog, maxImportFilesDialog, RenamerFile} from '$models';
     import {invoke} from "@tauri-apps/api/core";
     import {t} from '$lib/translations';
     import {toast} from "svelte-sonner";
@@ -27,8 +27,11 @@
                     const droppedFiles = event.payload.paths as string[];
                     let new_files: RenamerFile[] = [];
 
-                    let tmp_files: any[] = await invoke('files_from_vec', {files: droppedFiles})
-                    tmp_files.forEach(
+                    let response: { files: any[], plan: number } = await invoke('files_from_vec', {files: droppedFiles})
+                    if (response.plan === 0) {
+                        await maxImportFilesDialog();
+                    }
+                    response.files.forEach(
                         (file) => {
                             new_files.push(new RenamerFile(file));
                         }
@@ -89,12 +92,14 @@
 
 </script>
 
-<div class="flex p-10 h-[200px] w-[350px] items-center justify-center rounded-md border-2 border-dashed text-sm" role="button" tabindex="0"
-     class:bg-primary={dragActive}
-     class:border-secondary={dragActive}
+<div class="flex p-10 h-[200px] w-[350px] items-center justify-center rounded-md border-2 border-dashed text-sm"
+     class:bg-primary={dragActive} class:border-secondary={dragActive}
      id="dropzone"
      ondragleave={handleDragLeave}
-     ondragover={handleDragOver}>
+     ondragover={handleDragOver}
+     onfocusout={_ => dragActive = false}
+     role="button"
+     tabindex="0">
     <button class="h-full w-full" onclick={getFolder} type="button">
         {$t('drag_drop_zone')}
     </button>

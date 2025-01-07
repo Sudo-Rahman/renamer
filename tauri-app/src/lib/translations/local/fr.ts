@@ -201,6 +201,7 @@ export const fr = {
         import_files: {
             success: "Fichiers importés avec succès",
             error: "Erreur lors de l'importation des fichiers",
+            max_licence: "Le nombre de fichiers pouvant être importés est de 5 pour la version gratuite",
         },
         desactivate_license: {
             success: "Licence désactivée avec succès",

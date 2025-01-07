@@ -18,7 +18,7 @@ pub struct User {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct App {
-    license: bool,
+    plan: u8,
     store_name: String,
 }
 
@@ -27,12 +27,16 @@ lazy_static! {
 }
 
 impl App {
-    pub fn set_license(&mut self, license: bool) {
-        self.license = license;
+    pub fn set_license(&mut self, plan: u8) {
+        self.plan = plan;
     }
 
-    pub fn license(&mut self) -> bool {
-        self.license
+    pub fn license(&mut self) -> u8 {
+        self.plan
+    }
+
+    pub fn have_license(&mut self) -> bool {
+        self.plan > 0
     }
 
     pub async fn get_store(&mut self, app: tauri::AppHandle) -> tauri_plugin_store::Result<Arc<Store<Wry>>> {
@@ -44,7 +48,7 @@ impl App {
 impl Default for App {
     fn default() -> Self {
         App {
-            license: false,
+            plan: 0,
             store_name: "renamer_store.json".to_string(),
         }
     }

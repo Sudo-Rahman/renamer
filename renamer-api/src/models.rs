@@ -27,6 +27,7 @@ pub fn user_to_user_machine(user: User, machine: Machine) -> UserMachine {
         email: user.email,
         key: user.key,
         machine,
+        plan: user.plan,
     }
 }
 
