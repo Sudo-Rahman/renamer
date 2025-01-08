@@ -10,7 +10,7 @@
     import {t} from "$lib/translations";
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    let {formatter} :{formatter: NumberFormatter} = $props();
+    let {formatter}: { formatter: NumberFormatter } = $props();
 
     let start = $state(formatter.start);
     let step = $state(formatter.step);
@@ -18,7 +18,7 @@
     let fill = $state(formatter.fill.length);
     let fillChar = $state(formatter.fill.char);
 
-   $effect(() => {
+    function format() {
         formatter.start = start;
         formatter.step = step;
         formatter.text = text;
@@ -27,15 +27,17 @@
             length: fill
         };
         $formatters.format();
-    });
+    }
 
     function handleInputStart(event: InputEvent) {
         if ((event.target as HTMLInputElement).value.length > 0) {
             start = parseInt((event.target as HTMLInputElement).value);
         } else {
+            console.log((event.target as HTMLInputElement).value);
             start = 1;
             (event.target as HTMLInputElement).value = formatter.start.toString();
         }
+        format();
     }
 
     function handleInputStep(event: InputEvent) {
@@ -45,6 +47,7 @@
             step = 1;
             (event.target as HTMLInputElement).value = formatter.step.toString();
         }
+        format();
     }
 
     function handleInputFill(event: InputEvent) {
@@ -54,11 +57,12 @@
             fill = 1;
             (event.target as HTMLInputElement).value = formatter.fill.length.toString();
         }
+        format();
     }
 
 </script>
 
-<AccordionFormatter title={$t('formatter.number.title')} id={formatter.id}>
+<AccordionFormatter id={formatter.id} title={$t('formatter.number.title')}>
 
     <div class="flex flex-col w-full space-y-4 px-1">
 
@@ -74,7 +78,7 @@
                     </Popover.Content>
                 </Popover.Root>
             </div>
-            <Input type="text" class="w-full" id="start" bind:value={text}/>
+            <Input bind:value={text} class="w-full" id="start" type="text"/>
         </div>
 
         <div class="grid w-full items-center gap-1.5">
@@ -91,15 +95,23 @@
             </div>
 
             <div class="flex border-input rounded-md border px-2">
-                <Input class="p-1 focus-visible:ring-offset-0 text-center focus:border-none border-none focus-visible:ring-0 shadow-none" type="number" oninput={handleInputStart}
-                       bind:value={start}/>
-                <Input class="p-1 text-center focus-visible:ring-offset-0 border-none focus-visible:ring-0 shadow-none" type="number" oninput={handleInputStep}
-                       bind:value={step}/>
+                <Input bind:value={start}
+                       class="p-1 focus-visible:ring-offset-0 text-center focus:border-none border-none focus-visible:ring-0 shadow-none"
+                       oninput={handleInputStart}
+                       type="number"/>
+                <Input bind:value={step}
+                       class="p-1 text-center focus-visible:ring-offset-0 border-none focus-visible:ring-0 shadow-none"
+                       oninput={handleInputStep}
+                       type="number"/>
 
-                <Input class="p-1 text-center focus-visible:ring-offset-0 border-none focus-visible:ring-0 shadow-none" type="text"
-                       bind:value={fillChar}/>
-                <Input class="p-1 text-center focus-visible:ring-offset-0 border-none focus-visible:ring-0 shadow-none" type="number" min={0} oninput={handleInputFill}
-                       bind:value={fill}/>
+                <Input bind:value={fillChar}
+                       class="p-1 text-center focus-visible:ring-offset-0 border-none focus-visible:ring-0 shadow-none"
+                       oninput={format}
+                       type="text"/>
+                <Input bind:value={fill}
+                       class="p-1 text-center focus-visible:ring-offset-0 border-none focus-visible:ring-0 shadow-none"
+                       min={0} oninput={handleInputFill}
+                       type="number"/>
             </div>
         </div>
 

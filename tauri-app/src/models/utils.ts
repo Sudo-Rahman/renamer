@@ -1,8 +1,7 @@
 import {RenamerFile} from '$models';
 import {message, open} from '@tauri-apps/plugin-dialog';
 import {invoke} from "@tauri-apps/api/core";
-import {toast} from "svelte-sonner";
-import {t} from "$lib/translations/index";
+import {t} from "$lib/translations";
 import {get} from "svelte/store";
 
 
@@ -62,7 +61,6 @@ export async function getFilesFromFileDialog(type: "Files" | "Folder" = "Files")
             kind: "error",
         });
     }
-    toast.success(get(t)('toast.import_files.success'));
     return files
 }
 

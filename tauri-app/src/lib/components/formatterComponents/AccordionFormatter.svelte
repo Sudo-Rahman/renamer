@@ -9,6 +9,7 @@
         children: any;
         title: string;
         id: string;
+
     };
 
     let {children, title, id}: Props = $props();

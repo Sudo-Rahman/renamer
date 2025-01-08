@@ -6,17 +6,12 @@
     import {t} from "$lib/translations";
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    let {formatter} :{formatter: CasesFormatter} = $props();
+    let {formatter}: { formatter: CasesFormatter } = $props();
 
 
     let checked = $state(formatter.mode === 0);
     let withSpaces = $state(formatter.removeSpaces);
     let caseValue = $state(formatter.case);
-
-    function handleCaseChange(c: string) {
-        formatter.case = c;
-        $formatters.format();
-    }
 
     $effect(() => {
         formatter.mode = checked ? 0 : 1;
@@ -29,7 +24,7 @@
 </script>
 
 
-<AccordionFormatter title={$t('formatter.case.title')} id={formatter.id}>
+<AccordionFormatter id={formatter.id} title={$t('formatter.case.title')}>
 
     <div class="flex flex-col space-y-4">
 
@@ -43,11 +38,11 @@
             <Label>{withSpaces ? $t('formatter.case.space_switch.no_space') : $t('formatter.case.space_switch.space')}</Label>
         </div>
 
-        <RadioGroup.Root class="grid-cols-2" bind:value={caseValue}>
+        <RadioGroup.Root bind:value={caseValue} class="grid-cols-2">
 
             {#each CasesFormatter.Cases as c}
                 <div class="flex items-center space-x-2">
-                    <RadioGroup.Item value={c} onclick={()=>handleCaseChange(c)}/>
+                    <RadioGroup.Item value={c}/>
                     <Label>{$t(`formatter.case.${c}`)}</Label>
                 </div>
             {/each}

@@ -4,7 +4,6 @@ import dateFormat from "dateformat";
 import {Signal} from "$models/Signal";
 import {invoke} from "@tauri-apps/api/core";
 import {get, writable} from "svelte/store";
-import {message} from "@tauri-apps/plugin-dialog";
 
 
 export abstract class Formatter {
@@ -454,19 +453,23 @@ export class CasesFormatter extends Formatter {
                 formatted = text.toUpperCase();
                 break;
             case "title_case":
-                formatted = text.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+                formatted = text.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase());
                 break;
             case "camel_case":
-                formatted = text.replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => index === 0 ? word.toLowerCase() : word.toUpperCase());
+                formatted = this.toCamelCase(text);
                 break;
             case "pascal_case":
-                formatted = text.replace(/(?:^\w|[A-Z]|\b\w)/g, (word) => word.toUpperCase());
+                formatted = this.toPascalCase(text);
                 break;
             case "kebab_case":
-                formatted = text.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+                formatted = text.toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/[\s_]+/g, '-')
+                    .replace(/-+/g, '-')
+                    .trim();
                 break;
             case "snake_case":
-                formatted = text.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
+                formatted = this.toSnakeCase(text);
                 break;
             default:
                 formatted = text;
@@ -475,6 +478,37 @@ export class CasesFormatter extends Formatter {
             formatted = formatted.replace(/\s/g, "");
         }
         file.newName = formatted;
+    }
+
+    private toCamelCase(str: string): string {
+        return str
+            .replace(/[^a-zA-Z0-9]/g, ' ')
+            .split(' ')
+            .map((word, index) => {
+                if (index === 0) {
+                    return word.toLowerCase();
+                }
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            })
+            .join('');
+    }
+
+    private toPascalCase(str: string): string {
+        return str
+            .replace(/[^a-zA-Z0-9]/g, ' ')
+            .split(' ')
+            .map((word) => {
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            }).join('');
+    }
+
+    private toSnakeCase(str: string): string {
+        return str
+            .replace(/[^a-zA-Z0-9\s-_]/g, '')
+            .replace(/[\s-]/g, '_')
+            .toLowerCase()
+            .replace(/_+/g, '_')
+            .trim();
     }
 }
 
@@ -498,7 +532,6 @@ export class RemoveFormatter extends Formatter {
 
     format(file: RenamerFile): void {
         let text = file.newName;
-        console.log(file.newName);
         this._texts.forEach((t) => {
             text = text.replaceAll(t, "")
         });
@@ -590,6 +623,13 @@ export class RegexFormatter extends Formatter {
     }
 
     format(file: RenamerFile): void {
+        if (this._regex.length === 0) return;
+
+        try {
+            new RegExp(this._regex, "g");
+        } catch (e) {
+            return;
+        }
         // Si 'all' est true, appliquer la regex à tout le nom de fichier
         if (this._all) {
             file.newName = file.newName.replace(new RegExp(this._regex, "g"), this._replace);

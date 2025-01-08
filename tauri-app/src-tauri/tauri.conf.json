@@ -44,7 +44,7 @@
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDg4MjhFRUYwMzA1QzM0NzUKUldSMU5Gd3c4TzRvaUFwMTUrei8zMzFNdXYweHduVUY5blNxTWpydEVoWEJ3MkFjU0FYYmFDODMK",
       "endpoints": [
-        "https://sudo-rahman.fr/latest.json"
+        "https://download.renamer.pro/latest.json"
       ]
     }
   }
