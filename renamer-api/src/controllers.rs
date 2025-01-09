@@ -14,6 +14,7 @@ use serde::de::DeserializeOwned;
 use serde_json::{json, Value};
 use std::fmt::Debug;
 use std::net::SocketAddr;
+use serde::de::Unexpected::Option;
 
 fn extract_field<T>(body: &Value, field: &str) -> Result<T, (StatusCode, String)>
 where
@@ -88,9 +89,10 @@ pub async fn create_user(
         let user = User {
             _id: bson::oid::ObjectId::new(),
             email: email.to_string(),
-            plan: plan as u8,
+            plan,
             key: Uuid::from_bytes(*uuid::Uuid::now_v7().as_bytes()),
             machines: vec![],
+            presets: "".to_string(),
         };
         match config.db.insert_user(&user).await {
             Ok(_) => {
@@ -271,7 +273,6 @@ pub async fn get_all_logs(
 }
 
 pub async fn get_user(
-    ConnectInfo(addr): ConnectInfo<SocketAddr>,
     State(config): State<ServerConfig>,
     Json(body): Json<Value>)
     -> Result<(StatusCode, String), (StatusCode, String)> {
@@ -290,6 +291,32 @@ pub async fn get_user(
                 Ok((StatusCode::OK, serde_json::to_string(&user).unwrap()))
             } else {
                 Err((StatusCode::UNAUTHORIZED, "Invalid key".to_string()))
+            }
+        }
+        None => Err((StatusCode::NOT_FOUND, "User not found".to_string()))
+    }
+}
+
+
+pub async fn save_presets(
+    State(config): State<ServerConfig>,
+    Json(body): Json<Value>,
+) -> Result<(StatusCode, String), (StatusCode, String)> {
+    let key = extract_field::<String>(&body, "key")?;
+    let presets = extract_field::<Value>(&body, "presets")?;
+
+    let user = config.db.find_user(
+        &bson::doc! {
+            "key": Uuid::parse_str(key.clone()).unwrap(),
+        }
+    ).await.unwrap();
+
+    match user {
+        Some(mut user) => {
+            user.presets = serde_json::to_string(&presets).unwrap();
+            match config.db.modify_user(&user).await {
+                Ok(_) => Ok((StatusCode::OK, "Preset saved".to_string())),
+                Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to save preset".to_string()))
             }
         }
         None => Err((StatusCode::NOT_FOUND, "User not found".to_string()))

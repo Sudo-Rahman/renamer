@@ -73,6 +73,12 @@ pub async fn is_license_ok(app: tauri::AppHandle) -> Result<u8, i8> {
                 Ok(user) => user,
                 Err(_) => return Err(1)
             };
+
+            let store = APPLICATION.lock().await.get_store(app.clone()).await.map_err(
+                |_| 1
+            )?;
+            store.set("presets", json!(user.presets));
+
             if (online::check(None).is_ok()) {
                 let res = check_licence(user.clone()).await;
                 match res {
@@ -145,7 +151,40 @@ pub async fn remove_license(app: tauri::AppHandle) -> Result<bool, i8> {
         .or_else(|_| Err(1))?;
 
     let store = APPLICATION.lock().await.get_store(app.clone()).await.or_else(|_| Err(1))?;
-    store.set("license".to_string(), json!(null));
+    store.clear();
+    store.save();
     APPLICATION.lock().await.set_license(0);
     Ok(true)
+}
+
+#[tauri::command]
+pub async fn save_presets(app: tauri::AppHandle) -> Result<(), u8> {
+    let store = APPLICATION.lock().await.get_store(app.clone()).await.map_err(
+        |_| 1
+    )?;
+    let preset = store.get("presets")
+        .map(|value| value.to_string())
+        .ok_or_else(|| 1)?;
+
+    let user_machine = get_license(app.clone()).await.unwrap();
+
+    let json = json!({
+        "key" : serde_json::from_str::<Value>(user_machine.as_str()).unwrap().get("key").unwrap(),
+        "presets" : serde_json::from_str::<Value>(preset.as_str()).unwrap()
+    });
+    
+    let client = Client::new();
+
+    let res = client
+        .post(format!("{}/save_presets", API_URL))
+        .json(&json)
+        .send()
+        .await
+        .or_else(|_| Err(1))?;
+
+    if res.status().is_success() {
+        Ok(())
+    } else {
+        Err(1)
+    }
 }

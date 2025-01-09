@@ -20,6 +20,7 @@ pub struct User {
     pub key: Uuid,
     pub plan: u8,
     pub machines: Vec<Machine>,
+    pub presets: String,
 }
 
 pub fn user_to_user_machine(user: User, machine: Machine) -> UserMachine {
@@ -28,6 +29,7 @@ pub fn user_to_user_machine(user: User, machine: Machine) -> UserMachine {
         key: user.key,
         machine,
         plan: user.plan,
+        presets: user.presets,
     }
 }
 

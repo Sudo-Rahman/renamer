@@ -25,6 +25,7 @@
         } else {
             try {
                 let response: any = await invoke("is_license_ok");
+                console.log(response);
                 response = JSON.parse(response as string);
                 valide = response as boolean;
             } catch (e) {
@@ -64,7 +65,7 @@
 
     function remove_license() {
         invoke("remove_license").then(
-            (_) => {
+            _ => {
                 valide = false
                 toast.success($t('toast.desactivate_license.success'))
             },

@@ -1,6 +1,6 @@
 #![allow(unused)]
 
-use crate::auth::get_license;
+use crate::api::get_license;
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use std::string::ToString;

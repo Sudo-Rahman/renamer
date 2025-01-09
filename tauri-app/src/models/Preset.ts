@@ -1,6 +1,8 @@
 import {v4 as uuidv4} from "uuid";
 import {Formatter} from "$models/Formatter";
 import {store} from "$models/store";
+import {invoke} from "@tauri-apps/api/core";
+import {json} from "@sveltejs/kit";
 
 export class Preset {
     constructor(name: string = "", formatters: Formatter[] = []) {
@@ -48,19 +50,18 @@ export async function savePreset(preset: Preset) {
         presets = [];
         presets.push(preset);
         await store.set("presets", presets);
-        return true;
     } else {
         if (!presets.find((p) => p.id === preset.id)) {
             presets.push(preset);
             await store.set("presets", presets);
-            return true;
         } else {
             presets = presets.filter((p) => p.id !== preset.id);
             presets.push(preset);
             await store.set("presets", presets);
-            return true;
         }
     }
+    await invoke("save_presets");
+    return true;
 }
 
 
@@ -68,7 +69,6 @@ export async function deletePreset(presetId: string) {
     let presets = await getPresetList();
     if (presets) {
         presets = presets.filter((p) => p.id !== presetId);
-        console.log(presets);
         await store.set("presets", presets);
         return true;
     }
@@ -77,13 +77,20 @@ export async function deletePreset(presetId: string) {
 
 export async function getPresetList(): Promise<Preset[]> {
     let presets: any[] | null | undefined = await store.get("presets");
+    if (typeof presets === "string") {
+        presets = JSON.parse(presets);
+    }
     if (presets) {
-        return presets.map(presetData => {
-            let preset = new Preset(presetData._name);
-            preset['_id'] = presetData._id;
-            preset.formatters = presetData._formatters.map(Formatter.fromObject);
-            return preset;
-        });
+        try {
+            return presets.map(presetData => {
+                let preset = new Preset(presetData._name);
+                preset['_id'] = presetData._id;
+                preset.formatters = presetData._formatters.map(Formatter.fromObject);
+                return preset;
+            });
+        } catch (e) {
+            return [];
+        }
     } else {
         return [];
     }

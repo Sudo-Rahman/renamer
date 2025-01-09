@@ -34,7 +34,8 @@ async fn main() {
         .route("/activate_license", post(activate_licence))
         .route("/remove_machine", post(remove_machine))
         .route("/create", post(create_user))
-        .route("/logs", get(get_all_logs));
+        .route("/logs", get(get_all_logs))
+        .route("/save_presets", post(save_presets));
 
     if cfg!(debug_assertions) {
         app = app.layer(CorsLayer::new()

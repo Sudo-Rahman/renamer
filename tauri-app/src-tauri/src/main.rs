@@ -3,12 +3,12 @@
 extern crate core;
 
 mod app;
-mod auth;
+mod api;
 mod entities;
 mod utils;
 
 use crate::app::APPLICATION;
-use crate::auth::*;
+use crate::api::*;
 use crate::utils::*;
 
 fn main() {
@@ -34,7 +34,8 @@ fn main() {
             activate_license,
             remove_license,
             set_system_language,
-            open_browser_url
+            open_browser_url,
+            save_presets
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

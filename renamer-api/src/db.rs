@@ -51,6 +51,21 @@ impl Mongo {
         }
     }
 
+    pub async fn modify_user(&self, user: &User) -> Result<()> {
+        match self.database.collection::<User>("users").replace_one(
+            doc! {
+                "key": Uuid::parse_str(&user.key.to_string()).unwrap()
+            },
+            user,
+        ).await {
+            Ok(_) => Ok(()),
+            Err(e) => {
+                eprintln!("Failed to update user: {}", e);
+                Err(e)
+            }
+        }
+    }
+
     pub async fn find_user_by_email(&self, email: &str) -> Result<Option<User>> {
         match self.database.collection::<User>("users").find_one(
             doc! {

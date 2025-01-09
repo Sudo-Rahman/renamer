@@ -13,4 +13,5 @@ pub struct UserMachine {
     pub key: Uuid,
     pub machine: Machine,
     pub plan: u8,
+    pub presets: String,
 }
