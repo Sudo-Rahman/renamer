@@ -1,12 +1,12 @@
 <script lang="ts">
-    import {formatters, RemoveFormatter, SizeFormatter} from "$models";
+    import {formatters, SizeFormatter} from "$models";
     import {t} from "$lib/translations";
     import * as Select from "$lib/components/ui/select";
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
     import {Label} from "$lib/components/ui/label";
     import {Input} from "$lib/components/ui/input";
 
-    let {formatter}: { formatter: SizeFormatter } = $props();
+    let {formatter, dragDisabled = $bindable()}: { formatter: SizeFormatter, dragDisabled: boolean } = $props();
 
 
     let text = $state(formatter.text);
@@ -37,7 +37,7 @@
 
 </script>
 
-<AccordionFormatter id={formatter.id} title={$t('formatter.size.title')}>
+<AccordionFormatter bind:dragDisabled={dragDisabled} id={formatter.id} title={$t('formatter.size.title')}>
 
     <div class="flex flex-col w-full items-center space-y-4 pt-2 px-1">
 

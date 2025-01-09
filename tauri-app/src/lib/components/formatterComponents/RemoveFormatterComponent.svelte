@@ -2,14 +2,18 @@
     import {Input} from "$lib/components/ui/input/index.js";
     import {formatters, RemoveFormatter} from "$models";
     import {Button} from "$lib/components/ui/button";
-    import {Plus, X, GripVertical} from "lucide-svelte";
-    import {type DndEvent, dndzone, type Item} from "svelte-dnd-action";
+    import {GripVertical, Plus, X} from "lucide-svelte";
+    import {type DndEvent, dndzone, type Item, SOURCES, TRIGGERS} from "svelte-dnd-action";
     import {t} from "$lib/translations";
+    import {flip} from "svelte/animate";
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    let {formatter}: { formatter: RemoveFormatter } = $props();
+    let {formatter, dragDisabled = $bindable()}: { formatter: RemoveFormatter, dragDisabled: boolean } = $props();
 
     let inputs: Item[] = $state(formatter.text.map((value) => ({id: crypto.randomUUID(), value})));
+
+    const flipDurationMs = 200;
+    let _dragDisabled = $state(true);
 
     let dropTargetStyle: any = {
         border: "none",
@@ -19,16 +23,35 @@
         inputs = [...inputs, {id: crypto.randomUUID(), value: ""}];
     }
 
+    function startDrag(e) {
+        e.preventDefault();
+        _dragDisabled = false;
+    }
+
+    function handleKeyDown(e) {
+        if ((e.key === "Enter" || e.key === " ") && dragDisabled) dragDisabled = false;
+    }
+
     function removeInput(id: string) {
         inputs = inputs.filter(input => input.id !== id);
     }
 
     function handleDndConsider(e: CustomEvent<DndEvent>) {
-        inputs = e.detail.items as Item[];
+        const {items: newItems, info: {source, trigger}} = e.detail;
+        inputs = newItems;
+        // Ensure dragging is stopped on drag finish via keyboard
+        if (source === SOURCES.KEYBOARD && trigger === TRIGGERS.DRAG_STOPPED) {
+            _dragDisabled = true;
+        }
     }
 
     function handleDndFinalize(e: CustomEvent<DndEvent>) {
-        inputs = e.detail.items as Item[];
+        const {items: newItems, info: {source}} = e.detail;
+        inputs = newItems;
+        // Ensure dragging is stopped on drag finish via pointer (mouse, touch)
+        if (source === SOURCES.POINTER) {
+            _dragDisabled = true;
+        }
     }
 
     $effect(() => {
@@ -38,16 +61,22 @@
 </script>
 
 
-<AccordionFormatter id={formatter.id} title={$t('formatter.remove.title')}>
+<AccordionFormatter bind:dragDisabled={dragDisabled} id={formatter.id} title={$t('formatter.remove.title')}>
 
     <div class="flex flex-col space-y-2 pt-2 w-full">
-        <div class="space-y-2"
-             onconsider={handleDndConsider}
-             onfinalize={handleDndFinalize}
-             use:dndzone={{items: inputs, dropTargetStyle, type: "input"}}>
+        <section class="space-y-2"
+                 on:consider={handleDndConsider}
+                 on:finalize={handleDndFinalize}
+                 use:dndzone={{ items: inputs,dropTargetStyle, dragDisabled : _dragDisabled, flipDurationMs, type : "remove", zoneItemTabIndex: -1}}>
             {#each inputs as input (input.id)}
-                <div class="flex items-center space-x-2 h-10 px-2">
-                    <div>
+                <div animate:flip={{ duration: flipDurationMs }} class="flex items-center space-x-2 h-10 px-2">
+                    <div tabindex={dragDisabled? 0 : -1}
+                         role="button"
+                         aria-label="drag-handle"
+                         style={_dragDisabled ? 'cursor: grab' : 'cursor: grabbing'}
+                         on:mousedown={startDrag}
+                         on:touchstart={startDrag}
+                         on:keydown={handleKeyDown}>
                         <GripVertical class="h-5 w-5"/>
                     </div>
                     <Input
@@ -65,7 +94,7 @@
                     </div>
                 </div>
             {/each}
-        </div>
+        </section>
 
         <div class="flex justify-center items-center w-full">
             <Button class="h-8 w-8 rounded-full p-0 active:bg-primary/50" onclick={newInput} variant="ghost">

@@ -2,29 +2,27 @@
     import * as Accordion from "$lib/components/ui/accordion";
     import {Label} from "$lib/components/ui/label/index.js";
     import {Switch} from "$lib/components/ui/switch/index.js";
-    import {Input} from "$lib/components/ui/input/index.js";
     import {formatters, OriginalFileNameFormatter} from "$models";
-    import {slide} from "svelte/transition";
-    import {Button} from "$lib/components/ui/button";
-    import {GripVertical, X} from "lucide-svelte";
     import {t} from "$lib/translations";
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    export let formatter: OriginalFileNameFormatter;
+    let {formatter, dragDisabled = $bindable()}: {
+        formatter: OriginalFileNameFormatter,
+        dragDisabled: boolean
+    } = $props();
 
 
+    let withExtension = $state(formatter.withExtension);
 
-    let withExtension = formatter.withExtension;
-
-    $: {
+    $effect(() => {
         formatter.withExtension = withExtension;
         $formatters.format();
-    }
+    });
 
 </script>
 
 
-<AccordionFormatter title={$t('formatter.file_name.title')} id={formatter.id}>
+<AccordionFormatter bind:dragDisabled={dragDisabled} id={formatter.id} title={$t('formatter.file_name.title')}>
 
     <div class="flex items-center space-x-3">
         <Switch bind:checked={withExtension}/>

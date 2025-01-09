@@ -6,7 +6,7 @@
     import {t} from "$lib/translations";
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    let {formatter}: { formatter: CasesFormatter } = $props();
+    let {formatter, dragDisabled = $bindable()}: { formatter: CasesFormatter, dragDisabled: boolean } = $props();
 
 
     let checked = $state(formatter.mode === 0);
@@ -24,7 +24,7 @@
 </script>
 
 
-<AccordionFormatter id={formatter.id} title={$t('formatter.case.title')}>
+<AccordionFormatter bind:dragDisabled={dragDisabled} id={formatter.id} title={$t('formatter.case.title')}>
 
     <div class="flex flex-col space-y-4">
 

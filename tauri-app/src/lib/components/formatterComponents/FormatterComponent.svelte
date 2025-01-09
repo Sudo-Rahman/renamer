@@ -1,13 +1,15 @@
 <script lang="ts">
-
     import {
         BasicTextFormatter,
         CasesFormatter,
         CreationDateFormatter,
-        ExtensionFormatter, Formatter,
+        ExtensionFormatter,
+        Formatter,
         NumberFormatter,
-        OriginalFileNameFormatter, RegexFormatter,
-        RemoveFormatter,SizeFormatter
+        OriginalFileNameFormatter,
+        RegexFormatter,
+        RemoveFormatter,
+        SizeFormatter
     } from "$models";
     import NumberFormatterComponent from "$lib/components/formatterComponents/NumberFormatterComponent.svelte";
     import CreationDateFormatterComponent
@@ -21,27 +23,24 @@
     import RegexFormatterComponent from "$lib/components/formatterComponents/RegexFormatterComponent.svelte";
     import SizeFormatterComponent from "$lib/components/formatterComponents/SizeFormatterComponent.svelte";
 
-    let {formatter} :{formatter: Formatter} = $props();
+    let {formatter, dragDisabled = $bindable()}: { formatter: Formatter, dragDisabled: boolean } = $props();
+
+    const formatterComponents = {
+        [NumberFormatter.name]: NumberFormatterComponent,
+        [CreationDateFormatter.name]: CreationDateFormatterComponent,
+        [CasesFormatter.name]: CasesFormatterComponent,
+        [RemoveFormatter.name]: RemoveFormatterComponent,
+        [ExtensionFormatter.name]: ExtensionFormatterComponent,
+        [OriginalFileNameFormatter.name]: OriginalFileNameFormatterComponent,
+        [BasicTextFormatter.name]: BasicTextFormatterComponent,
+        [RegexFormatter.name]: RegexFormatterComponent,
+        [SizeFormatter.name]: SizeFormatterComponent,
+    };
+
+    const FormatterComponent = $derived(formatterComponents[formatter.constructor.name]);
 
 </script>
 
-
-{#if formatter instanceof NumberFormatter}
-    <NumberFormatterComponent {formatter}/>
-{:else if formatter instanceof CreationDateFormatter}
-    <CreationDateFormatterComponent {formatter}/>
-{:else if formatter instanceof CasesFormatter}
-    <CasesFormatterComponent {formatter}/>
-{:else if formatter instanceof RemoveFormatter}
-    <RemoveFormatterComponent {formatter}/>
-{:else if formatter instanceof ExtensionFormatter}
-    <ExtensionFormatterComponent {formatter}/>
-{:else if formatter instanceof OriginalFileNameFormatter}
-    <OriginalFileNameFormatterComponent {formatter}/>
-{:else if formatter instanceof BasicTextFormatter}
-    <BasicTextFormatterComponent {formatter}/>
-{:else if formatter instanceof RegexFormatter}
-    <RegexFormatterComponent {formatter}/>
-{:else if formatter instanceof SizeFormatter}
-    <SizeFormatterComponent {formatter}/>
+{#if FormatterComponent}
+    <FormatterComponent formatter={formatter} bind:dragDisabled={dragDisabled}/>
 {/if}

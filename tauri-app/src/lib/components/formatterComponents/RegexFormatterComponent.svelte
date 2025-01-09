@@ -1,13 +1,13 @@
 <script lang="ts">
     import {Label} from "$lib/components/ui/label/index.js";
     import {Input} from "$lib/components/ui/input/index.js";
-    import {formatters, RegexFormatter, SizeFormatter} from "$models";
+    import {formatters, RegexFormatter} from "$models";
     import {Switch} from "$lib/components/ui/switch";
     import {fly} from "svelte/transition";
     import {t} from "$lib/translations";
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    let {formatter}: { formatter: RegexFormatter } = $props();
+    let {formatter, dragDisabled = $bindable()}: { formatter: RegexFormatter, dragDisabled: boolean } = $props();
 
 
     let regex = $state(formatter.regex);
@@ -27,7 +27,7 @@
 
 </script>
 
-<AccordionFormatter id={formatter.id} title={$t('formatter.regex.title')}>
+<AccordionFormatter bind:dragDisabled={dragDisabled} id={formatter.id} title={$t('formatter.regex.title')}>
 
     <div class="flex flex-col w-full items-center space-y-4 px-1">
 

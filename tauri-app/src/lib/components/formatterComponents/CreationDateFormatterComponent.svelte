@@ -5,7 +5,7 @@
     import {t} from "$lib/translations";
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    let {formatter} :{formatter: CreationDateFormatter} = $props();
+    let {formatter, dragDisabled = $bindable()}: { formatter: CreationDateFormatter, dragDisabled: boolean } = $props();
 
     let dateFormat = $state(formatter.dateFormat);
 
@@ -16,10 +16,10 @@
 
 </script>
 
-<AccordionFormatter title={$t('formatter.creation_date.title')} id={formatter.id}>
+<AccordionFormatter bind:dragDisabled={dragDisabled} id={formatter.id} title={$t('formatter.creation_date.title')}>
 
     <div class="grid gap-1.5 pl-2">
-        <Label for="formatter.enabled" class="text-sm">{$t('formatter.creation_date.input1.label')}</Label>
+        <Label class="text-sm" for="formatter.enabled">{$t('formatter.creation_date.input1.label')}</Label>
         <RadioGroup.Root bind:value={dateFormat}>
             {#each CreationDateFormatter.Format as format}
                 <div class="flex items-center space-x-2">

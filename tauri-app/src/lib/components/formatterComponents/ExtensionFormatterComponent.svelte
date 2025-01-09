@@ -2,12 +2,12 @@
     import {Label} from "$lib/components/ui/label/index.js";
     import {Switch} from "$lib/components/ui/switch/index.js";
     import {Input} from "$lib/components/ui/input/index.js";
-    import {ExtensionFormatter, formatters, SizeFormatter} from "$models";
+    import {ExtensionFormatter, formatters} from "$models";
     import {slide} from "svelte/transition";
     import {t} from "$lib/translations";
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    let {formatter} :{formatter: ExtensionFormatter} = $props();
+    let {formatter, dragDisabled = $bindable()}: { formatter: ExtensionFormatter, dragDisabled: boolean } = $props();
 
 
     let customExt = $state(formatter.customeExt);
@@ -22,12 +22,12 @@
 </script>
 
 
-<AccordionFormatter title={$t('formatter.extension.title')} id={formatter.id}>
+<AccordionFormatter bind:dragDisabled={dragDisabled} id={formatter.id} title={$t('formatter.extension.title')}>
 
     <div class="flex flex-col w-full space-y-4 px-1">
 
         <div class="flex items-center space-x-3">
-            <Switch id="custom-ext" bind:checked={customExt}/>
+            <Switch bind:checked={customExt} id="custom-ext"/>
             <Label for="custom-ext">{customExt ? $t('formatter.extension.switch.custom') : $t('formatter.extension.switch.file')}</Label>
         </div>
 
@@ -35,7 +35,8 @@
 
             <div transition:slide class="grid w-full items-center gap-1.5">
                 <Label class="pl-1" for="ext">{$t('formatter.extension.input.label')}</Label>
-                <Input type="text" class="transition-all duration-300 ease-in-out" id="ext" placeholder={$t('formatter.extension.input.placeholder')} bind:value={customExtension}/>
+                <Input type="text" class="transition-all duration-300 ease-in-out" id="ext"
+                       placeholder={$t('formatter.extension.input.placeholder')} bind:value={customExtension}/>
             </div>
 
         {/if}

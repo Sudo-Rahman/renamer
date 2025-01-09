@@ -10,7 +10,7 @@
     import {t} from "$lib/translations";
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    let {formatter}: { formatter: NumberFormatter } = $props();
+    let {formatter, dragDisabled = $bindable()}: { formatter: NumberFormatter, dragDisabled: boolean } = $props();
 
     let start = $state(formatter.start);
     let step = $state(formatter.step);
@@ -62,7 +62,7 @@
 
 </script>
 
-<AccordionFormatter id={formatter.id} title={$t('formatter.number.title')}>
+<AccordionFormatter bind:dragDisabled={dragDisabled} id={formatter.id} title={$t('formatter.number.title')}>
 
     <div class="flex flex-col w-full space-y-4 px-1">
 

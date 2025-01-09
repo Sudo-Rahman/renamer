@@ -91,7 +91,7 @@
     <Resizable.PaneGroup class="h-full p-0" direction="horizontal">
         <Resizable.Pane defaultSize={30}>
             <div class="flex flex-col h-full transition-all duration-300 ease-in-out">
-                <div class="h-16 flex min-w-72 items-center px-2 justify-between">
+                <div class="h-16 flex min-w-72 items-center px-2 justify-between bg-card">
                     <Label class="text-xl text-center pl-2
                          font-bold">{$t('formatter.panel.title')}</Label>
                     <AddFormatterButton/>
@@ -103,7 +103,7 @@
         <Resizable.Pane minSize={50}>
 
             <div bind:this={rightPane} class="flex flex-col h-full">
-                <div class="flex h-16 items-center">
+                <div class="flex h-16 items-center bg-card">
                     <Menubar bind:files={$files} class="w-full px-4"/>
                 </div>
                 <ListView bind:files={$files}/>

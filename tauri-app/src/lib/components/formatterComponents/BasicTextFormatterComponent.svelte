@@ -5,7 +5,7 @@
     import {t} from "$lib/translations";
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    let {formatter} :{formatter: BasicTextFormatter} = $props();
+    let {formatter, dragDisabled = $bindable()}: { formatter: BasicTextFormatter, dragDisabled: boolean } = $props();
 
 
     let text = $state(formatter.text);
@@ -17,11 +17,11 @@
 
 </script>
 
-<AccordionFormatter title={$t('formatter.basic_text.title')} id={formatter.id}>
+<AccordionFormatter bind:dragDisabled={dragDisabled} id={formatter.id} title={$t('formatter.basic_text.title')}>
     <div class="grid w-full items-center gap-1.5 px-1">
         <Label class="pl-1" for="text">{$t('formatter.basic_text.input1.label')}</Label>
-        <Input class="transition-all duration-300 ease-in-out" type="text" id="text"
+        <Input bind:value={text} class="transition-all duration-300 ease-in-out" id="text"
                placeholder={$t('formatter.basic_text.input1.placeholder')}
-               bind:value={text}/>
+               type="text"/>
     </div>
 </AccordionFormatter>
