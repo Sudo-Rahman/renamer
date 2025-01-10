@@ -4,11 +4,13 @@ mod models;
 mod controllers;
 mod mailgun;
 mod utils;
+mod api_rate;
 
 use std::net::{IpAddr, SocketAddr};
 use tower::{buffer::BufferLayer, limit::RateLimitLayer, BoxError, ServiceBuilder};
-use axum::{http, http::StatusCode, routing::{get}, Router};
+use axum::{http, http::StatusCode, middleware, routing::{get}, Router};
 use std::process::exit;
+use std::sync::Arc;
 use std::time::Duration;
 use axum::error_handling::HandleErrorLayer;
 use axum::routing::post;
@@ -18,6 +20,7 @@ use crate::controllers::*;
 use crate::db::*;
 use crate::mailgun::MailgunEmail;
 use crate::models::ServerConfig;
+use crate::api_rate::*;
 
 #[tokio::main]
 async fn main() {
@@ -44,6 +47,8 @@ async fn main() {
                             .allow_headers([http::header::CONTENT_TYPE]) // Autorise l'en-tête Content-Type
         )
     }
+    
+    let rate_limiter = Arc::new(RateLimiter::new(10, Duration::from_secs(60)));
 
     let app = app.with_state(config)
         .layer(
@@ -55,7 +60,10 @@ async fn main() {
                     )
                 }))
                 .layer(BufferLayer::new(1024))
-                .layer(RateLimitLayer::new(10000, Duration::from_secs(60))),
+                .layer(middleware::from_fn(move |req, next| {
+                    let rate_limiter = Arc::clone(&rate_limiter);
+                    rate_limit_middleware(req, next, rate_limiter)
+                }))
         );
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));

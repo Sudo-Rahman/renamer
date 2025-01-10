@@ -18,6 +18,7 @@ openssl = { version = "0.10", features = ["vendored"] }
 renamer-shared = { path = "../shared" }
 tower-http = { version = "0.6", features = ["cors"] }
 http = "1.1.0"
+dashmap = "6.1.0"
 
 [dependencies.mongodb]
 version = "3"
