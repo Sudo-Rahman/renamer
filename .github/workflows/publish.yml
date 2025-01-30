@@ -154,10 +154,28 @@ jobs:
         with:
           target: ${{ matrix.arch }}
 
-      - name: Install dependencies
+      # Configuration spécifique pour ARM64
+      - name: Setup ARM64 dependencies
+        if: matrix.arch == 'aarch64-unknown-linux-gnu'
+        run: |
+          sudo dpkg --add-architecture arm64
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev:arm64 \
+            libappindicator3-dev:arm64 \
+            librsvg2-dev:arm64 \
+            pkg-config-aarch64-linux-gnu
+
+      # Configuration spécifique pour x86_64
+      - name: Setup x86_64 dependencies
+        if: matrix.arch == 'x86_64-unknown-linux-gnu'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf
 
       - uses: pnpm/action-setup@v4
         name: Install pnpm
@@ -176,7 +194,13 @@ jobs:
         run: pnpm install
 
       - name: Build for Linux ${{ matrix.arch }}
-        run: pnpm tauri build --target ${{ matrix.arch }}
+        env:
+          PKG_CONFIG_ALLOW_CROSS: ${{ matrix.arch == 'aarch64-unknown-linux-gnu' && '1' || '' }}
+        run: |
+          if [ "${{ matrix.arch }}" = "aarch64-unknown-linux-gnu" ]; then
+            export PKG_CONFIG=aarch64-linux-gnu-pkg-config
+          fi
+          pnpm tauri build --target ${{ matrix.arch }}
 
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4

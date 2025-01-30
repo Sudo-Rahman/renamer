@@ -47,8 +47,8 @@ async fn main() {
                             .allow_headers([http::header::CONTENT_TYPE]) // Autorise l'en-tête Content-Type
         )
     }
-    
-    let rate_limiter = Arc::new(RateLimiter::new(10, Duration::from_secs(60)));
+
+    let rate_limiter = Arc::new(RateLimiter::new(32, Duration::from_secs(60)));
 
     let app = app.with_state(config)
         .layer(
