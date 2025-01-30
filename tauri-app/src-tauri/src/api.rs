@@ -17,7 +17,7 @@ use tauri_plugin_store::StoreExt;
 pub const API_URL: &str = "http://localhost:3000";
 
 #[cfg(not(debug_assertions))]
-pub const API_URL: &str = "https://api.renamer.sudo-rahman.fr";
+pub const API_URL: &str = "https://api.renamer.pro";
 
 #[tauri::command]
 pub async fn check_licence(user: UserMachine) -> Result<String, String> {
@@ -172,7 +172,7 @@ pub async fn save_presets(app: tauri::AppHandle) -> Result<(), u8> {
         "key" : serde_json::from_str::<Value>(user_machine.as_str()).unwrap().get("key").unwrap(),
         "presets" : serde_json::from_str::<Value>(preset.as_str()).unwrap()
     });
-    
+
     let client = Client::new();
 
     let res = client
