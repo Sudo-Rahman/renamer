@@ -20,6 +20,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: cd tauri-app
+        run: cd tauri-app
+
       - name: Cache Rust build
         uses: actions/cache@v3
         with:
@@ -77,6 +80,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: cd tauri-app
+        run: cd tauri-app
+
       - name: Cache Rust build
         uses: actions/cache@v3
         with:
@@ -91,8 +97,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install dependencies
-        run: |
-          rustup target add ${{ matrix.arch }}
+        run: rustup target add ${{ matrix.arch }}
 
       - uses: pnpm/action-setup@v4
         name: Install pnpm
@@ -135,6 +140,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: cd tauri-app
+        run: cd tauri-app
+
       - name: Cache Rust build
         uses: actions/cache@v3
         with:
@@ -155,20 +163,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          if [ "${{ matrix.arch }}" = "aarch64-unknown-linux-gnu" ]; then
-            sudo dpkg --add-architecture arm64
-          fi
           sudo apt-get update
-          sudo apt-get install -y \
-            libgtk-3-dev:$([ "${{ matrix.arch }}" = "aarch64-unknown-linux-gnu" ] && echo "arm64" || echo "amd64") \
-            libwebkit2gtk-4.1-dev:$([ "${{ matrix.arch }}" = "aarch64-unknown-linux-gnu" ] && echo "arm64" || echo "amd64") \
-            libjavascriptcoregtk-4.1-dev:$([ "${{ matrix.arch }}" = "aarch64-unknown-linux-gnu" ] && echo "arm64" || echo "amd64") \
-            libayatana-appindicator3-dev:$([ "${{ matrix.arch }}" = "aarch64-unknown-linux-gnu" ] && echo "arm64" || echo "amd64") \
-            librsvg2-dev:$([ "${{ matrix.arch }}" = "aarch64-unknown-linux-gnu" ] && echo "arm64" || echo "amd64") \
-            libxdo-dev:$([ "${{ matrix.arch }}" = "aarch64-unknown-linux-gnu" ] && echo "arm64" || echo "amd64") \
-            libxcb1:$([ "${{ matrix.arch }}" = "aarch64-unknown-linux-gnu" ] && echo "arm64" || echo "amd64") \
-            libxrandr2:$([ "${{ matrix.arch }}" = "aarch64-unknown-linux-gnu" ] && echo "arm64" || echo "amd64") \
-            libdbus-1-3:$([ "${{ matrix.arch }}" = "aarch64-unknown-linux-gnu" ] && echo "arm64" || echo "amd64") \
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
       - uses: pnpm/action-setup@v4
         name: Install pnpm
