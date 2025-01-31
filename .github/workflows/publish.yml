@@ -27,7 +27,7 @@ jobs:
         with:
           path: |
             ~/.cargo
-            src-tauri/target
+            tauri-app/src-tauri/target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-
@@ -64,8 +64,8 @@ jobs:
         with:
           name: macOS-app
           path: |
-            src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
-            src-tauri/target/universal-apple-darwin/release/bundle/macos/*.tar.gz
+            tauri-app/src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+            tauri-app/src-tauri/target/universal-apple-darwin/release/bundle/macos/*.tar.gz
 
   build-windows:
     name: Build for Windows (x86 and ARM)
@@ -85,7 +85,7 @@ jobs:
         with:
           path: |
             ~/.cargo
-            src-tauri/target
+            tauri-app/src-tauri/target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-
@@ -120,8 +120,8 @@ jobs:
         with:
           name: windows-app-${{ matrix.arch }}
           path: |
-            src-tauri/target/${{ matrix.arch }}/release/bundle/msi/*.msi
-            src-tauri/target/${{ matrix.arch }}/release/bundle/nsis/*.exe
+            tauri-app/src-tauri/target/${{ matrix.arch }}/release/bundle/msi/*.msi
+            tauri-app/src-tauri/target/${{ matrix.arch }}/release/bundle/nsis/*.exe
 
   build-linux:
     name: Build for Linux (x86 and ARM)
@@ -147,7 +147,7 @@ jobs:
         with:
           path: |
             ~/.cargo
-            src-tauri/target
+            tauri-app/src-tauri/target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-
@@ -186,9 +186,9 @@ jobs:
         with:
           name: linux-app-${{ matrix.arch }}
           path: |
-            src-tauri/target/${{ matrix.arch }}/release/bundle/appimage/*.AppImage
-            src-tauri/target/${{ matrix.arch }}/release/bundle/deb/*.deb
-            src-tauri/target/${{ matrix.arch }}/release/bundle/rpm/*.rpm
+            tauri-app/src-tauri/target/${{ matrix.arch }}/release/bundle/appimage/*.AppImage
+            tauri-app/src-tauri/target/${{ matrix.arch }}/release/bundle/deb/*.deb
+            tauri-app/src-tauri/target/${{ matrix.arch }}/release/bundle/rpm/*.rpm
 
   create-release:
     name: Create GitHub Release
