@@ -51,6 +51,7 @@ jobs:
         with:
           node-version: 22
           cache: 'pnpm'
+          cache-dependency-path: tauri-app/pnpm-lock.yaml
 
       - name: Install dependencies
         run: pnpm install
@@ -106,6 +107,7 @@ jobs:
         with:
           node-version: 22
           cache: 'pnpm'
+          cache-dependency-path: tauri-app/pnpm-lock.yaml
 
       - name: Install dependencies
         run: pnpm install
@@ -164,11 +166,13 @@ jobs:
           version: 10
           run_install: false
 
+
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: 'pnpm'
+          cache-dependency-path: tauri-app/pnpm-lock.yaml
 
       - name: Install dependencies
         run: pnpm install
