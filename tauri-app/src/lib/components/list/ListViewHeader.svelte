@@ -3,7 +3,7 @@
     import {type Column, columns} from "$lib/components/list/store";
     import {Button} from "$lib/components/ui/button";
     import ArrowUpDown from "lucide-svelte/icons/arrow-up-down";
-    import {createEventDispatcher, onMount} from "svelte";
+    import {onMount} from "svelte";
     import * as Resizable from "$lib/components/ui/resizable";
     import {Separator} from "$lib/components/ui/separator";
     import {tick} from 'svelte';
@@ -19,8 +19,6 @@
     let {class: className, files = $bindable(), sort}: Props = $props();
 
     let panel: HTMLDivElement;
-    let timeout: any;
-    let timeoutResize: any;
 
     // Réactifs pour les colonnes visibles, redimensionnables et non redimensionnables
     let visibleCols = $derived($columns.filter(c => c.visible || c.visible === undefined));
@@ -28,8 +26,8 @@
     let notResizableCols = $derived(visibleCols.filter(c => !c.resizable));
 
     // Références aux éléments DOM des colonnes
-    let divs: HTMLDivElement[] = [];
-    let divs2: HTMLDivElement[] = [];
+    let divs: HTMLDivElement[] = $state([]);
+    let divs2: HTMLDivElement[] = $state([]);
 
     // Fonction pour gérer le tri des colonnes
     function sortToggle(column: Column) {
@@ -54,19 +52,6 @@
         sort(sorted);
     }
 
-    // Fonction pour gérer le redimensionnement des colonnes
-    function handleResize(size: number, prevSize: number | undefined, column: Column) {
-        const panelWidth = panel.getBoundingClientRect().width;
-        column.width = (size / 100) * panelWidth;
-
-        // Timeout pour éviter plusieurs événemen3ts de redimensionnement
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            columns.update(c => {
-                return c;
-            });
-        }, 100);
-    }
 
     // onMount pour mesurer les largeurs après le rendu initial
     onMount(async () => {
@@ -74,15 +59,18 @@
 
         // Utilisation de ResizeObserver pour détecter les changements de taille du panel
         const resizeObserver = new ResizeObserver(() => {
-            clearTimeout(timeoutResize);
-            timeoutResize = setTimeout(() => {
-                resizeColumns();
-            }, 30);
+            scheduleResizeColumns();
         });
 
         if (panel) {
             resizeObserver.observe(panel); // Observer le panel pour les changements de taille
         }
+
+        divs2.forEach((div) => {
+            if (div) {
+                resizeObserver.observe(div); // Observer les colonnes redimensionnables pour les changements de taille
+            }
+        });
 
         store.get('listColumns').then((cols) => {
             if (cols) {
@@ -134,6 +122,13 @@
         });
     }
 
+    function scheduleResizeColumns() {
+        if (resizeRequestId) cancelAnimationFrame(resizeRequestId);
+        resizeRequestId = requestAnimationFrame(resizeColumns);
+    }
+
+    let resizeRequestId: number;
+
 </script>
 
 <div class="w-full flex py-1 justify-evenly text-center items-center {className}">
@@ -154,10 +149,10 @@
         {/each}
 
         <Resizable.PaneGroup direction="horizontal">
-            <div bind:this={panel} class="px-2 w-full flex">
+            <div bind:this={panel} class="w-full flex">
                 {#each resizableCols as col, i}
                     {@const Component = col.headerComponent}
-                    <Resizable.Pane onResize={(s, p) => handleResize(s, p, col)} minSize={col.minSize ?? 1}
+                    <Resizable.Pane minSize={col.minSize ?? 1}
                                     defaultSize={col.minSize ?? 10}>
                         <div class="px-2 font-medium text-sm" bind:this={divs2[i]}>
                             {#if col.headerComponent !== undefined}

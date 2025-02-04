@@ -11,7 +11,7 @@
         remove: (event: RenamerFile) => void;
     }
 
-    let { class : className, file, remove} : Props = $props();
+    let {class: className, file, remove}: Props = $props();
 
     let divs: HTMLDivElement[] = $state([]);
 
@@ -20,14 +20,17 @@
     function onRemove() {
         setTimeout(
             () => {
-               remove(file);
+                remove(file);
             }, 100
         );
     }
 
     $effect(() => {
-        divs.forEach((div, i) => {
-            if (div) div.style.width = $columns[i].width + 'px';
+        cols.forEach((col, i) => {
+            const column = $columns.find(c => c.accessor === col.accessor);
+            if (column && divs[i]) {
+                divs[i].style.width = column.width + 'px';
+            }
         });
     });
 
@@ -43,7 +46,7 @@
                 {#each cols as col, i (col.accessor)}
                     {@const Component = col.customComponent}
 
-                    <div bind:this={divs[i]}
+                    <div bind:this={divs[i]} data-accessor={col.accessor}
                          class="flex w-[{col.width}px]">
 
                         <div class="line-clamp-1 px-2 flex w-full">

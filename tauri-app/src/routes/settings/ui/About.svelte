@@ -12,13 +12,17 @@
 
     let version: string = $state('')
     let appName: string = $state('')
-    let update  = $state(false)
+    let update = $state(false)
     let check_update: boolean | null = $state(null)
 
     onMount(async () => {
         version = await getVersion()
         appName = await getName();
-        update = (await check())?.available ?? false;
+        try {
+            update = (await check())?.available ?? false;
+        } catch (e) {
+            console.error(e)
+        }
         check_update = await store.get('check_update') ?? true
     })
 

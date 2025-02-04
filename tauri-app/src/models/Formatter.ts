@@ -347,8 +347,9 @@ export class ExtensionFormatter extends Formatter {
     }
 
     format(file: RenamerFile): void {
-        let formatted: string;
+        let formatted: string = '';
         if (!this._customeExt) {
+            if (file.getExtension() === "") return;
             formatted = `.${file.getExtension()}`;
         } else {
             formatted = `.${this.extension}`;

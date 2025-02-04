@@ -2,7 +2,7 @@
 
     import {RenamerFile} from "$models";
 
-    let {file} : {file: RenamerFile} = $props();
+    let {file}: { file: RenamerFile } = $props();
 
 </script>
 

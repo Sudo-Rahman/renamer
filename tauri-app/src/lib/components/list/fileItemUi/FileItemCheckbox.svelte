@@ -5,7 +5,7 @@
     import {columns} from "$lib/components/list/store";
     import {onMount} from "svelte";
 
-    let {file} : {file: RenamerFile} = $props();
+    let {file}: { file: RenamerFile } = $props();
 
     let selected = $state(file.selected);
 

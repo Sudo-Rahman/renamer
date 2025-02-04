@@ -5,7 +5,7 @@
     import {t} from "$lib/translations";
     import * as Popover from "$lib/components/ui/popover";
 
-    let {file} : {file: RenamerFile} = $props();
+    let {file}: { file: RenamerFile } = $props();
 
     let status: string = $state(file.status);
     let message: string = $state($t(`file_status.error.${file.statusCode}`));

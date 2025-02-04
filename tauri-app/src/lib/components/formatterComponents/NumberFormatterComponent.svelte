@@ -18,6 +18,11 @@
     let fill = $state(formatter.fill.length);
     let fillChar = $state(formatter.fill.char);
 
+    $effect(() => {
+        text
+        format()
+    })
+
     function format() {
         formatter.start = start;
         formatter.step = step;
