@@ -6,7 +6,7 @@
 
     let name = $state(file.name);
 
-    file.onRenamed.connect(() => {
+    file.nameStore.subscribe((name) => {
         name = file.newName;
     });
 

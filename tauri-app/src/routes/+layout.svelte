@@ -1,16 +1,41 @@
 <script lang="ts">
     import "../app.css";
+    import {page} from "$app/state";
     import {ModeWatcher} from "mode-watcher";
     import {Toaster} from "$lib/components/ui/sonner";
-    import WindowTitlebar from "$lib/components/titleBar/WindowTitlebar.svelte";
     import {Separator} from "$lib/components/ui/separator";
+    import {window as tauriWindow} from '@tauri-apps/api';
+    import {type as osType} from '@tauri-apps/plugin-os';
+    import {onMount} from 'svelte';
+
+    let {children} = $props();
+
+
+    let {id} = $derived(page.route);
+    let isMacOS = $state(false);
+    let isFullScreen = $state(false);
+
+    onMount(async () => {
+        // Détecter si c'est macOS
+        const type = osType();
+        isMacOS = type === 'macos';
+
+        // Obtenir la fenêtre actuelle
+        const appWindow = tauriWindow.getCurrentWindow();
+
+        // Vérifier l'état initial du plein écran
+        isFullScreen = await appWindow.isFullscreen();
+
+        // Écouter les changements d'état du plein écran
+        await appWindow.listen('tauri://resize', async (data) => {
+            isFullScreen = await appWindow.isFullscreen();
+            console.log('isFullScreen', isFullScreen, data);
+        });
+    });
 
     if (import.meta.env.PROD) {
         document.addEventListener('contextmenu', event => event.preventDefault());
     }
-
-    let {children} = $props();
-
 </script>
 
 <svelte:window on:scroll|preventDefault/>
@@ -19,13 +44,11 @@
      spellcheck="false">
     <Toaster/>
     <ModeWatcher/>
-    <div data-tauri-drag-region>
-        <WindowTitlebar>
-            <div class="flex w-screen font-bold justify-center absolute" data-tauri-drag-region>
-                <span data-tauri-drag-region>Renamer</span>
-            </div>
-        </WindowTitlebar>
-    </div>
-    <Separator/>
+    {#if !(isMacOS && isFullScreen)}
+        <header class="w-full h-7" data-tauri-drag-region></header>
+        {#if id !== '/'}
+            <Separator/>
+        {/if}
+    {/if}
     {@render children()}
 </div>

@@ -1,14 +1,16 @@
-import {Signal} from "$models/Signal";
+import {get, writable, type Writable} from "svelte/store";
 
 export class RenamerFile {
-    onNewNameChanged: Signal<string>;
-    onStatusChanged: Signal<string>;
-    onRenamed: Signal<void>;
-    onSelect: Signal<boolean>;
     private readonly _uuid: string = "";
     private readonly _size: number;
     private readonly _creationDate: Date;
     private readonly _modificationDate: Date;
+    private readonly _path: Writable<string>;
+    private readonly _selected: Writable<boolean>;
+    private readonly _name: Writable<string>;
+    private readonly _newName: Writable<string>;
+    private readonly _status: Writable<Status>;
+    private readonly _statusCode: Writable<number>;
 
     constructor(params: {
         uuid: string,
@@ -18,41 +20,40 @@ export class RenamerFile {
         creation_date: number,
         last_modified_date: number
     }) {
-        this._path = params.path;
-        this._name = params.name;
+        this._path = writable(params.path);
+        this._name = writable(params.name);
         this._size = params.size;
         this._creationDate = new Date(params.creation_date * 1000);
         this._modificationDate = new Date(params.last_modified_date * 1000);
-        this._newName = this._name;
-        this._selected = true;
-        this.onNewNameChanged = new Signal<string>();
-        this.onStatusChanged = new Signal<string>();
-        this.onRenamed = new Signal<void>();
-        this.onSelect = new Signal<boolean>();
+        this._newName = writable(params.name);
+        this._selected = writable(true);
         this._uuid = params.uuid;
-        this._status = "None";
-        this._statusCode = 0;
+        this._status = writable("None");
+        this._statusCode = writable(0);
     }
 
-    private _path: string;
-
     get path(): string {
-        return this._path;
+        return get(this._path);
     }
 
     set path(value: string) {
-        this._path = value;
+        this._path.set(value);
     }
 
-    private _selected: boolean;
+    get pathStore(): Writable<string> {
+        return this._path;
+    }
 
     get selected(): boolean {
-        return this._selected;
+        return get(this._selected);
     }
 
     set selected(value: boolean) {
-        this._selected = value;
-        this.onSelect.emit(value);
+        this._selected.set(value);
+    }
+
+    get selectedStore(): Writable<boolean> {
+        return this._selected;
     }
 
     get uuid(): string {
@@ -71,45 +72,52 @@ export class RenamerFile {
         return this._modificationDate;
     }
 
-    private _name: string;
-
     get name(): string {
-        return this._name;
+        return get(this._name);
     }
 
     set name(value: string) {
-        this._name = value;
+        this._name.set(value);
     }
 
-    private _newName: string;
+    get nameStore(): Writable<string> {
+        return this._name;
+    }
 
     get newName(): string {
-        return this._newName;
+        return get(this._newName);
     }
 
     set newName(value: string) {
-        this._newName = value;
+        this._newName.set(value);
     }
 
-    private _status: "None" | "Error" | "Success";
+    get newNameStore(): Writable<string> {
+        return this._newName;
+    }
 
-    get status(): "None" | "Error" | "Success" {
+    get status(): Status {
+        return get(this._status);
+    }
+
+    set status(value: Status) {
+        this._status.set(value);
+    }
+
+    get statusStore(): Writable<Status> {
         return this._status;
     }
 
-    set status(value: "None" | "Error" | "Success") {
-        this._status = value;
-        this.onStatusChanged.emit(value);
-    }
-
-    private _statusCode: number;
-
     get statusCode(): number {
-        return this._statusCode;
+        return get(this._statusCode);
     }
 
     set statusCode(value: number) {
-        this._statusCode = value;
+        this._statusCode.set(value);
+    }
+
+    get statusCodeStore(): number {
+        return get(this._statusCode);
     }
 
     public static getStringSize(size: number): string {
@@ -178,3 +186,5 @@ export class RenamerFile {
     }
 
 }
+
+export type Status = "None" | "Error" | "Success"

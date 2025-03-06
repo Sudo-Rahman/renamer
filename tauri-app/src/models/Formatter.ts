@@ -63,9 +63,9 @@ function createWritableWithUpdate(value: any) {
 
     return {
         subscribe,
-        set: (newValue) => {
+        set: (newValue: any) => {
             // Toujours déclencher la mise à jour même si la valeur est la même
-            set();
+            set(value);
             setTimeout(() => set(newValue), 0);
         },
         update
@@ -77,11 +77,16 @@ export class FormatterList {
     public onListChangedSignal = new Signal<Formatter[]>();
     readonly renamable = writable<boolean>(false);
     readonly errors = createWritableWithUpdate(0);
-    private _renamerFiles: RenamerFile[] = [];
     private _timer: any;
 
     constructor(files: RenamerFile[]) {
         this._renamerFiles = files;
+    }
+
+    private _renamerFiles: RenamerFile[] = [];
+
+    get renamerFiles(): RenamerFile[] {
+        return this._renamerFiles;
     }
 
     private _formatters: Formatter[] = [];
@@ -139,7 +144,6 @@ export class FormatterList {
                     f.format(file);
                 });
             }
-            file.onNewNameChanged.emit(file.newName);
         });
         this._formatters.forEach((f) => f.finish());
         this.onFormattedSignal.emit(this._renamerFiles);
@@ -173,7 +177,6 @@ export class FormatterList {
                             if (file.status) {
                                 f.name = f.newName;
                                 f.path = file.new_path;
-                                f.onRenamed.emit();
                             }
                         }
                     });

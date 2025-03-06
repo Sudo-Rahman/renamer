@@ -3,7 +3,7 @@ name = "renamer"
 version = "0.0.0"
 description = "A Tauri App"
 authors = ["rahman"]
-edition = "2021"
+edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -11,25 +11,26 @@ edition = "2021"
 tauri-build = { version = "2.0.3", features = [] }
 
 [dependencies]
-tauri = { version = "2.1.1", features = ["macos-private-api"] }
-tauri-plugin-fs = "2.0.3"
-tauri-plugin-shell = "2.0.2"
-tauri-plugin-os = "2.0.1"
-tauri-plugin-dialog = "2.0.1"
+tauri = { version = "2", features = ["macos-private-api"] }
+tauri-plugin-fs = "2"
+tauri-plugin-shell = "2"
+tauri-plugin-os = "2"
+tauri-plugin-dialog = "2"
 tauri-plugin-core = "2.0.0-beta.0"
+
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 uuid = { version = "1", features = ["v4"] }
 sys-locale = "0.3"
-tauri-plugin-store = "2.1.0"
-tauri-plugin-process = "2.0.1"
+tauri-plugin-store = "2"
+tauri-plugin-process = "2"
 mid = "3"
 online = { version = "4" }
 reqwest = { version = "0", features = ["json"] }
 lazy_static = "1"
-tokio = { version = "1.0", features = ["full"] }
+tokio = { version = "1", features = ["full"] }
 openssl = { version = "0.10", features = ["vendored"] }
-whoami = "1.5.2"
+whoami = "2.0.0-pre.1"
 renamer-shared = { path = "../../shared" }
 webbrowser = "1.0.2"
 
@@ -41,4 +42,4 @@ cocoa = "0.26.0"
 
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
-tauri-plugin-updater = "2.0.2"
+tauri-plugin-updater = "2.2.0"

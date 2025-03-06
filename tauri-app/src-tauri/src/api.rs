@@ -71,11 +71,11 @@ pub async fn is_license_ok(app: tauri::AppHandle) -> Result<u8, i8> {
 
             let user = match serde_json::from_str::<UserMachine>(license.as_str()) {
                 Ok(user) => user,
-                Err(_) => return Err(1)
+                Err(_) => return Err(3)
             };
 
             let store = APPLICATION.lock().await.get_store(app.clone()).await.map_err(
-                |_| 1
+                |_| 4
             )?;
             store.set("presets", json!(user.presets));
 
@@ -83,7 +83,9 @@ pub async fn is_license_ok(app: tauri::AppHandle) -> Result<u8, i8> {
                 let res = check_licence(user.clone()).await;
                 match res {
                     Ok(res) => Ok(user.plan),
-                    Err(_) => Err(1),
+                    Err(_) => {
+                        if user.machine.id == get_machine_id() { Ok(1) } else { Err(5) }
+                    }
                 }
             } else {
                 Ok(if user.machine.id == get_machine_id() { 1 } else { 0 })
@@ -103,7 +105,7 @@ pub async fn activate_license(app: tauri::AppHandle, key: String) -> Result<bool
        "key" : key,
         "machine" : json!({
             "id" : get_machine_id(),
-            "device_name" : whoami::devicename()
+            "device_name" : whoami::devicename().unwrap_or("Unknown".to_string()),
         })
     });
 

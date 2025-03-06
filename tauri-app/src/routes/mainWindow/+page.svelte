@@ -113,7 +113,7 @@
 
     <Separator class="w-full"/>
 
-    <div class="flex w-full p-1 text-sm px-3 space-x-5 items-center justify-between">
+    <div class="flex w-full p-1 text-sm px-3 space-x-5 items-center justify-between bg-card">
 
         <span class="px-2 font-medium">{$preset ? `Preset : ${$preset?.name}` : ''}</span>
 

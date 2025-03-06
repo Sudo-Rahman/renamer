@@ -18,7 +18,6 @@
 
     function remove(event: RenamerFile) {
         const scroll = Vlist?.getScrollOffset();
-        event.onStatusChanged.disconnectAll();
         files = files.filter(f => f.uuid !== event.uuid);
         filteredFiles = filteredFiles.filter(f => f.uuid !== event.uuid); // Utilisation de l'opérateur de copie
         setTimeout(() => {

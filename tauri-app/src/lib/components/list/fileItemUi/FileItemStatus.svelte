@@ -9,7 +9,7 @@
 
     let status: string = $state(file.status);
     let message: string = $state($t(`file_status.error.${file.statusCode}`));
-    file.onStatusChanged.connect(
+    file.statusStore.subscribe(
         (s) => {
             status = s;
             message = $t(`file_status.error.${file.statusCode}`);

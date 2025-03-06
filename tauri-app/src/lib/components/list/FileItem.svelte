@@ -18,11 +18,7 @@
     let cols = $derived($columns.filter(c => c.visible || c.visible === undefined));
 
     function onRemove() {
-        setTimeout(
-            () => {
-                remove(file);
-            }, 100
-        );
+        remove(file);
     }
 
     $effect(() => {

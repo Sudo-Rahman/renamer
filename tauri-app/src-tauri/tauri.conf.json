@@ -13,15 +13,15 @@
     "macOSPrivateApi": true,
     "windows": [
       {
-        "title": "renamer",
+        "title": "Renamer",
         "width": 1200,
         "shadow": false,
         "transparent": true,
-        "decorations": false,
         "height": 600,
         "minWidth": 1000,
         "minHeight": 600,
-        "dragDropEnabled": true
+        "dragDropEnabled": true,
+        "titleBarStyle": "Overlay"
       }
     ],
     "security": {

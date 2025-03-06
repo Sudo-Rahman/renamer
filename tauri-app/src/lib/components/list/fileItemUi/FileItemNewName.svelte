@@ -4,11 +4,12 @@
 
     let {file}: { file: RenamerFile } = $props();
 
-    let newName = $state(file.newName);
-
-    file.onNewNameChanged.connect((n) => {
-        newName = n;
-    });
+    let newName: string = $state(file.newName);
+    file.newNameStore.subscribe(
+        (s) => {
+            newName = s;
+        }
+    );
 
 </script>
 

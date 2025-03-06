@@ -10,14 +10,14 @@
     let selected = $state(file.selected);
 
     onMount(() => {
-        file.onSelect.connect((bool) => {
+        file.selectedStore.subscribe((bool) => {
             selected = bool;
         });
     });
 
     function handleClick() {
         file.selected = selected;  // Toggle the selection
-        $columns[0].onCheck();
+        $columns[0]?.onCheck();
         $formatters.format();
     }
 </script>
