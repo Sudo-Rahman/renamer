@@ -6,14 +6,15 @@
     import {t} from "$lib/translations";
 
     type Props = {
-        class?: string;
         file: RenamerFile;
         remove: (event: RenamerFile) => void;
+        index: number;
     }
 
-    let {class: className, file, remove}: Props = $props();
+    let {file, remove, index}: Props = $props();
 
     let divs: HTMLDivElement[] = $state([]);
+    let hover = $state(false);
 
     let cols = $derived($columns.filter(c => c.visible || c.visible === undefined));
 
@@ -32,12 +33,14 @@
 
 </script>
 
-<div class="{className} rounded-[10px]">
+<div role="none"
+     class="{index % 2 === 0 ? 'bg-accent text-accent-foreground' : ''} mx-3 rounded-[10px] overflow-hidden hover:bg-primary hover:text-primary-foreground"
+     onmouseenter={() => hover = true} onmouseleave={() => hover = false}>
 
     <ContextMenu.Root>
         <ContextMenu.Trigger>
 
-            <div class="flex py-1 text-xs items-center hover:bg-primary hover:rounded-[10px]">
+            <div class="flex py-1 text-xs items-center">
 
                 {#each cols as col, i (col.accessor)}
                     {@const Component = col.customComponent}
@@ -46,7 +49,7 @@
                          class="flex w-[{col.width}px]">
 
                         <div class="line-clamp-1 px-2 flex w-full">
-                            <Component file={file}/>
+                            <Component file={file} index={index} bind:hover={hover}/>
                         </div>
 
                     </div>

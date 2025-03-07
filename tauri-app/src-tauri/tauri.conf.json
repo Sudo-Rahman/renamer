@@ -14,13 +14,13 @@
       {
         "title": "Renamer",
         "width": 1200,
-        "shadow": false,
+        "shadow": true,
         "transparent": true,
         "height": 600,
         "minWidth": 1000,
         "minHeight": 600,
         "dragDropEnabled": true,
-        "decorations": "false"
+        "decorations": false
       }
     ],
     "security": {

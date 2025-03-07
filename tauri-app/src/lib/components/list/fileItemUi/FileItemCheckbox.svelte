@@ -5,9 +5,11 @@
     import {columns} from "$lib/components/list/store";
     import {onMount} from "svelte";
 
-    let {file}: { file: RenamerFile } = $props();
+    let {file, index, hover = $bindable()}: { file: RenamerFile, index : number, hover : boolean } = $props();
 
     let selected = $state(file.selected);
+
+    console.log(index);
 
     onMount(() => {
         file.selectedStore.subscribe((bool) => {
@@ -22,4 +24,4 @@
     }
 </script>
 
-<Checkbox bind:checked={selected} class="border-primary-foreground/10 rounded" onCheckedChange={handleClick}/>
+<Checkbox bind:checked={selected} class="{index % 2 === 0 ? 'border-primary-foreground/30' : 'border-foreground/30'} {hover ? 'border-primary-foreground/30' : '' } rounded" onCheckedChange={handleClick}/>

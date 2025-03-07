@@ -7,7 +7,7 @@
 
     type Props = {
         files: RenamerFile[],
-        column: Column
+        column: Column,
     };
 
     let {files, column}: Props = $props();
@@ -26,4 +26,4 @@
     }
 </script>
 
-<Checkbox bind:checked={selected} class="border-primary-foreground/10 rounded" onCheckedChange={handleClick}/>
+<Checkbox bind:checked={selected} class="border-foreground/30 rounded" onCheckedChange={handleClick}/>

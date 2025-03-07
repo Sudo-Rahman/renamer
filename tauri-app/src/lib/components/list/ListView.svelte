@@ -44,7 +44,7 @@
             <VList data={filteredFiles} bind:this={Vlist} class="h-full p-0"
                    getKey={(_, i) => i}>
                 {#snippet children(item, index)}
-                    <FileItem class="{index % 2 === 0 ? 'bg-accent' : ''} mx-3" file={filteredFiles[index]}
+                    <FileItem file={filteredFiles[index]} index={index}
                               remove={remove}/>
                 {/snippet}
             </VList>
