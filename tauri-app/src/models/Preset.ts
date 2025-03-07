@@ -60,17 +60,28 @@ export async function savePreset(preset: Preset) {
             await store.set("presets", presets);
         }
     }
-    await invoke("save_presets");
-    return true;
+    return await invoke("save_presets")
+        .then(() => {
+            return true;
+        })
+        .catch(() => {
+            return false;
+        });
 }
 
 
-export async function deletePreset(presetId: string) {
+export async function deletePreset(presetId: string): Promise<boolean> {
     let presets = await getPresetList();
     if (presets) {
         presets = presets.filter((p) => p.id !== presetId);
         await store.set("presets", presets);
-        return true;
+        return await invoke("save_presets")
+            .then(() => {
+                return true;
+            })
+            .catch(() => {
+                return false;
+            });
     }
     return false;
 }

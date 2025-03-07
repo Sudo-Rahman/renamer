@@ -45,7 +45,7 @@
     <Toaster/>
     <ModeWatcher/>
     {#if !(isMacOS && isFullScreen)}
-        <header class="w-full h-7" data-tauri-drag-region></header>
+        <header class="w-full {isMacOS ? 'h-6': 'h-10'}" data-tauri-drag-region></header>
         {#if id !== '/'}
             <Separator/>
         {/if}

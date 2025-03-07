@@ -55,8 +55,8 @@ pub async fn get_license(
         Ok(user) => {
             if user.is_none() {
                 Err((StatusCode::NOT_FOUND, "User not found".to_string()))
-            } else if user.unwrap().machines.iter().any(|m| m.id == user_machine.machine.id) {
-                Ok((StatusCode::OK, json!(user_machine).to_string()))
+            } else if user.clone().unwrap().machines.iter().any(|m| m.id == user_machine.machine.id) {
+                Ok((StatusCode::OK, json!(user_to_user_machine(user.unwrap(), user_machine.machine)).to_string()))
             } else {
                 Err((StatusCode::UNAUTHORIZED, "Machine not found".to_string()))
             }

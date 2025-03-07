@@ -19,20 +19,21 @@ pub const API_URL: &str = "http://localhost:3000";
 #[cfg(not(debug_assertions))]
 pub const API_URL: &str = "https://api.renamer.pro";
 
-#[tauri::command]
-pub async fn check_licence(user: UserMachine) -> Result<String, String> {
+pub async fn fetch_user_machine(mut user: &UserMachine) -> Result<(), String> {
     let client = Client::new();
 
     let res = client
-        .post(format!("{}/license", API_URL))
+        .post(format!("{}/get_user", API_URL))
         .json(&user)
         .send()
         .await
         .map_err(|e| e.to_string())?;
 
+
     if res.status().is_success() {
         let text = res.text().await.map_err(|e| e.to_string())?;
-        Ok(text)
+        let tmp = &serde_json::from_str::<UserMachine>(text.as_str()).map_err(|e| e.to_string())?;
+        Ok(())
     } else {
         let error_text = res.text().await.map_err(|e| e.to_string())?;
         Err(error_text)
@@ -74,15 +75,16 @@ pub async fn is_license_ok(app: tauri::AppHandle) -> Result<u8, i8> {
                 Err(_) => return Err(3)
             };
 
-            let store = APPLICATION.lock().await.get_store(app.clone()).await.map_err(
-                |_| 4
-            )?;
-            store.set("presets", json!(user.presets));
-
             if (online::check(None).is_ok()) {
-                let res = check_licence(user.clone()).await;
+                let res = fetch_user_machine(&user).await;
                 match res {
-                    Ok(res) => Ok(user.plan),
+                    Ok(res) => {
+                        let store = APPLICATION.lock().await.get_store(app.clone()).await.map_err(
+                            |_| 4
+                        )?;
+                        store.set("presets", json!(user.presets));
+                        Ok(user.plan)
+                    }
                     Err(_) => {
                         if user.machine.id == get_machine_id() { Ok(1) } else { Err(5) }
                     }
@@ -166,7 +168,7 @@ pub async fn save_presets(app: tauri::AppHandle) -> Result<(), u8> {
     )?;
     let preset = store.get("presets")
         .map(|value| value.to_string())
-        .ok_or_else(|| 1)?;
+        .ok_or_else(|| 2)?;
 
     let user_machine = get_license(app.clone()).await.unwrap();
 
@@ -182,11 +184,11 @@ pub async fn save_presets(app: tauri::AppHandle) -> Result<(), u8> {
         .json(&json)
         .send()
         .await
-        .or_else(|_| Err(1))?;
+        .or_else(|_| Err(3))?;
 
     if res.status().is_success() {
         Ok(())
     } else {
-        Err(1)
+        Err(4)
     }
 }

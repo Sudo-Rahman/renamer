@@ -20,7 +20,7 @@
 
     let {class: className, files = $bindable()}: Props = $props();
 
-    onMount(async () => {
+    onMount(() => {
         const handleKeyDown = async (event: KeyboardEvent) => {
             if ((event.metaKey || event.ctrlKey) && event.shiftKey && event.key === 'n') {
                 event.preventDefault();

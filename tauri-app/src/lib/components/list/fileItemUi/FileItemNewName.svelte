@@ -4,16 +4,11 @@
 
     let {file}: { file: RenamerFile } = $props();
 
-    let newName: string = $state(file.newName);
-    file.newNameStore.subscribe(
-        (s) => {
-            newName = s;
-        }
-    );
+    let {newNameStore: newName} = file;
 
 </script>
 
 
 <span class="select-text line-clamp-1">
-{newName}
+{$newName}
 </span>

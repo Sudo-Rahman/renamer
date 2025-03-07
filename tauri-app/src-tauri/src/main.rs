@@ -27,7 +27,6 @@ fn main() {
             rename_files,
             check_files_names,
             get_system_language,
-            check_licence,
             get_license,
             save_license,
             is_license_ok,

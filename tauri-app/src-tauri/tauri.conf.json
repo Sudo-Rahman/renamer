@@ -10,7 +10,6 @@
     "frontendDist": "../build"
   },
   "app": {
-    "macOSPrivateApi": true,
     "windows": [
       {
         "title": "Renamer",
@@ -21,7 +20,7 @@
         "minWidth": 1000,
         "minHeight": 600,
         "dragDropEnabled": true,
-        "titleBarStyle": "Overlay"
+        "decorations": "false"
       }
     ],
     "security": {

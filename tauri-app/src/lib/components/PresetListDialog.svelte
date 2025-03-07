@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {deletePreset, getPresetList, Preset,preset} from "$models";
+    import {deletePreset, getPresetList, Preset, preset as presetStore} from "$models";
     import {Button} from "$lib/components/ui/button";
     import * as Dialog from "$lib/components/ui/dialog";
     import {toast} from "svelte-sonner";
@@ -16,11 +16,12 @@
         if (open)
             getPresetList().then((result) => {
                 presets = result;
+                console.log(presets);
             });
     });
 
     function onLoad(p: Preset) {
-        preset.set(p);
+        presetStore.set(p);
         open = false;
         toast.success($t('toast.load_preset.success').replace("%s", p.name));
     }
@@ -34,10 +35,12 @@
             okLabel: $t('ask_dialog.delete_preset.ok_btn'),
             cancelLabel: $t('ask_dialog.delete_preset.cancel_btn')
         }).then((bool) => {
-            if(bool)
+            if (bool)
                 deletePreset(preset.id).then((value) => {
-                    if (value) toast.success($t('toast.delete_preset.success').replace("%s", preset.name));
-                    else toast.error($t('toast.delete_preset.error').replace("%s", preset.name));
+                    if (value) {
+                        toast.success($t('toast.delete_preset.success').replace("%s", preset.name));
+                        presetStore.set(null);
+                    } else toast.error($t('toast.delete_preset.error').replace("%s", preset.name));
                     getPresetList().then((result) => {
                         presets = result;
                     });
@@ -65,8 +68,10 @@
                         </DropdownMenu.Trigger>
                         <DropdownMenu.Content>
                             <DropdownMenu.Group>
-                                <DropdownMenu.Item onclick={()=>onLoad(preset)}>{$t('menu_bar.preset.list_dialog.load')}</DropdownMenu.Item>
-                                <DropdownMenu.Item onclick={()=>onDelete(preset)}>{$t('menu_bar.preset.list_dialog.delete')}</DropdownMenu.Item>
+                                <DropdownMenu.Item
+                                        onclick={()=>onLoad(preset)}>{$t('menu_bar.preset.list_dialog.load')}</DropdownMenu.Item>
+                                <DropdownMenu.Item
+                                        onclick={()=>onDelete(preset)}>{$t('menu_bar.preset.list_dialog.delete')}</DropdownMenu.Item>
                             </DropdownMenu.Group>
                         </DropdownMenu.Content>
                     </DropdownMenu.Root>

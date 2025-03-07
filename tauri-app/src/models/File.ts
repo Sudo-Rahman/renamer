@@ -116,8 +116,8 @@ export class RenamerFile {
         this._statusCode.set(value);
     }
 
-    get statusCodeStore(): number {
-        return get(this._statusCode);
+    get statusCodeStore(): Writable<number> {
+        return this._statusCode;
     }
 
     public static getStringSize(size: number): string {
