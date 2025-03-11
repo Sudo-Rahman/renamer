@@ -3,10 +3,11 @@
     import {cn} from "./utils/utils"
     import type {WindowControlsProps} from "./types"
     import WindowControls from "./WindowControls.svelte"
+    import type {Snippet} from "svelte";
 
 
     type Props = {
-        children: any;
+        children: Snippet;
         class?: string;
         controlsOrder?: string;
         windowControlsProps: WindowControlsProps
@@ -19,7 +20,7 @@
             windowControlsProps?.platform === "macos"))
 
     osType.then((osType) => {
-        left = left || (controlsOrder === "system" && osType === "macos") || (controlsOrder === "system" && osType === "linux")
+        left = left || (controlsOrder === "system" && osType === "macos")
     })
 
     const restPropsFn = (ml: string) => {

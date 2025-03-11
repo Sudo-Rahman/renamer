@@ -37,10 +37,10 @@
         [SizeFormatter.name]: SizeFormatterComponent,
     };
 
-    const FormatterComponent = $derived(formatterComponents[formatter.constructor.name]);
 
 </script>
 
-{#if FormatterComponent}
-    <FormatterComponent formatter={formatter} bind:dragDisabled={dragDisabled}/>
+{#if formatterComponents[formatter.constructor.name]}
+    {@const FormatterComponent = formatterComponents[formatter.constructor.name]}
+    <FormatterComponent {formatter} bind:dragDisabled={dragDisabled}/>
 {/if}

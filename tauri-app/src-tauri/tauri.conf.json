@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/schema.json",
   "productName": "Renamer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "identifier": "com.sudo-rahman.renamer",
   "build": {
     "beforeDevCommand": "pnpm dev",

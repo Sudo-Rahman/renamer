@@ -33,9 +33,9 @@
 
 </script>
 
-<div role="none"
-     class="{index % 2 === 0 ? 'bg-accent text-accent-foreground' : ''} mx-3 rounded-[10px] overflow-hidden hover:bg-primary hover:text-primary-foreground"
-     onmouseenter={() => hover = true} onmouseleave={() => hover = false}>
+<div class="{index % 2 === 0 ? 'bg-accent text-accent-foreground' : ''} mx-3 rounded-[10px] overflow-hidden hover:bg-primary hover:text-primary-foreground"
+     onmouseenter={() => hover = true}
+     onmouseleave={() => hover = false} role="none">
 
     <ContextMenu.Root>
         <ContextMenu.Trigger>
