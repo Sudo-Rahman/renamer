@@ -87,9 +87,9 @@ jobs:
           path: |
             ~/.cargo
             tauri-app/src-tauri/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ matrix.arch }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-cargo-
+            ${{ matrix.arch }}-cargo-
 
       - name: Install Rust Stable
         uses: dtolnay/rust-toolchain@stable
@@ -150,9 +150,9 @@ jobs:
           path: |
             ~/.cargo
             tauri-app/src-tauri/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ matrix.arch }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-cargo-
+            ${{ matrix.arch }}-cargo-
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
