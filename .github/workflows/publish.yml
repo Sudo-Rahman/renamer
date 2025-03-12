@@ -66,6 +66,7 @@ jobs:
           path: |
             tauri-app/src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
             tauri-app/src-tauri/target/universal-apple-darwin/release/bundle/macos/*.tar.gz
+            tauri-app/src-tauri/target/universal-apple-darwin/release/bundle/macos/*.sig
 
   build-windows:
     name: Build for Windows (x86 and ARM)
@@ -122,6 +123,7 @@ jobs:
           path: |
             tauri-app/src-tauri/target/${{ matrix.arch }}/release/bundle/msi/*.msi
             tauri-app/src-tauri/target/${{ matrix.arch }}/release/bundle/nsis/*.exe
+            tauri-app/src-tauri/target/${{ matrix.arch }}/release/bundle/nsis/*.sig
 
   build-linux:
     name: Build for Linux (x86 and ARM)
@@ -189,6 +191,7 @@ jobs:
             tauri-app/src-tauri/target/${{ matrix.arch }}/release/bundle/appimage/*.AppImage
             tauri-app/src-tauri/target/${{ matrix.arch }}/release/bundle/deb/*.deb
             tauri-app/src-tauri/target/${{ matrix.arch }}/release/bundle/rpm/*.rpm
+            tauri-app/src-tauri/target/${{ matrix.arch }}/release/bundle/snap/*.sig
 
   create-release:
     name: Create GitHub Release
