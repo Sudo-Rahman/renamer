@@ -64,12 +64,13 @@ fn setup<'a>(app: &'a mut tauri::App) -> Result<(), Box<dyn std::error::Error>> 
     tauri::async_runtime::spawn(async move {
         APPLICATION.lock().await.init_values(handle_clone1.clone()).await;
         rust_i18n::set_locale(&get_system_language().await);
-        check_update(handle_clone1.clone()).await
-            .inspect_err(|e| {
-                create_main_window(handle_clone1.clone());
-            })
-            .expect("Update failed");
+        check_update(handle_clone1.clone(), || {
+            create_main_window(handle_clone1.clone());
+        }).await.inspect_err(|_| {
+            create_main_window(handle_clone1.clone());
+        }).expect("error checking update");
     });
+
 
     let handle_clone2 = app.handle().clone();
     tauri::async_runtime::spawn(async move {
