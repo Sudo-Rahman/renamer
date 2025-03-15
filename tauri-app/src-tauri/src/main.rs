@@ -1,15 +1,27 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 extern crate core;
+#[macro_use]
+extern crate rust_i18n;
 
 mod app;
 mod api;
 mod entities;
 mod utils;
+mod store;
+mod window;
+mod updater;
 
-use crate::app::APPLICATION;
 use crate::api::*;
+use crate::app::APPLICATION;
+use crate::store::*;
 use crate::utils::*;
+use crate::updater::*;
+
+use rust_i18n::i18n;
+use crate::window::create_main_window;
+
+i18n!("locales");
 
 fn main() {
     tauri::Builder::default()
@@ -34,17 +46,34 @@ fn main() {
             remove_license,
             set_system_language,
             open_browser_url,
-            save_presets
+            save_presets,
+            get_app,
+            get_languages_data,
+            download_and_install_update
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 
 fn setup<'a>(app: &'a mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
-    let handle = app.handle().clone();
+    let handle_clone1 = app.handle().clone();
+
+    AppStore::init(handle_clone1.clone());
+
 
     tauri::async_runtime::spawn(async move {
-        let license_result = is_license_ok(handle).await;
+        APPLICATION.lock().await.init_values(handle_clone1.clone()).await;
+        rust_i18n::set_locale(&get_system_language().await);
+        check_update(handle_clone1.clone()).await
+            .inspect_err(|e| {
+                create_main_window(handle_clone1.clone());
+            })
+            .expect("Update failed");
+    });
+
+    let handle_clone2 = app.handle().clone();
+    tauri::async_runtime::spawn(async move {
+        let license_result = is_license_ok(handle_clone2.clone()).await;
         let application = APPLICATION.clone();
         if let Ok(plan) = license_result {
             application.lock().await.set_license(plan);

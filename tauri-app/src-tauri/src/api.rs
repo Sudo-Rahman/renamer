@@ -2,21 +2,20 @@
 
 extern crate mid;
 use crate::app::{APPLICATION};
+use crate::store::{AppStore};
 use reqwest::{Client, StatusCode};
-use serde_json::Value::Null;
 use serde_json::{json, Value};
-use std::path::PathBuf;
 use std::str::FromStr;
 use whoami;
 
 use renamer_shared::UserMachine;
-use tauri::{Manager, Wry};
+use tauri::{AppHandle, Manager};
 use tauri_plugin_store::StoreExt;
 
-#[cfg(debug_assertions)]
-pub const API_URL: &str = "http://localhost:3000";
-
-#[cfg(not(debug_assertions))]
+// #[cfg(debug_assertions)]
+// pub const API_URL: &str = "http://localhost:3000";
+//
+// #[cfg(not(debug_assertions))]
 pub const API_URL: &str = "https://api.renamer.pro";
 
 pub async fn fetch_user_machine(mut user: &UserMachine) -> Result<(), String> {
@@ -41,56 +40,38 @@ pub async fn fetch_user_machine(mut user: &UserMachine) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub async fn get_license(app: tauri::AppHandle) -> Result<String, String> {
-    let store = APPLICATION.lock().await.get_store(app.clone()).await;
-    match store {
-        Ok(store) => {
-            let license = store.get("license").map(|value| value.to_string()).ok_or_else(|| "License key not found in store".to_string())?;
-            Ok(license)
-        }
-        Err(_) => Err("Error getting store".to_string())
+pub async fn get_license() -> Result<UserMachine, String> {
+    let licence = AppStore::read::<UserMachine>("license");
+    if licence.is_none() {
+        return Err("No license found".to_string());
     }
+    Ok(licence.unwrap())
 }
 
 #[tauri::command]
-pub async fn save_license(app: tauri::AppHandle, user: UserMachine) -> Result<bool, i8> {
-    let store = APPLICATION.lock().await.get_store(app.clone()).await.map_err(
-        |_| 1
-    )?;
-    store.set("license".to_string(), json!(user));
-    Ok(true)
+pub async fn save_license(user: UserMachine) -> bool {
+    AppStore::write("license", json!(user));
+    true
 }
 
 #[tauri::command]
 pub async fn is_license_ok(app: tauri::AppHandle) -> Result<u8, i8> {
-    let license = get_license(app.clone()).await;
+    let license = get_license().await;
     match license {
         Ok(license) => {
-            if license.is_empty() {
-                return Err(2);
-            }
-
-            let user = match serde_json::from_str::<UserMachine>(license.as_str()) {
-                Ok(user) => user,
-                Err(_) => return Err(3)
-            };
-
             if (online::check(None).is_ok()) {
-                let res = fetch_user_machine(&user).await;
+                let res = fetch_user_machine(&license).await;
                 match res {
                     Ok(res) => {
-                        let store = APPLICATION.lock().await.get_store(app.clone()).await.map_err(
-                            |_| 4
-                        )?;
-                        store.set("presets", json!(user.presets));
-                        Ok(user.plan)
+                        AppStore::write("presets", json!(license.presets));
+                        Ok(license.plan)
                     }
                     Err(_) => {
-                        if user.machine.id == get_machine_id() { Ok(1) } else { Err(5) }
+                        if license.machine.id == get_machine_id() { Ok(1) } else { Err(5) }
                     }
                 }
             } else {
-                Ok(if user.machine.id == get_machine_id() { 1 } else { 0 })
+                Ok(if license.machine.id == get_machine_id() { 1 } else { 0 })
             }
         }
         Err(_) => Err(1),
@@ -125,7 +106,7 @@ pub async fn activate_license(app: tauri::AppHandle, key: String) -> Result<bool
             return Err(1);
         }
         let user: UserMachine = serde_json::from_str(text.unwrap().as_str()).unwrap();
-        save_license(app.clone(), user.clone()).await?;
+        save_license(user.clone()).await;
         application.lock().await.set_license(user.plan);
         Ok(true)
     } else if res.status() == StatusCode::UNAUTHORIZED {
@@ -141,40 +122,32 @@ pub fn get_machine_id() -> String {
 
 #[tauri::command]
 pub async fn remove_license(app: tauri::AppHandle) -> Result<bool, i8> {
-    let license = get_license(app.clone()).await;
+    let license = get_license().await;
     if license.is_err() {
         return Err(1);
     }
-    let json = serde_json::from_str::<UserMachine>(license.unwrap().as_str()).unwrap();
     let client = Client::new();
     let res = client
         .post(format!("{}/remove_machine", API_URL))
-        .json(&json)
+        .json(&license)
         .send()
         .await
         .or_else(|_| Err(1))?;
 
-    let store = APPLICATION.lock().await.get_store(app.clone()).await.or_else(|_| Err(1))?;
-    store.clear();
-    store.save();
+    AppStore::clear();
     APPLICATION.lock().await.set_license(0);
     Ok(true)
 }
 
 #[tauri::command]
 pub async fn save_presets(app: tauri::AppHandle) -> Result<(), u8> {
-    let store = APPLICATION.lock().await.get_store(app.clone()).await.map_err(
-        |_| 1
-    )?;
-    let preset = store.get("presets")
-        .map(|value| value.to_string())
-        .ok_or_else(|| 2)?;
+    let presets = AppStore::read::<String>("presets").unwrap_or("".to_string());
 
-    let user_machine = get_license(app.clone()).await.unwrap();
+    let user_machine = get_license().await.unwrap();
 
     let json = json!({
-        "key" : serde_json::from_str::<Value>(user_machine.as_str()).unwrap().get("key").unwrap(),
-        "presets" : serde_json::from_str::<Value>(preset.as_str()).unwrap()
+        "key" : user_machine.key,
+        "presets" : serde_json::from_str::<Value>(presets.as_str()).unwrap()
     });
 
     let client = Client::new();

@@ -8,21 +8,21 @@
     import {t} from "$lib/translations";
     import {Switch} from "$lib/components/ui/switch";
     import {store} from "$models";
+    import {getCurrentWindow} from "@tauri-apps/api/window";
 
 
     let version: string = $state('')
     let appName: string = $state('')
-    let update = $state(false)
+    let new_version = $state<string | null>(null)
     let check_update: boolean | null = $state(null)
 
+
     onMount(async () => {
-        version = await getVersion()
+        invoke("get_app").then((response: any) => {
+            version = response.version
+            new_version = response.new_version
+        })
         appName = await getName();
-        try {
-            update = (await check())?.available ?? false;
-        } catch (e) {
-            console.error(e)
-        }
         check_update = await store.get('check_update') ?? true
     })
 
@@ -36,6 +36,11 @@
         }
     });
 
+    function installAndDownload() {
+        invoke('download_and_install_update').catch(console.error)
+        getCurrentWindow().close()
+    }
+
 </script>
 
 
@@ -44,7 +49,7 @@
     <div class="flex w-full space-x-4">
 
         <div class="flex">
-            <img alt="" src="icon.svg">
+            <img alt="" src="/icon.svg">
         </div>
 
         <div class="flex-col flex">
@@ -53,11 +58,11 @@
             </span>
 
             <span class="text-sm pb-1">
-                {update ? $t('settings.about.update.available') : $t('settings.about.update.not_available')}
+                {new_version ? $t('settings.about.update.available', {version: new_version}) : $t('settings.about.update.not_available')}
             </span>
 
-            {#if update}
-                <Button class="w-fit">
+            {#if new_version}
+                <Button class="w-fit" onclick={installAndDownload}>
                     {$t('settings.about.update.btn')}
                 </Button>
             {/if}

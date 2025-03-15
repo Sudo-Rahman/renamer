@@ -41,7 +41,7 @@
                     $files = new_files;
                     toast.success($t('toast.import_files.success'));
                     dragActive = false;
-                    await goto('/mainWindow');
+                    await goto('app/mainWindow');
                 } catch (e) {
                     toast.error($t('toast.import_files.error'));
                     console.error(e);
@@ -82,7 +82,7 @@
             if ($files.length === 0) {
                 return;
             }
-            await goto('/mainWindow');
+            await goto('app/mainWindow');
             toast.success($t('toast.import_files.success'));
         } catch (e) {
             toast.error($t('toast.import_files.error'));

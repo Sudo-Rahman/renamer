@@ -191,7 +191,7 @@ jobs:
             tauri-app/src-tauri/target/${{ matrix.arch }}/release/bundle/appimage/*.AppImage
             tauri-app/src-tauri/target/${{ matrix.arch }}/release/bundle/deb/*.deb
             tauri-app/src-tauri/target/${{ matrix.arch }}/release/bundle/rpm/*.rpm
-            tauri-app/src-tauri/target/${{ matrix.arch }}/release/bundle/snap/*.sig
+            tauri-app/src-tauri/target/${{ matrix.arch }}/release/bundle/*/*.sig
 
   create-release:
     name: Create GitHub Release

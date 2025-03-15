@@ -2,6 +2,9 @@ use crate::entities::*;
 use std::fs;
 use std::path::Path;
 use sys_locale::get_locale;
+use crate::store::{AppStore};
+use crate::app::{App, APPLICATION};
+
 
 #[tauri::command]
 pub async fn list_files_in_directory(dir: String) -> Result<Value, String> {
@@ -64,7 +67,6 @@ pub async fn files_from_vec(files: Vec<String>) -> Result<Value, String> {
         }))
 }
 
-use crate::app::APPLICATION;
 use serde_json::{json, Value};
 
 #[tauri::command]
@@ -173,26 +175,36 @@ const LOCAL: fn() -> String = || {
         .to_string();
 };
 #[tauri::command]
-pub async fn get_system_language(app: tauri::AppHandle) -> String {
-    let store = APPLICATION.lock().await.get_store(app.clone()).await;
-    if store.is_err() {
-        return LOCAL();
-    }
-
-    let lang = store.unwrap().get("lang");
-    match lang {
-        Some(lang) => lang.as_str().unwrap().to_string(),
-        None => LOCAL()
-    }
+pub async fn get_system_language() -> String {
+    let lang = AppStore::read::<String>("lang");
+    lang.unwrap_or_else(|| LOCAL())
 }
 
 #[tauri::command]
-pub async fn set_system_language(app: tauri::AppHandle, lang: String) -> Result<bool, i8> {
-    let store = APPLICATION.lock().await.get_store(app.clone()).await;
-    if store.is_err() {
-        return Err(1);
-    }
-    store.unwrap().set("lang".to_string(), json!(lang));
+pub async fn get_languages_data() -> Value {
+    let mut languages = Vec::new();
+
+    languages.push(Language {
+        locale: "en".to_string(),
+        data: include_str!("../locales/en.json").to_string(),
+    });
+
+    languages.push(Language {
+        locale: "fr".to_string(),
+        data: include_str!("../locales/fr.json").to_string(),
+    });
+
+    let system_lang = get_system_language().await;
+    json!({
+        "languages": languages,
+        "locale": system_lang
+    })
+}
+
+#[tauri::command]
+pub async fn set_system_language(lang: String) -> Result<bool, i8> {
+    AppStore::write("lang", json!(lang));
+    rust_i18n::set_locale(&lang);
 
     Ok(true)
 }
@@ -204,4 +216,10 @@ pub async fn open_browser_url(url: &str) -> Result<(), String> {
     } else {
         Err("Failed to open the browser".to_string())
     }
+}
+
+#[tauri::command]
+pub async fn get_app() -> Result<App, ()> {
+    let app = APPLICATION.lock().await.clone();
+    Ok(app)
 }

@@ -3,9 +3,11 @@
   "identifier": "default",
   "description": "Capability for the main window",
   "windows": [
-    "main"
+    "main",
+    "update"
   ],
   "permissions": [
+    "core:window:allow-set-progress-bar",
     "core:window:default",
     "core:path:allow-join",
     "core:path:default",

@@ -67,3 +67,9 @@ pub struct FileStatus {
     pub uuid: String, // ou le type approprié pour uuid
     pub error: u8,
 }
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Language {
+    pub locale: String,
+    pub data: String,
+}

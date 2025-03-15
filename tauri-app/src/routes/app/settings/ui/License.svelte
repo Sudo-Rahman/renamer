@@ -25,7 +25,6 @@
         } else {
             try {
                 let response: any = await invoke("is_license_ok");
-                console.log(response);
                 response = JSON.parse(response as string);
                 valide = response as boolean;
             } catch (e) {
@@ -36,7 +35,6 @@
                         await message($t('message.check_license.error'), {kind: 'error'});
 
                 }
-                console.log(e);
                 valide = false;
                 return;
             }
@@ -64,6 +62,7 @@
     }
 
     function remove_license() {
+        valide = null;
         invoke("remove_license").then(
             _ => {
                 valide = false

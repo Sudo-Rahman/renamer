@@ -1,14 +1,22 @@
 <script lang="ts">
     import * as Select from "$lib/components/ui/select/index.js";
-    import {t, locale, available_locales} from "$lib/translations";
+    import {locale as appLocal, available_locales, changeLocale, locales, type Locale} from "$lib/translations";
 
-    let current = $derived(available_locales[$locale]);
+    let current = $derived(available_locales[$appLocal]);
+
+    let locale = $state($appLocal);
+
+    function onChangeLocale(locale: string) {
+        if ($locales.includes(locale)) {
+            changeLocale(locale as Locale);
+        }
+    }
 
 </script>
 
 
-<Select.Root type="single" bind:value={$locale}
-             onValueChange={(e) => { console.log(e);locale.set(e.value)}}>
+<Select.Root bind:value={locale} onValueChange={(e) => { onChangeLocale(e); }}
+             type="single">
     <Select.Trigger class="w-fit transition-all duration-300 ease-in-out">
         <div class="space-x-5 flex items-center">
             <span>{current.name} </span>

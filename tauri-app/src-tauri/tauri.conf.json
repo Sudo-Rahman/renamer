@@ -1,7 +1,6 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/schema.json",
   "productName": "Renamer",
-  "version": "1.0.1",
   "identifier": "com.sudo-rahman.renamer",
   "build": {
     "beforeDevCommand": "pnpm dev",
@@ -10,19 +9,8 @@
     "frontendDist": "../build"
   },
   "app": {
-    "windows": [
-      {
-        "title": "Renamer",
-        "width": 1200,
-        "shadow": true,
-        "transparent": true,
-        "height": 600,
-        "minWidth": 1000,
-        "minHeight": 600,
-        "dragDropEnabled": true,
-        "decorations": false
-      }
-    ],
+    "macOSPrivateApi": true,
+    "windows": [],
     "security": {
       "csp": null
     }
@@ -43,7 +31,7 @@
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDg4MjhFRUYwMzA1QzM0NzUKUldSMU5Gd3c4TzRvaUFwMTUrei8zMzFNdXYweHduVUY5blNxTWpydEVoWEJ3MkFjU0FYYmFDODMK",
       "endpoints": [
-        "https://download.renamer.pro/latest.json"
+        "https://renamer.pro/downloads/latest.json"
       ]
     }
   }
