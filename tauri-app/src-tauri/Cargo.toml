@@ -1,6 +1,6 @@
 [package]
 name = "Renamer"
-version = "1.0.0"
+version = "1.0.2"
 description = "A Tauri App"
 authors = ["rahman"]
 edition = "2024"
