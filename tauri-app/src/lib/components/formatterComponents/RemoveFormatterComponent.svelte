@@ -28,6 +28,11 @@
         _dragDisabled = false;
     }
 
+    function stopDrag(e) {
+        e.preventDefault();
+        _dragDisabled = true;
+    }
+
     function handleKeyDown(e) {
         if ((e.key === "Enter" || e.key === " ") && dragDisabled) dragDisabled = false;
     }
@@ -65,18 +70,19 @@
 
     <div class="flex flex-col space-y-2 pt-2 w-full">
         <section class="space-y-2"
-                 on:consider={handleDndConsider}
-                 on:finalize={handleDndFinalize}
+                 onconsider={handleDndConsider}
+                 onfinalize={handleDndFinalize}
                  use:dndzone={{ items: inputs,dropTargetStyle, dragDisabled : _dragDisabled, flipDurationMs, type : "remove", zoneItemTabIndex: -1}}>
             {#each inputs as input (input.id)}
                 <div animate:flip={{ duration: flipDurationMs }} class="flex items-center space-x-2 h-10 px-2">
                     <div tabindex={dragDisabled? 0 : -1}
                          role="button"
                          aria-label="drag-handle"
-                         style={_dragDisabled ? 'cursor: grab' : 'cursor: grabbing'}
-                         on:mousedown={startDrag}
-                         on:touchstart={startDrag}
-                         on:keydown={handleKeyDown}>
+                         class="z-10 h-6 hover:cursor-grab active:cursor-grabbing"
+                         onmousedown={startDrag}
+                         onmouseenter={startDrag}
+                         onmouseleave= {stopDrag}
+                         onkeydown={handleKeyDown}>
                         <GripVertical class="h-5 w-5"/>
                     </div>
                     <Input

@@ -45,8 +45,8 @@
     <div class="flex-col space-y-2 h-full w-full min-w-72">
 
         <section class="flex flex-col min-w-10 space-y-2 p-1 h-full"
-                 on:consider={handleDndConsider}
-                 on:finalize={handleDndFinalize}
+                 onconsider={handleDndConsider}
+                 onfinalize={handleDndFinalize}
                  use:dndzone={{items: formatterList, dragDisabled, flipDurationMs, dropTargetStyle, type: "formatter"}}>
 
             {#key $preset}

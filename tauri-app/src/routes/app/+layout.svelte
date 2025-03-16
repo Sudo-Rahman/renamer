@@ -27,7 +27,7 @@
         isFullScreen = await appWindow.isFullscreen();
 
         // Écouter les changements d'état du plein écran
-        await appWindow.listen('tauri://resize', async (data) => {
+        await appWindow.listen('tauri://resize', async () => {
             isFullScreen = await appWindow.isFullscreen();
         });
     });
@@ -42,7 +42,7 @@
     {#if isMacOS}
         {#if !isFullScreen}
             <header class="w-full h-6" data-tauri-drag-region></header>
-            {#if id !== '/'}
+            {#if id !== '/app'}
                 <Separator/>
             {/if}
         {/if}
@@ -54,7 +54,9 @@
                 </div>
             </WindowTitlebar>
         </div>
-        <Separator/>
+        {#if id !== '/app'}
+            <Separator/>
+        {/if}
     {/if}
     {@render children()}
 </div>

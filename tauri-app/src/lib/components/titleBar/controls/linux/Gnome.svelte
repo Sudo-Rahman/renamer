@@ -21,14 +21,16 @@
 
 <div
         {...restProps}
-        class={cn("mr-[10px] px-3 py-2 h-auto items-center space-x-[13px]", className)}
+        class={cn("mr-[10px] py-2 h-auto items-center space-x-[13px]", className)}
 >
+
     <Button
-            class="m-0 aspect-square h-6 w-6 cursor-default rounded-full  bg-foreground/10 border p-0 text-foreground hover:bg-foreground/20 active:bg-foreground/30"
-            onclick={() => closeWindow()}
+            class="m-0 aspect-square h-6 w-6 cursor-default rounded-full bg-foreground/10 border p-0 text-foreground hover:bg-foreground/20 active:bg-foreground/30"
+            onclick={() => minimizeWindow()}
     >
-        <Icons class="h-2 w-2" icon="closeWin"/>
+        <Icons class="h-[9px] w-[9px]" icon="minimizeWin"/>
     </Button>
+
     <Button
             class="m-0 aspect-square h-6 w-6 cursor-default rounded-full  bg-foreground/10 border p-0 text-foreground hover:bg-foreground/20 active:bg-foreground/30"
             onclick={() => maximizeWindow()}
@@ -40,10 +42,12 @@
         {/if}
     </Button>
 
+
     <Button
-            class="m-0 aspect-square h-6 w-6 cursor-default rounded-full bg-foreground/10 border p-0 text-foreground hover:bg-foreground/20 active:bg-foreground/30"
-            onclick={() => minimizeWindow()}
+            class="m-0 aspect-square h-6 w-6 cursor-default rounded-full  bg-foreground/10 border p-0 text-foreground hover:bg-foreground/20 active:bg-foreground/30"
+            onclick={() => closeWindow()}
     >
-        <Icons class="h-[9px] w-[9px]" icon="minimizeWin"/>
+        <Icons class="h-2 w-2" icon="closeWin"/>
     </Button>
+
 </div>

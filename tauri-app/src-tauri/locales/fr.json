@@ -106,7 +106,6 @@
     "basic_text": {
       "title": "Texte",
       "input1": {
-        "label": "Texte",
         "placeholder": "Insérer le texte"
       }
     },

@@ -27,7 +27,7 @@ where
             return Ok(());
         }
         download_and_install_update(app).await?;
-    }
+    }else { main_window(); }
     Ok(())
 }
 

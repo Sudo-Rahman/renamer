@@ -4,14 +4,13 @@ version = 4
 
 [[package]]
 name = "Renamer"
-version = "1.0.0"
+version = "1.0.3"
 dependencies = [
  "cocoa",
  "glib-sys 0.20.4",
  "lazy_static",
  "mid",
  "online",
- "openssl",
  "renamer-shared",
  "reqwest",
  "rust-i18n",
@@ -20,7 +19,6 @@ dependencies = [
  "sys-locale",
  "tauri",
  "tauri-build",
- "tauri-plugin-core",
  "tauri-plugin-dialog",
  "tauri-plugin-fs",
  "tauri-plugin-os",
@@ -3044,15 +3042,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ff011a302c396a5197692431fc1948019154afc178baf7d8e37367442a4601cf"
 
 [[package]]
-name = "openssl-src"
-version = "300.3.2+3.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a211a18d945ef7e648cc6e0058f4c548ee46aab922ea203e0d30e966ea23647b"
-dependencies = [
- "cc",
-]
-
-[[package]]
 name = "openssl-sys"
 version = "0.9.103"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3060,7 +3049,6 @@ checksum = "7f9e8deee91df40a943c71b917e5874b951d32a802526c85721ce3b776c929d6"
 dependencies = [
  "cc",
  "libc",
- "openssl-src",
  "pkg-config",
  "vcpkg",
 ]
@@ -4823,12 +4811,6 @@ dependencies = [
  "toml",
  "walkdir",
 ]
-
-[[package]]
-name = "tauri-plugin-core"
-version = "2.0.0-beta.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3b7e8b8667127779d1abe14bad8630a149d92939ceecf5ed332d52852cee501a"
 
 [[package]]
 name = "tauri-plugin-dialog"
