@@ -36,9 +36,11 @@
         }
     });
 
-    function installAndDownload() {
-        invoke('download_and_install_update').catch(console.error)
-        getCurrentWindow().close()
+    async function installAndDownload() {
+        await invoke('download_and_install_update')
+            .then(() => {getCurrentWindow().close()})
+            .catch(console.error)
+
     }
 
 </script>

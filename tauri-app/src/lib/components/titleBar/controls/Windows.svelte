@@ -22,7 +22,7 @@
 <div {...restProps} class={cn("h-8 select-none", className)}>
     <Button
             class="max-h-8 w-[46px] cursor-default rounded-none bg-transparent text-black/90 hover:bg-black/[.05] active:bg-black/[.03]  dark:text-white dark:hover:bg-white/[.06] dark:active:bg-white/[.04]"
-            on:click={() => minimizeWindow()}
+            onclick={() => minimizeWindow()}
     >
         <Icons icon="minimizeWin"/>
     </Button>

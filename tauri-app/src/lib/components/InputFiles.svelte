@@ -9,21 +9,13 @@
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 
 
-    let dragActive = $state(false);
-
-
     function handleDragOver(event: DragEvent) {
         event.preventDefault();
-        dragActive = true;
     }
 
-    function handleDragLeave() {
-        dragActive = false;
-    }
 
     onMount(async () => {
         const dropListen = await listen('tauri://drag-drop', async (event: any) => {
-            if (dragActive) {
                 try {
                     const droppedFiles = event.payload.paths as string[];
                     let new_files: RenamerFile[] = [];
@@ -41,39 +33,15 @@
                     new_files = new_files.sort((a, b) => a.name.localeCompare(b.name));
                     $files = new_files;
                     toast.success($t('toast.import_files.success'));
-                    dragActive = false;
                     await goto('/app/mainWindow');
                 } catch (e) {
                     toast.error($t('toast.import_files.error'));
                     console.error(e);
                 }
-            }
-        });
-
-        const dragOverListen = await listen('tauri://drag-over', (event) => {
-            // only trigger the dragOver event if the drag is in div with id dropzone
-            let dropzone = document.getElementById('dropzone');
-            let pos = event.payload.position;
-            if (!pos) {
-                dragActive = false;
-                return;
-            }
-            // get the element at the current mouse position
-            let target = document.elementFromPoint(pos.x, pos.y);
-            // if the element is not the dropzone, return
-            while (target && target !== dropzone && target.parentElement) {
-                target = target.parentElement;
-            }
-            if (target !== dropzone) {
-                dragActive = false;
-                return;
-            }
-            dragActive = true;
         });
 
         return () => {
             dropListen();
-            dragOverListen();
         };
     });
 
@@ -108,10 +76,7 @@
 </script>
 
 <div class="flex h-full w-full items-center justify-center"
-     id="dropzone"
-     ondragleave={handleDragLeave}
      ondragover={handleDragOver}
-     onfocusout={_ => dragActive = false}
      role="document">
     <DropdownMenu.Root>
         <DropdownMenu.Trigger
