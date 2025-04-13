@@ -19,9 +19,15 @@ pub fn create_main_window(app: tauri::AppHandle) {
             builder = builder
                 .decorations(false)
                 .transparent(true)
-                .drag_and_drop(true)
                 .shadow(true);
         }
+
+        #[cfg(any(target_os = "windows"))]
+        {
+            builder = builder
+                .drag_and_drop(true)
+        }
+
 
         builder.build().unwrap();
     });
