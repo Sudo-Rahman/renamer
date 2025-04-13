@@ -5,29 +5,32 @@
     import {Button} from "$lib/components/ui/button";
     import {listen} from "@tauri-apps/api/event";
     import {ProgressBarStatus} from "@tauri-apps/api/window";
+    import {t} from "$lib/translations";
 
     let progress = $state(0);
-    let contentLength = $state<number | undefined>(0);
+    let contentProgress = $state<number | undefined>(undefined);
+    let contentLength = $state<number | undefined>(undefined);
     let finished = $state(false);
-    let text = $state('Mise à jour en cours');
+    let text = $state($t('updater.progress'));
 
     type ProgressEvent = {
         type: "download" | "finish";
-        progress?: number;
-        contentLength?: number;
+        downloaded?: number;
+        total?: number;
     }
 
     onMount(async () => {
 
         listen('update_progress', (event : {event : string,payload : ProgressEvent}) => {
-            console.log(event);
             if (event.payload.type === 'download') {
-                contentLength = event.payload.contentLength;
-                progress = (event.payload.progress! * 100) / event.payload.contentLength!;
+                contentLength = event.payload.total;
+                contentProgress = event.payload.downloaded;
+                progress = (contentProgress! * 100) / contentLength!;
                 tauriWindow.getCurrentWindow().setProgressBar({progress: progress});
             } else if (event.payload.type === 'finish') {
+                progress = 100;
                 finished = true;
-                text = 'Mise à jour terminée';
+                text = $t('updater.finished');
                 tauriWindow.getCurrentWindow().setProgressBar({status: ProgressBarStatus.None});
             }
         });
@@ -37,9 +40,16 @@
         await relaunch();
     }
 
+    function formatFileSize(bytes: number): string {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
+    }
+
 </script>
 
-<div class=" cursor-default select-none bg-card gap-10 flex flex-col justify-center items-center w-full h-full rounded-md p-10"
+<div class="cursor-default select-none bg-card gap-10 flex flex-col justify-center items-center w-full h-full mac:rounded-sm linux:rounded-sm p-10"
      data-tauri-drag-region>
 
     <div class="flex flex-col items-center">
@@ -47,26 +57,24 @@
     </div>
 
     <div class="flex flex-col items-center">
-        {#if !contentLength}
-            <div class="h-[22px] rounded-full border-primary border-2 relative w-52 p-1">
-                <div class="h-full bg-primary rounded-full" style="width: {progress}%"></div>
-            </div>
-        {:else}
-            <div class="h-[22px] rounded-full border-primary border-2 relative w-52 p-1">
-                <div class="h-full bg-primary rounded-full" style="width: 100%"></div>
-            </div>
-        {/if}
+        <div class="h-[26px] rounded-full border-primary border-2 relative w-52 p-1">
+            <div class="h-full bg-primary rounded-full" style="width: {progress}%"></div>
+            {#if contentProgress && contentLength}
+                <div class="absolute text-xs top-0 left-0 right-0 bottom-0 flex items-center justify-center">
+                    {formatFileSize(contentProgress)} / {formatFileSize(contentLength)}
+                </div>
+            {/if}
+        </div>
     </div>
     {#if finished}
         <div class="bottom-3">
             <Button onclick={relaunchApp}>
-                Relancer l'application
+                {$t('updater.relaunch')}
             </Button>
         </div>
     {:else}
         <div class="flex flex-col items-center">
-            <span class="text-sm">Veuillez ne pas fermer l'application</span>
-            <span class="text-sm">Cela peut prendre quelques minutes</span>
+            <span class="text-sm">{$t('updater.not_close')}</span>
         </div>
     {/if}
 

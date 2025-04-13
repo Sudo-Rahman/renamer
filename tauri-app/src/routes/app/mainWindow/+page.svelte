@@ -99,7 +99,9 @@
                 <FormattersComponent/>
             </div>
         </Resizable.Pane>
-        <Resizable.Handle class="p-0 m-0" withHandle/>
+        <Resizable.Handle
+                class="p-0 m-0 w-0.5 transition-all duration-300 ease-in-out hover:ring-2 active:ring-2 hover:bg-primary hover:ring-primary active:bg-primary active:ring-primary"
+                withHandle/>
         <Resizable.Pane minSize={50}>
 
             <div bind:this={rightPane} class="flex flex-col h-full">

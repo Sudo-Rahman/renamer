@@ -16,7 +16,6 @@
         if (open)
             getPresetList().then((result) => {
                 presets = result;
-                console.log(presets);
             });
     });
 

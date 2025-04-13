@@ -30,7 +30,7 @@
     }
 </script>
 
-<div class="overflow-x-scroll w-full h-full">
+<div class="overflow-x-auto w-full h-full">
     <div class="w-full h-full flex flex-col min-w-[40rem]">
 
         <div class="px-3 flex-col flex w-full">

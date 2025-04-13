@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {osType} from "./utils/os"
+    import {osType} from "$lib/os"
     import {cn} from "./utils/utils"
     import type {WindowControlsProps} from "./types"
     import WindowControls from "./WindowControls.svelte"
@@ -15,13 +15,7 @@
 
     let {children, class: className, controlsOrder = "system", windowControlsProps = {}, ...restProps}: Props = $props()
 
-    let left = $state(controlsOrder === "left" ||
-        (controlsOrder === "platform" &&
-            windowControlsProps?.platform === "macos"))
-
-    osType.then((osType) => {
-        left = left || (controlsOrder === "system" && osType === "macos")
-    })
+    let left = $state(controlsOrder === "left" || (controlsOrder === "system" && osType === "macos"))
 
     const restPropsFn = (ml: string) => {
         if (windowControlsProps?.justify !== undefined) return windowControlsProps

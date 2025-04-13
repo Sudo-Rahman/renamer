@@ -3,9 +3,9 @@
     import {Button} from "$lib/components/ui/button";
     import {goto} from "$app/navigation";
     import LeftSide from "./ui/LeftSide.svelte";
-    import { settingsRouteList, SettingsRoutes} from "./settings";
+    import {settingsRouteList, SettingsRoutes} from "./settings";
     import {t} from "$lib/translations";
-    import { page } from '$app/state';
+    import {page} from '$app/state';
 
     let currentRoute = $state(settingsRouteList[parseInt(page.url.searchParams.get('page') ?? "0")] ?? settingsRouteList[0]);
 
@@ -26,7 +26,7 @@
                 {$t(currentRoute.title)}
             </h1>
             <Button class="p-0 w-8 rounded-full h-8 stroke"
-                    onclick={async () => { await goto('mainWindow')}}
+                    onclick={async () => { await goto('/app/mainWindow')}}
                     variant="outline">
                 <X/>
             </Button>

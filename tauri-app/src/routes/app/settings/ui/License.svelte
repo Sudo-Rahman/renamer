@@ -13,6 +13,7 @@
 
     let key: string = $state('');
     let valide: boolean | null = $state(null);
+    let activate: boolean = $state(false);
 
     onMount(async () => {
         await checkLicense();
@@ -43,12 +44,15 @@
 
     function activate_license() {
         if (key === '') return;
+        activate = true;
         invoke("activate_license", {"key": key}).then(
             (response) => {
+                activate = false;
                 valide = response as boolean;
                 key = '';
             },
             async (error) => {
+                activate = false;
                 console.log(error);
                 switch (error) {
                     case 1:
@@ -92,7 +96,13 @@
             <div class="flex w-full space-x-5">
                 <Input bind:value={key} type="text" class="min-w-80"
                        placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"/>
-                <Button class="w-1/4" onclick={activate_license}>{$t('settings.license.key.activate_btn')}</Button>
+                <Button class="w-1/4" onclick={activate_license}>
+                    {#if activate}
+                        <CircularProgress circleColor="text-secondary"/>
+                    {:else}
+                        {$t('settings.license.key.activate_btn')}
+                    {/if}
+                </Button>
             </div>
         </SettingsItemCard>
     </div>

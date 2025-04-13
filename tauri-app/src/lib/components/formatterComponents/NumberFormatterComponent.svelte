@@ -38,7 +38,6 @@
         if ((event.target as HTMLInputElement).value.length > 0) {
             start = parseInt((event.target as HTMLInputElement).value);
         } else {
-            console.log((event.target as HTMLInputElement).value);
             start = 1;
             (event.target as HTMLInputElement).value = formatter.start.toString();
         }

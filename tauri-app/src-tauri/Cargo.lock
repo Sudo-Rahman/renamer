@@ -4,7 +4,7 @@ version = 4
 
 [[package]]
 name = "Renamer"
-version = "1.0.3"
+version = "1.0.0"
 dependencies = [
  "cocoa",
  "glib-sys 0.20.4",

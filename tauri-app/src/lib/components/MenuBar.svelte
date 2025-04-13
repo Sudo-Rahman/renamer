@@ -96,7 +96,7 @@
                         kind: "error"
                     }).then(
                         (res) => {
-                            goto("settings?page=1");
+                            goto("/app/settings?page=1");
                         }
                     )
                 } else {
@@ -147,7 +147,7 @@
             <Menubar.Menu>
                 <Menubar.Trigger>{$t('menu_bar.file.title')}</Menubar.Trigger>
                 <Menubar.Content>
-                    <Menubar.Item onclick={async ()=> { await goto('settings')}}>
+                    <Menubar.Item onclick={async ()=> { await goto('/app/settings')}}>
                         {$t('menu_bar.file.settings')}
                     </Menubar.Item>
                     <Menubar.Separator/>

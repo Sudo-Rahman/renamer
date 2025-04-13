@@ -6,6 +6,7 @@
     import {invoke} from "@tauri-apps/api/core";
     import {t} from '$lib/translations';
     import {toast} from "svelte-sonner";
+    import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 
 
     let dragActive = $state(false);
@@ -41,7 +42,7 @@
                     $files = new_files;
                     toast.success($t('toast.import_files.success'));
                     dragActive = false;
-                    await goto('app/mainWindow');
+                    await goto('/app/mainWindow');
                 } catch (e) {
                     toast.error($t('toast.import_files.error'));
                     console.error(e);
@@ -82,7 +83,21 @@
             if ($files.length === 0) {
                 return;
             }
-            await goto('app/mainWindow');
+            await goto('/app/mainWindow');
+            toast.success($t('toast.import_files.success'));
+        } catch (e) {
+            toast.error($t('toast.import_files.error'));
+            console.error(e);
+        }
+    }
+
+    async function getFiles() {
+        try {
+            $files = await getFilesFromFileDialog("Files");
+            if ($files.length === 0) {
+                return;
+            }
+            await goto('/app/mainWindow');
             toast.success($t('toast.import_files.success'));
         } catch (e) {
             toast.error($t('toast.import_files.error'));
@@ -92,15 +107,20 @@
 
 </script>
 
-<div class="flex p-10 h-[200px] w-[350px] items-center justify-center rounded-md border-2 border-dashed text-sm"
-     class:bg-primary={dragActive} class:border-secondary={dragActive}
+<div class="flex h-full w-full items-center justify-center"
      id="dropzone"
      ondragleave={handleDragLeave}
      ondragover={handleDragOver}
      onfocusout={_ => dragActive = false}
-     role="button"
-     tabindex="0">
-    <button class="h-full w-full" onclick={getFolder} type="button">
-        {$t('drag_drop_zone')}
-    </button>
+     role="document">
+    <DropdownMenu.Root>
+        <DropdownMenu.Trigger
+                class="flex p-10 h-[200px] w-[350px] items-center justify-center rounded-md border-2 border-dashed text-sm">{$t('drag_drop_zone')}</DropdownMenu.Trigger>
+        <DropdownMenu.Content>
+            <DropdownMenu.Group>
+                <DropdownMenu.Item onclick={getFiles}>{$t('drag_drop_zone.files')}</DropdownMenu.Item>
+                <DropdownMenu.Item onclick={getFolder}>{$t('drag_drop_zone.folder')}</DropdownMenu.Item>
+            </DropdownMenu.Group>
+        </DropdownMenu.Content>
+    </DropdownMenu.Root>
 </div>

@@ -48,7 +48,6 @@ fn main() {
             open_browser_url,
             save_presets,
             get_app,
-            get_languages_data,
             download_and_install_update
         ])
         .run(tauri::generate_context!())

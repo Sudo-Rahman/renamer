@@ -36,7 +36,7 @@
 
 <svelte:window on:scroll|preventDefault/>
 
-<div class="w-full flex flex-col h-screen select-none cursor-default rounded-sm bg-background overflow-hidden dark:border-white/5 border-black/5 border"
+<div class="w-full flex flex-col h-screen select-none cursor-default rounded-sm bg-background overflow-hidden dark:border-white/5 border-black/5 linux:rounded-sm"
      spellcheck="false">
     <Toaster/>
     {#if isMacOS}

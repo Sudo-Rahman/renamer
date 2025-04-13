@@ -12,10 +12,10 @@ use renamer_shared::UserMachine;
 use tauri::{AppHandle, Manager};
 use tauri_plugin_store::StoreExt;
 
-// #[cfg(debug_assertions)]
-// pub const API_URL: &str = "http://localhost:3000";
-//
-// #[cfg(not(debug_assertions))]
+#[cfg(debug_assertions)]
+pub const API_URL: &str = "http://localhost:3000";
+
+#[cfg(not(debug_assertions))]
 pub const API_URL: &str = "https://api.renamer.pro";
 
 pub async fn fetch_user_machine(mut user: &UserMachine) -> Result<(), String> {

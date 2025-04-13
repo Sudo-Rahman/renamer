@@ -20,7 +20,9 @@ pub async fn list_files_in_directory(dir: String) -> Result<Value, String> {
             }
 
             if path.is_file() {
-                match RenameFile::new(path.to_string_lossy().to_string()) {
+                // Normaliser le chemin de fichier avant de créer RenameFile
+                let normalized_path = path.to_string_lossy().to_string().replace('\\', "/");
+                match RenameFile::new(normalized_path) {
                     Ok(file) => files.push(file),
                     Err(err) => eprintln!("Error reading file metadata: {}", err),
                 }
@@ -47,9 +49,12 @@ pub async fn files_from_vec(files: Vec<String>) -> Result<Value, String> {
     let binding = files.first().unwrap();
     let dir = Path::new(&binding).parent().unwrap();
     for file in &files {
-        let path = Path::new(file);
+        // Normaliser chaque chemin en remplaçant les backslashes par des forward slashes
+        let normalized_path = file.replace('\\', "/");
+        let path = Path::new(&normalized_path);
+
         if path.is_file() && path.parent().unwrap() == dir {
-            match RenameFile::new(path.to_string_lossy().to_string()) {
+            match RenameFile::new(normalized_path) {
                 Ok(file) => files_vec.push(file),
                 Err(err) => eprintln!("Error reading file metadata: {}", err),
             }
@@ -120,7 +125,9 @@ pub async fn check_files_names(files: Vec<FileRenameInfo>) -> Result<Vec<FileSta
             let path = entry.path();
 
             if path.is_file() {
-                files_in_dir.push(path.to_string_lossy().to_string());
+                // Normaliser le chemin des fichiers dans le répertoire
+                let normalized_file_path = path.to_string_lossy().to_string().replace('\\', "/");
+                files_in_dir.push(normalized_file_path);
             }
         }
     } else {
@@ -178,27 +185,6 @@ const LOCAL: fn() -> String = || {
 pub async fn get_system_language() -> String {
     let lang = AppStore::read::<String>("lang");
     lang.unwrap_or_else(|| LOCAL())
-}
-
-#[tauri::command]
-pub async fn get_languages_data() -> Value {
-    let mut languages = Vec::new();
-
-    languages.push(Language {
-        locale: "en".to_string(),
-        data: include_str!("../locales/en.json").to_string(),
-    });
-
-    languages.push(Language {
-        locale: "fr".to_string(),
-        data: include_str!("../locales/fr.json").to_string(),
-    });
-
-    let system_lang = get_system_language().await;
-    json!({
-        "languages": languages,
-        "locale": system_lang
-    })
 }
 
 #[tauri::command]
