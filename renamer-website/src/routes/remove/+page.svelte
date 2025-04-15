@@ -3,7 +3,7 @@
     import {quintOut} from "svelte/easing";
 
     let email = $state("");
-    let licenseKey =  $state("");
+    let licenseKey = $state("");
     let posts = $state(new Array<string>())
     let getPosts = $state(false);
 
@@ -13,7 +13,7 @@
     import CircularProgress from "$lib/components/CircularProgress.svelte";
     import Card from "$lib/components/CardRevealedPointer.svelte";
     import {toast} from "svelte-sonner";
-    import {PUBLIC_API_URL} from "$env/static/public";
+    import {env} from "$env/dynamic/public";
     import {flip} from "svelte/animate";
     import {fly} from "svelte/transition";
 
@@ -34,7 +34,7 @@
             return;
         }
         getPosts = true;
-        fetch(PUBLIC_API_URL + "/get_user", {
+        fetch(env.PUBLIC_API_URL + "/get_user", {
             method: 'POST',
             headers: {'Content-Type': 'application/json'}, // Pas besoin de mode no-cors
             body: JSON.stringify({
@@ -71,7 +71,7 @@
         posts = [...posts, machine.id];
         await new Promise(resolve => setTimeout(resolve, 2000));
         try {
-            const response = await fetch(PUBLIC_API_URL + "/remove_machine", {
+            const response = await fetch(env.PUBLIC_API_URL + "/remove_machine", {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -128,13 +128,13 @@
                         <Input
                                 bind:value={licenseKey}
                                 class="w-full transition-all duration-300 ease-in-out"
-                                placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-                                type="text"
                                 onkeydown={(e) => {
                                     if (e.key === "Enter") {
                                         getUser();
                                     }
                                 }}
+                                placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                                type="text"
                         />
                     </div>
 

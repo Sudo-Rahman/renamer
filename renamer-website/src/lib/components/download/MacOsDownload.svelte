@@ -1,13 +1,10 @@
 <script lang="ts">
     import * as Select from "$lib/components/ui/select/index.js";
     import {Button} from "$lib/components/ui/button";
+    import {page} from "$app/state";
 
     let selected = $state({value: "universal", label: ".dmg (Universal)"});
-
-    function download() {
-        const url = ""
-        window.open(url, "_blank");
-    }
+    const url = `${page.url.origin}/downloads/Renamer_universal.dmg`;
 
 </script>
 
@@ -18,7 +15,7 @@
 
     <div class="flex">
 
-        <Select.Root type="single" bind:value={selected.value}>
+        <Select.Root bind:value={selected.value} type="single">
             <Select.Trigger class="w-52" value="x86">
                 {selected.label}
             </Select.Trigger>
@@ -27,7 +24,7 @@
             </Select.Content>
         </Select.Root>
 
-        <Button class="ml-2">Download</Button>
+        <Button class="ml-2" href={url}>Download</Button>
 
     </div>
 </div>

@@ -1,6 +1,4 @@
 <script lang="ts">
-    import {Button} from "$lib/components/ui/button";
-    import {onMount} from "svelte";
     import PricingSection from "$lib/components/pricing/PricingSection.svelte";
     import * as Tabs from "$lib/components/ui/tabs/index.js";
     import WindowsDownload from "$lib/components/download/WindowsDownload.svelte";

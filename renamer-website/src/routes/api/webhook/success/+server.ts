@@ -17,7 +17,7 @@ export const POST: RequestHandler = async ({request}) => {
 
         // Vérification de la signature du webhook avec le secret
         event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
-    } catch (err) {
+    } catch (err: any) {
         console.error(`⚠️  Erreur lors de la vérification du webhook: ${err.message}`);
         return new Response(`Webhook Error: ${err.message}`, {status: 400});
     }
@@ -34,7 +34,7 @@ export const POST: RequestHandler = async ({request}) => {
             try {
                 const product = await stripe.products.retrieve(session.metadata.product);
                 plan = +product.metadata.plan || 1;
-            } catch (err) {
+            } catch (err: any) {
                 console.error(`⚠️  Erreur lors de la récupération du produit: ${err.message}`);
             }
 
@@ -47,7 +47,8 @@ export const POST: RequestHandler = async ({request}) => {
                     },
                     body: JSON.stringify({
                         email: session.customer_details.email,
-                        plan: plan
+                        plan: plan,
+                        token: env.AUTHENTICATION_KEY
                     }),
                 }
             ).then(

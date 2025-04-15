@@ -1,7 +1,8 @@
 import type {RequestHandler} from "@sveltejs/kit";
 import {stripe} from "$lib/server/Stripe";
+import {env} from '$env/dynamic/private';
 
-export const POST: RequestHandler = async ({request}) => {
+export const POST: RequestHandler = async ({url, request}) => {
     try {
         // Récupère les données de la requête
         const data = await request.json();
@@ -18,9 +19,12 @@ export const POST: RequestHandler = async ({request}) => {
                     quantity: 1,
                 },
             ],
+            invoice_creation: {
+                enabled: true,
+            },
             mode: 'payment',
-            success_url: 'http://localhost:5173/api/webhook',
-            cancel_url: 'http://localhost:5173/cancel',
+            success_url: `${url.origin}/api/webhook/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${url.origin}/api/webhook/cancel`,
         });
 
         // Renvoie la session ID pour le front-end

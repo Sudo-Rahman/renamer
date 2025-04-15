@@ -1,20 +1,22 @@
 #![allow(unused)]
 
-use std::any::TypeId;
 use crate::db::Mongo;
 use crate::mailgun::MailgunEmail;
 use crate::models::{user_to_user_machine, Log, ServerConfig, User};
-use renamer_shared::{UserMachine, Machine};
 use axum::extract::{ConnectInfo, State};
 use axum::http::StatusCode;
 use axum::Json;
 use mongodb::bson;
 use mongodb::bson::Uuid;
+use renamer_shared::{Machine, UserMachine};
 use serde::de::DeserializeOwned;
 use serde_json::{json, Value};
+use std::any::TypeId;
+use std::env;
 use std::fmt::Debug;
 use std::net::SocketAddr;
-use serde::de::Unexpected::Option;
+
+static AUTHENTICATION_KEY: Option<&str> = option_env!("AUTHENTICATION_KEY");
 
 fn extract_field<T>(body: &Value, field: &str) -> Result<T, (StatusCode, String)>
 where
@@ -82,45 +84,52 @@ pub async fn create_user(
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
     Json(body): Json<Value>,
 ) -> Result<(StatusCode, String), (StatusCode, String)> {
-    if (addr.ip().is_loopback()) {
-        let email = extract_field::<String>(&body, "email")?;
-        let plan = extract_field::<u8>(&body, "plan")?;
-
-        let user = User {
-            _id: bson::oid::ObjectId::new(),
-            email: email.to_string(),
-            plan,
-            key: Uuid::from_bytes(*uuid::Uuid::now_v7().as_bytes()),
-            machines: vec![],
-            presets: "".to_string(),
-        };
-        match config.db.insert_user(&user).await {
-            Ok(_) => {
-                let email = MailgunEmail {
-                    from: format!("noreply@{domain}", domain = MailgunEmail::get_domain()),
-                    to: email.to_string(),
-                    subject: "Your license key".to_string(),
-                    text: "Here is your license key: ".to_string() + &user.key.to_string(),
-                };
-                match email.send().await {
-                    Ok(()) => {}
-                    Err(log) => {
-                        config.db.insert_log(log).await;
-                    }
-                }
-                Ok((StatusCode::CREATED, json!(user).to_string()))
+    match (extract_field::<String>(&body, "token")) {
+        Ok(token) => {
+            if AUTHENTICATION_KEY.unwrap_or("") != token {
+                return Err((StatusCode::UNAUTHORIZED, "Invalid token".to_string()));
             }
-            Err(_) => {
-                config.db.insert_log(Log {
-                    _id: bson::oid::ObjectId::new(),
-                    date_time: bson::DateTime::now(),
-                    message: format!("Failed to create user: {}", email),
-                }).await;
-                Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to create user".to_string()))
+
+            let email = extract_field::<String>(&body, "email")?;
+            let plan = extract_field::<u8>(&body, "plan")?;
+
+            let user = User {
+                _id: bson::oid::ObjectId::new(),
+                email: email.to_string(),
+                plan,
+                key: Uuid::from_bytes(*uuid::Uuid::now_v7().as_bytes()),
+                machines: vec![],
+                presets: "".to_string(),
+            };
+            match config.db.insert_user(&user).await {
+                Ok(_) => {
+                    let email = MailgunEmail {
+                        from: format!("noreply@{domain}", domain = MailgunEmail::get_domain()),
+                        to: email.to_string(),
+                        subject: "Your license key".to_string(),
+                        text: "Here is your license key: ".to_string() + &user.key.to_string(),
+                    };
+                    match email.send().await {
+                        Ok(()) => {}
+                        Err(log) => {
+                            config.db.insert_log(log).await;
+                        }
+                    }
+                    Ok((StatusCode::CREATED, json!(user).to_string()))
+                }
+                Err(_) => {
+                    config.db.insert_log(Log {
+                        _id: bson::oid::ObjectId::new(),
+                        date_time: bson::DateTime::now(),
+                        message: format!("Failed to create user: {}", email),
+                    }).await;
+                    Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to create user".to_string()))
+                }
             }
         }
-    } else {
-        Err((StatusCode::NOT_FOUND, "".to_string()))
+        Err(_) => {
+            Err((StatusCode::BAD_REQUEST, "Missing token".to_string()))
+        }
     }
 }
 

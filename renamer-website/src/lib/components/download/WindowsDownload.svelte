@@ -1,13 +1,13 @@
 <script lang="ts">
     import * as Select from "$lib/components/ui/select/index.js";
     import {Button} from "$lib/components/ui/button";
+    import {page} from "$app/state";
 
-    let selected = $state({value: "x86", label: ".exe (Windows x86)"});
+    const amd64 = `${page.url.origin}/downloads/Renamer_amd64-setup.exe`;
+    const arm64 = `${page.url.origin}/downloads/Renamer_arm64-setup.exe`;
 
-    function download() {
-        const url = selected.value === "x86" ? "/renamer-setup.exe" : "/renamer-setup-arm64.exe";
-        window.open(url, "_blank");
-    }
+
+    let selected = $state({value: "amd64", label: ".exe (Windows AMD64)", url: amd64});
 
 </script>
 
@@ -18,17 +18,17 @@
 
     <div class="flex">
 
-        <Select.Root type="single" bind:value={selected.value}>
+        <Select.Root bind:value={selected.value} type="single">
             <Select.Trigger class="w-52" value="x86">
                 {selected.label}
             </Select.Trigger>
             <Select.Content class="w-fit flex">
-                <Select.Item value="x86">.exe (Windows x86)</Select.Item>
-                <Select.Item value="arm64">.exe (Windows ARM64)</Select.Item>
+                <Select.Item onclick={_ =>selected.url = amd64} value="amd64">.exe (Windows AMD64)</Select.Item>
+                <Select.Item onclick={_ =>selected.url = arm64} value="arm64">.exe (Windows ARM64)</Select.Item>
             </Select.Content>
         </Select.Root>
 
-        <Button class="ml-2">Download</Button>
+        <Button class="ml-2" href={selected.url}>Download</Button>
 
     </div>
 </div>
