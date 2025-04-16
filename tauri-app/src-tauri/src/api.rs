@@ -57,6 +57,7 @@ pub async fn save_license(user: UserMachine) -> bool {
 #[tauri::command]
 pub async fn is_license_ok(app: tauri::AppHandle) -> Result<u8, i8> {
     let license = get_license().await;
+    let application = APPLICATION.clone();
     match license {
         Ok(license) => {
             if (online::check(None).is_ok()) {
@@ -64,17 +65,24 @@ pub async fn is_license_ok(app: tauri::AppHandle) -> Result<u8, i8> {
                 match res {
                     Ok(res) => {
                         AppStore::write("presets", json!(license.presets));
+                        application.lock().await.set_license(license.plan);
                         Ok(license.plan)
                     }
                     Err(_) => {
-                        if license.machine.id == get_machine_id() { Ok(1) } else { Err(5) }
+                        application.lock().await.set_license(0);
+                        Err(5)
                     }
                 }
             } else {
-                Ok(if license.machine.id == get_machine_id() { 1 } else { 0 })
+                let plan = if license.machine.id == get_machine_id() { 1 } else { 0 };
+                application.lock().await.set_license(plan);
+                Ok(plan)
             }
         }
-        Err(_) => Err(1),
+        Err(_) => {
+            application.lock().await.set_license(0);
+            Err(1)
+        }
     }
 }
 
@@ -129,7 +137,7 @@ pub async fn remove_license(app: tauri::AppHandle) -> Result<bool, i8> {
     let client = Client::new();
     let res = client
         .post(format!("{}/remove_machine", API_URL))
-        .json(&license)
+        .json(&license.unwrap())
         .send()
         .await
         .or_else(|_| Err(1))?;

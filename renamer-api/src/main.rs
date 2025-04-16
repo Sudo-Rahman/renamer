@@ -29,7 +29,13 @@ async fn main() {
         exit(1);
     });
 
-    let config = ServerConfig { db };
+    let token = std::env::var("AUTHENTICATION_KEY").unwrap_or_else(|_| {
+        eprintln!("AUTH_TOKEN environment variable not set");
+        exit(1);
+    });
+
+
+    let config = ServerConfig { db, token };
 
     let mut app = Router::new()
         .route("/license", post(get_license))
@@ -38,7 +44,8 @@ async fn main() {
         .route("/remove_machine", post(remove_machine))
         .route("/create", post(create_user))
         .route("/logs", get(get_all_logs))
-        .route("/save_presets", post(save_presets));
+        .route("/save_presets", post(save_presets))
+        .route("/ping", get(|| async { return StatusCode::OK; }));
 
     if cfg!(debug_assertions) {
         app = app.layer(CorsLayer::new()

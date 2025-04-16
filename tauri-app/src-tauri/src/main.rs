@@ -73,13 +73,7 @@ fn setup<'a>(app: &'a mut tauri::App) -> Result<(), Box<dyn std::error::Error>> 
 
     let handle_clone2 = app.handle().clone();
     tauri::async_runtime::spawn(async move {
-        let license_result = is_license_ok(handle_clone2.clone()).await;
-        let application = APPLICATION.clone();
-        if let Ok(plan) = license_result {
-            application.lock().await.set_license(plan);
-        } else {
-            application.lock().await.set_license(0);
-        }
+        is_license_ok(handle_clone2.clone()).await;
     });
     Ok(())
 }

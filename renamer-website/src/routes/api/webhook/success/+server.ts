@@ -38,6 +38,8 @@ export const POST: RequestHandler = async ({request}) => {
                 console.error(`⚠️  Erreur lors de la récupération du produit: ${err.message}`);
             }
 
+            const invoice = await stripe.invoices.retrieve(session.invoice);
+
             await fetch(
                 env.API_URL + "/create",
                 {
@@ -48,7 +50,9 @@ export const POST: RequestHandler = async ({request}) => {
                     body: JSON.stringify({
                         email: session.customer_details.email,
                         plan: plan,
-                        token: env.AUTHENTICATION_KEY
+                        token: env.AUTHENTICATION_KEY,
+                        checkout_session_id: session.id,
+                        invoice_url: invoice.hosted_invoice_url,
                     }),
                 }
             ).then(

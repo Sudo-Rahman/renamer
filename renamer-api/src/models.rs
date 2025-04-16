@@ -10,6 +10,7 @@ use serde_json::{json, Value};
 #[derive(Clone)]
 pub struct ServerConfig {
     pub db: Mongo,
+    pub token: String,
 }
 
 

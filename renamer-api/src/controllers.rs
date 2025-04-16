@@ -1,7 +1,7 @@
 #![allow(unused)]
 
 use crate::db::Mongo;
-use crate::mailgun::MailgunEmail;
+use crate::mailgun::{MailgunEmail, OrderConfirmationData, RemoveMachineData};
 use crate::models::{user_to_user_machine, Log, ServerConfig, User};
 use axum::extract::{ConnectInfo, State};
 use axum::http::StatusCode;
@@ -15,8 +15,6 @@ use std::any::TypeId;
 use std::env;
 use std::fmt::Debug;
 use std::net::SocketAddr;
-
-static AUTHENTICATION_KEY: Option<&str> = option_env!("AUTHENTICATION_KEY");
 
 fn extract_field<T>(body: &Value, field: &str) -> Result<T, (StatusCode, String)>
 where
@@ -86,7 +84,7 @@ pub async fn create_user(
 ) -> Result<(StatusCode, String), (StatusCode, String)> {
     match (extract_field::<String>(&body, "token")) {
         Ok(token) => {
-            if AUTHENTICATION_KEY.unwrap_or("") != token {
+            if config.token != token {
                 return Err((StatusCode::UNAUTHORIZED, "Invalid token".to_string()));
             }
 
@@ -106,10 +104,16 @@ pub async fn create_user(
                     let email = MailgunEmail {
                         from: format!("noreply@{domain}", domain = MailgunEmail::get_domain()),
                         to: email.to_string(),
-                        subject: "Your license key".to_string(),
-                        text: "Here is your license key: ".to_string() + &user.key.to_string(),
                     };
-                    match email.send().await {
+
+                    let data =
+                        OrderConfirmationData {
+                            checkout_session_id: body["checkout_session_id"].as_str().unwrap().to_string(),
+                            invoice_url: body["invoice_url"].as_str().unwrap().to_string(),
+                            license_key: user.key.to_string(),
+                        };
+
+                    match email.send_order_confirmation(data).await {
                         Ok(()) => {}
                         Err(log) => {
                             config.db.insert_log(log).await;
@@ -252,10 +256,8 @@ pub async fn remove_machine(
             let email = MailgunEmail {
                 from: format!("noreply@{domain}", domain = MailgunEmail::get_domain()),
                 to: email.to_string(),
-                subject: "License Renamer".to_string(),
-                text: format!("Machine name {} removed", machine.device_name),
             };
-            match email.send().await {
+            match email.send_remove_machine(RemoveMachineData { machine_name: machine.device_name, license_key: key }).await {
                 Ok(()) => {}
                 Err(log) => {
                     config.db.insert_log(log).await;
@@ -296,10 +298,13 @@ pub async fn get_user(
 
     match user {
         Some(user) => {
-            if user.key.to_string() == key.clone() {
-                Ok((StatusCode::OK, serde_json::to_string(&user).unwrap()))
+            let machine = extract_field::<Machine>(&body, "machine")?;
+
+            // Vérifier si l'utilisateur existe
+            if user.machines.iter().any(|m| m.id == machine.id) {
+                Ok((StatusCode::OK, json!(user_to_user_machine(user, machine)).to_string()))
             } else {
-                Err((StatusCode::UNAUTHORIZED, "Invalid key".to_string()))
+                Err((StatusCode::UNAUTHORIZED, "Machine not found".to_string()))
             }
         }
         None => Err((StatusCode::NOT_FOUND, "User not found".to_string()))

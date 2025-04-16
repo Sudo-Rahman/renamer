@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Purchase Confirmation</title>
+    <style>
+        /* Same CSS styles as previous French version */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 16px;
+            color: #555555;
+            line-height: 1.5;
+        }
+
+        .info {
+            margin-top: 20px;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #222222;
+        }
+
+        a.button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        a.button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Your Purchase is Confirmed</h1>
+    <p>Thank you for your purchase! Here are your transaction details:</p>
+    <div class="info">
+        <p><span class="label">Order ID:</span> <strong>{{stripe_checkout_id}}</strong></p>
+        <p><span class="label">License Key:</span> <strong>{{license_key}}</strong></p>
+        <p><span class="label">Invoice URL:</span> <a href="{{invoice_url}}" target="_blank">{{invoice_url}}</a></p>
+    </div>
+    <p>If you have any questions or need assistance, please contact our support team.</p>
+    <a class="button" href="{{invoice_url}}">View Invoice</a>
+</div>
+</body>
+</html>

@@ -1,6 +1,7 @@
 use reqwest::{Client, Response};
 use std::collections::HashMap;
 use axum::http::StatusCode;
+use chrono::Utc;
 use mongodb::bson::{bson, Bson};
 use reqwest::multipart;
 use tokio::fs::OpenOptions;
@@ -11,12 +12,56 @@ use crate::models::Log;
 pub struct MailgunEmail {
     pub from: String,
     pub to: String,
+}
+
+pub struct OrderConfirmationData {
+    pub checkout_session_id: String,
+    pub invoice_url: String,
+    pub license_key: String,
+}
+
+pub struct RemoveMachineData {
+    pub machine_name: String,
+    pub license_key: String,
+}
+
+struct SendEmailData {
+    pub from: String,
+    pub to: String,
     pub subject: String,
-    pub text: String,
+    pub html: String,
 }
 
 impl MailgunEmail {
-    pub async fn send(&self) -> Result<(), Log> {
+    pub async fn send_order_confirmation(&self, data: OrderConfirmationData) -> Result<(), Log> {
+        let html = include_str!("templates/order_confirmation.html")
+            .replace("{{stripe_checkout_id}}", &data.checkout_session_id)
+            .replace("{{invoice_url}}", &data.invoice_url)
+            .replace("{{license_key}}", &data.license_key);
+
+        self.send(SendEmailData {
+            from: self.from.clone(),
+            to: self.to.clone(),
+            subject: "Your purchase is confirmed".to_string(),
+            html,
+        }).await
+    }
+
+    pub async fn send_remove_machine(&self, data: RemoveMachineData) -> Result<(), Log> {
+        let html = include_str!("templates/remove_machine.html")
+            .replace("{{machine_name}}", &data.machine_name)
+            .replace("{{license_key}}", &data.license_key)
+            .replace("{{removal_date}}", &Utc::now().to_string());
+
+        self.send(SendEmailData {
+            from: self.from.clone(),
+            to: self.to.clone(),
+            subject: "Machine removed".to_string(),
+            html,
+        }).await
+    }
+
+    async fn send(&self, data: SendEmailData) -> Result<(), Log> {
         let client = Client::builder()
             .redirect(reqwest::redirect::Policy::none())
             .build()
@@ -25,25 +70,24 @@ impl MailgunEmail {
 
         let api_key = self.get_api_key().expect("Failed to get API key");
 
-        // Créer un formulaire multipart
         let form = multipart::Form::new()
-            .text("from", self.from.clone())
-            .text("to", self.to.clone())
-            .text("subject", self.subject.clone())
-            .text("text", self.text.clone());
+            .text("from", data.from)
+            .text("to", data.to)
+            .text("subject", data.subject)
+            .text("html", data.html);
 
         let response = client.post(format!("https://api.eu.mailgun.net/v3/{}/messages", MailgunEmail::get_domain()))
             .basic_auth("api", Some(api_key))
             .multipart(form)
             .send().await;
 
-        let mut  error = response.is_err();
+        let mut error = response.is_err();
         let mut text = "".to_string();
         if error {
             text = response.as_ref().err().unwrap().to_string();
         }
 
-        if !error  && response.as_ref().unwrap().status() != StatusCode::OK {
+        if !error && response.as_ref().unwrap().status() != StatusCode::OK {
             error = true;
             text = response.unwrap().text().await.unwrap();
         }
