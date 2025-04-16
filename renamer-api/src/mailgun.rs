@@ -15,7 +15,7 @@ pub struct MailgunEmail {
 }
 
 pub struct OrderConfirmationData {
-    pub checkout_session_id: String,
+    pub payment_intent: String,
     pub invoice_url: String,
     pub license_key: String,
 }
@@ -35,7 +35,7 @@ struct SendEmailData {
 impl MailgunEmail {
     pub async fn send_order_confirmation(&self, data: OrderConfirmationData) -> Result<(), Log> {
         let html = include_str!("templates/order_confirmation.html")
-            .replace("{{stripe_checkout_id}}", &data.checkout_session_id)
+            .replace("{{payment_intent}}", &data.payment_intent)
             .replace("{{invoice_url}}", &data.invoice_url)
             .replace("{{license_key}}", &data.license_key);
 

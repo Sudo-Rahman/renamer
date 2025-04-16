@@ -108,7 +108,7 @@ pub async fn create_user(
 
                     let data =
                         OrderConfirmationData {
-                            checkout_session_id: body["checkout_session_id"].as_str().unwrap().to_string(),
+                            payment_intent: body["payment_intent"].as_str().unwrap().to_string(),
                             invoice_url: body["invoice_url"].as_str().unwrap().to_string(),
                             license_key: user.key.to_string(),
                         };
