@@ -3,22 +3,47 @@
     import {Toaster} from "$lib/components/ui/sonner";
     import {Separator} from "$lib/components/ui/separator";
     import {window as tauriWindow} from '@tauri-apps/api';
-    import {type as osType} from '@tauri-apps/plugin-os';
+    import {isMacOS} from "$lib/os";
     import {onMount} from 'svelte';
     import WindowTitlebar from "$lib/components/titleBar/WindowTitlebar.svelte";
+    import {listen} from "@tauri-apps/api/event";
+    import {RenamerFile} from "$models";
+    import {invoke} from "@tauri-apps/api/core";
+    import {toast} from "svelte-sonner";
+    import {goto} from "$app/navigation";
+    import { files } from "$models";
+    import {t} from "$lib/translations";
 
 
     let {children} = $props();
 
 
     let {id} = $derived(page.route);
-    let isMacOS = $state(false);
     let isFullScreen = $state(false);
 
+
     onMount(async () => {
-        // Détecter si c'est macOS
-        const type = osType();
-        isMacOS = type === 'macos';
+        const dropListen = await listen('tauri://drag-drop', async (event: any) => {
+            try {
+                const droppedFiles = event.payload.paths as string[];
+                let new_files: RenamerFile[] = [];
+
+                let response: { files: any[]} = await invoke('files_from_vec', {files: droppedFiles})
+                response.files.forEach(
+                    (file) => {
+                        new_files.push(new RenamerFile(file));
+                    }
+                );
+
+                new_files = new_files.sort((a, b) => a.name.localeCompare(b.name));
+                $files = new_files;
+                toast.success($t('toast.import_files.success'));
+                await goto('/app/mainWindow');
+            } catch (e) {
+                toast.error($t('toast.import_files.error'));
+                console.error(e);
+            }
+        });
 
         // Obtenir la fenêtre actuelle
         const appWindow = tauriWindow.getCurrentWindow();
@@ -30,7 +55,12 @@
         await appWindow.listen('tauri://resize', async () => {
             isFullScreen = await appWindow.isFullscreen();
         });
+
+        return () => {
+            dropListen();
+        };
     });
+
 
 </script>
 

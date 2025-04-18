@@ -187,6 +187,7 @@ export const en = {
         save_as_preset: {
             success: "Preset %s saved successfully",
             error: "Error saving preset %s",
+            error_license_free : "You need a license to save presets",
         },
         load_preset: {
             success: "Preset %s loaded successfully",
@@ -203,7 +204,6 @@ export const en = {
         import_files: {
             success: "Files imported successfully",
             error: "Error importing files",
-            max_licence: "The number of files that can be imported is 5 for the free version",
         },
         desactivate_license: {
             success: "License desactivated successfully",

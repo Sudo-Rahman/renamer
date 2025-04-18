@@ -1,9 +1,6 @@
 <script lang="ts">
     import {goto} from '$app/navigation';
-    import {listen} from "@tauri-apps/api/event";
-    import {onMount} from 'svelte';
-    import {files, getFilesFromFileDialog, maxImportFilesDialog, RenamerFile} from '$models';
-    import {invoke} from "@tauri-apps/api/core";
+    import {files, getFilesFromFileDialog,} from '$models';
     import {t} from '$lib/translations';
     import {toast} from "svelte-sonner";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
@@ -12,38 +9,6 @@
     function handleDragOver(event: DragEvent) {
         event.preventDefault();
     }
-
-
-    onMount(async () => {
-        const dropListen = await listen('tauri://drag-drop', async (event: any) => {
-                try {
-                    const droppedFiles = event.payload.paths as string[];
-                    let new_files: RenamerFile[] = [];
-
-                    let response: { files: any[], plan: number } = await invoke('files_from_vec', {files: droppedFiles})
-                    if (response.plan === 0) {
-                        await maxImportFilesDialog();
-                    }
-                    response.files.forEach(
-                        (file) => {
-                            new_files.push(new RenamerFile(file));
-                        }
-                    );
-
-                    new_files = new_files.sort((a, b) => a.name.localeCompare(b.name));
-                    $files = new_files;
-                    toast.success($t('toast.import_files.success'));
-                    await goto('/app/mainWindow');
-                } catch (e) {
-                    toast.error($t('toast.import_files.error'));
-                    console.error(e);
-                }
-        });
-
-        return () => {
-            dropListen();
-        };
-    });
 
     async function getFolder() {
         try {

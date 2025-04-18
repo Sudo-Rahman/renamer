@@ -4,10 +4,11 @@ use std::path::Path;
 use sys_locale::get_locale;
 use crate::store::{AppStore};
 use crate::app::{App, APPLICATION};
+use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 
 
 #[tauri::command]
-pub async fn list_files_in_directory(dir: String) -> Result<Value, String> {
+pub async fn list_files_in_directory(app: tauri::AppHandle,dir: String) -> Result<Value, String> {
     let path = Path::new(&dir);
 
     if path.is_dir() {
@@ -31,12 +32,15 @@ pub async fn list_files_in_directory(dir: String) -> Result<Value, String> {
 
         let plan = APPLICATION.lock().await.license();
         // no licence max 5 files
-        if plan == 0 {
+        if plan == 0 && files.len() > 5 {
             files.truncate(5);
+            app.dialog()
+                .message(t!("import_files.max_licence_import"))
+                .kind(MessageDialogKind::Error)
+                .blocking_show();
         }
         Ok(json!({
-            "files": files,
-            "plan": plan
+            "files": files
         }))
     } else {
         Err("The provided path is not a directory".to_string())
@@ -44,7 +48,7 @@ pub async fn list_files_in_directory(dir: String) -> Result<Value, String> {
 }
 
 #[tauri::command]
-pub async fn files_from_vec(files: Vec<String>) -> Result<Value, String> {
+pub async fn files_from_vec(app: tauri::AppHandle, files: Vec<String>) -> Result<Value, String> {
     let mut files_vec = Vec::new();
     let binding = files.first().unwrap();
     let dir = Path::new(&binding).parent().unwrap();
@@ -63,12 +67,15 @@ pub async fn files_from_vec(files: Vec<String>) -> Result<Value, String> {
 
     let plan = APPLICATION.lock().await.license();
     // no licence max 5 files
-    if plan == 0 {
+    if plan == 0 && files.len() > 5 {
         files_vec.truncate(5);
+        app.dialog()
+            .message(t!("import_files.max_licence_import"))
+            .kind(MessageDialogKind::Error)
+            .blocking_show();
     }
     Ok(json!({
-            "files": files_vec,
-            "plan": plan
+            "files": files_vec
         }))
 }
 

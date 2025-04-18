@@ -17,8 +17,13 @@
         savePreset(preset).then((value) => {
             if (value) {
                 toast.success($t('toast.save_as_preset.success').replace("%s", name));
-            } else {
-                toast.error($t('toast.save_as_preset.error').replace("%s", name));
+            }
+        }).catch((e)=>{
+            console.error(e);
+            if(e === 1){
+                toast.error($t('toast.save_as_preset.error_license_free'));
+            }else{
+                toast.error($t('toast.save_as_preset.error').replace('%s', name));
             }
         });
         open = false;

@@ -151,7 +151,11 @@ pub async fn remove_license(app: tauri::AppHandle) -> Result<bool, i8> {
 pub async fn save_presets(app: tauri::AppHandle) -> Result<(), u8> {
     let presets = AppStore::read::<String>("presets").unwrap_or("".to_string());
 
-    let user_machine = get_license().await.unwrap();
+    let user_machine = get_license().await;
+    if user_machine.is_err() {
+        return Err(1);
+    }
+    let user_machine = user_machine.unwrap();
 
     let json = json!({
         "key" : user_machine.key,

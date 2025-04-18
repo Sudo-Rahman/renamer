@@ -2,7 +2,7 @@ import {v4 as uuidv4} from "uuid";
 import {Formatter} from "$models/Formatter";
 import {store} from "$models/store";
 import {invoke} from "@tauri-apps/api/core";
-import {json} from "@sveltejs/kit";
+import {error, json} from "@sveltejs/kit";
 
 export class Preset {
     constructor(name: string = "", formatters: Formatter[] = []) {
@@ -64,8 +64,8 @@ export async function savePreset(preset: Preset) {
         .then(() => {
             return true;
         })
-        .catch(() => {
-            return false;
+        .catch((e : number) => {
+            throw e;
         });
 }
 

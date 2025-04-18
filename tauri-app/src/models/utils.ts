@@ -1,8 +1,7 @@
 import {RenamerFile} from '$models';
 import {message, open} from '@tauri-apps/plugin-dialog';
 import {invoke} from "@tauri-apps/api/core";
-import {t} from "$lib/translations";
-import {get} from "svelte/store";
+
 
 
 export async function getFilesFromFileDialog(type: "Files" | "Folder" = "Files"): Promise<RenamerFile[]> {
@@ -20,10 +19,7 @@ export async function getFilesFromFileDialog(type: "Files" | "Folder" = "Files")
                         return file;
                     }
                 );
-                let response: { files: any[], plan: number } = await invoke('files_from_vec', {files: paths})
-                if (response.plan === 0) {
-                    await maxImportFilesDialog();
-                }
+                let response: { files: any[] } = await invoke('files_from_vec', {files: paths})
                 response.files.forEach(
                     (file) => {
                         files.push(new RenamerFile(file));
@@ -41,10 +37,7 @@ export async function getFilesFromFileDialog(type: "Files" | "Folder" = "Files")
             if (folder) {
 
                 // call the function to list files in the directory
-                let response: { files: any[], plan: number } = await invoke('list_files_in_directory', {dir: folder});
-                if (response.plan === 0) {
-                    await maxImportFilesDialog();
-                }
+                let response: { files: any[]} = await invoke('list_files_in_directory', {dir: folder});
                 response.files.forEach(
                     (file) => {
                         files.push(new RenamerFile(file));
@@ -68,11 +61,4 @@ export function formatString(template: string, ...args: any[]): string {
     return template.replace(/{(\d+)}/g, (match, index) => {
         return typeof args[index] !== 'undefined' ? args[index] : match;
     });
-}
-
-export async function maxImportFilesDialog() {
-    const confirmation = await message(
-        get(t)('toast.import_files.max_licence'),
-        {kind: 'warning'}
-    );
 }

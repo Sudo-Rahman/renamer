@@ -4,5 +4,8 @@
     "yes_btn": "Mettre à jour",
     "cancel_btn": "Annuler",
     "message": "Une mise à jour est disponible pour la version %s. Voulez-vous mettre à jour ?"
+  },
+  "import_files" : {
+    "max_licence_import": "Le nombre de fichiers pouvant être importés est de 5 pour la version gratuite"
   }
 }

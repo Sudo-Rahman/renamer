@@ -113,9 +113,14 @@
             (value) => {
                 if (value)
                     toast.success($t('toast.save_as_preset.success').replace('%s', $preset?.name));
-                else toast.error($t('toast.save_as_preset.error').replace('%s', $preset?.name));
             },
-        );
+        ).catch((e)=>{
+            if(e === 1){
+                toast.error($t('toast.save_as_preset.error_license_free'));
+            }else{
+                toast.error($t('toast.save_as_preset.error').replace('%s', $preset?.name));
+            }
+        });
 
     }
 
