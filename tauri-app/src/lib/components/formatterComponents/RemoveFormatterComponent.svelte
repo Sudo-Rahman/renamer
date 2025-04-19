@@ -8,7 +8,7 @@
     import {flip} from "svelte/animate";
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    let {formatter, dragDisabled = $bindable()}: { formatter: RemoveFormatter, dragDisabled: boolean } = $props();
+    let {formatter, dragDisabled = $bindable()}: { formatter: RemoveFormatter, dragDisabled: {element : string | null, value : boolean} } = $props();
 
     let inputs: Item[] = $state(formatter.text.map((value) => ({id: crypto.randomUUID(), value})));
 
@@ -34,7 +34,7 @@
     }
 
     function handleKeyDown(e) {
-        if ((e.key === "Enter" || e.key === " ") && dragDisabled) dragDisabled = false;
+        if ((e.key === "Enter" || e.key === " ") && dragDisabled) _dragDisabled = false;
     }
 
     function removeInput(id: string) {

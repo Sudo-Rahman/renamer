@@ -6,7 +6,7 @@
     import {Label} from "$lib/components/ui/label";
     import {Input} from "$lib/components/ui/input";
 
-    let {formatter, dragDisabled = $bindable()}: { formatter: SizeFormatter, dragDisabled: boolean } = $props();
+    let {formatter, dragDisabled = $bindable()}: { formatter: SizeFormatter, dragDisabled: {element : string | null, value : boolean} } = $props();
 
 
     let text = $state(formatter.text);

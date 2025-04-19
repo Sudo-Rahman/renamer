@@ -8,7 +8,7 @@
 
     let {formatter, dragDisabled = $bindable()}: {
         formatter: OriginalFileNameFormatter,
-        dragDisabled: boolean
+        dragDisabled: {element : string | null, value : boolean}
     } = $props();
 
 

@@ -7,7 +7,7 @@
     import {t} from "$lib/translations";
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    let {formatter, dragDisabled = $bindable()}: { formatter: ExtensionFormatter, dragDisabled: boolean } = $props();
+    let {formatter, dragDisabled = $bindable()}: { formatter: ExtensionFormatter, dragDisabled: {element : string | null, value : boolean} } = $props();
 
 
     let customExt = $state(formatter.customeExt);

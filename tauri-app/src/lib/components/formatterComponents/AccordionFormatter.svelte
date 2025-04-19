@@ -8,49 +8,78 @@
         children: any;
         title: string;
         id: string;
-        dragDisabled: boolean;
+        dragDisabled: { value: boolean, element: string | null};
     };
 
-    let {children, title, id, dragDisabled = $bindable(true)}: Props = $props();
+    let {children, title, id, dragDisabled = $bindable({element: null, value : true})}: Props = $props();
+
+    let mouseHover = $state(false);
+    let mouseDown = $state(false);
+
 
     function handleKeyDown(e: any) {
-        if ((e.key === "Enter" || e.key === " ") && dragDisabled) dragDisabled = false;
+        if ((e.key === "Enter" || e.key === " ") && dragDisabled) {
+            dragDisabled = {
+                element: id,
+                value: false
+            }
+        }
     }
 
 
-    function startDrag(e: any) {
-        e.preventDefault();
-        dragDisabled = false;
+    function onMouseUp(e: any) {
+        mouseDown = false;
     }
 
-    function stopDrag(e: any) {
-        e.preventDefault();
-        dragDisabled = true;
+    function onMouseDown(e: any) {
+        mouseDown = true;
+    }
+
+    function onMouseEnter(e: any) {
+        if (dragDisabled) {
+            dragDisabled = {
+                element: id,
+                value: false
+            };
+        }
+        mouseHover = true;
+    }
+
+    function onMouseLeave(e: any) {
+        if (dragDisabled) {
+            dragDisabled = {
+                element: null,
+                value: true
+            };
+        }
+        mouseHover = false;
     }
 
 
 </script>
 
-<Accordion.Root class="w-full" disabled={!dragDisabled} id={id}>
-    <Accordion.Item class="{dragDisabled ?  'border border-transparent':'border border-accent rounded-md'} p-1"
-                    value="item-{id}">
+<Accordion.Root class="w-full" id={id} type="single">
+    <Accordion.Item class="{dragDisabled.value ?  'border border-transparent':'border border-accent rounded-md'} p-1"
+                    value={dragDisabled.value ? undefined : `item-${id}`}>
 
         <div class="flex h-fit w-full items-center relative">
-            <div aria-label="drag-handle"
-                 class="z-10 h-6 hover:cursor-grab active:cursor-grabbing"
+            <div
+                class="z-10 h-6 active:cursor-grabbing"
                  onkeydown={handleKeyDown}
-                 onmousedown={startDrag}
-                 onmouseenter={startDrag}
-                 onmouseleave={stopDrag}
-                 role="button"
-                 tabindex={dragDisabled? 0 : -1}>
+                 onmouseenter={onMouseEnter}
+                 onmouseup={onMouseUp}
+                 onmousedown={onMouseDown}
+                 onmouseleave={onMouseLeave}
+                 role="none">
                 <GripVertical class="h-6 w-6"/>
             </div>
-            <Accordion.Trigger
-                    class="w-full hover:no-underline py-0 flex items-center h-full justify-center absolute inset-0"
-                    disabled={!dragDisabled}>
-                {title}
-            </Accordion.Trigger>
+            <div class="w-full flex items-center h-full justify-center absolute">
+                <Accordion.Trigger
+                        class="hover:no-underline py-0 inset-0">
+                    {title}
+                </Accordion.Trigger>
+            </div>
+
 
             <div class="ml-auto z-0">
                 <Button class="w-7 h-7 p-0 rounded-full" onclick={() => $formatters.removeFormatter(id)}

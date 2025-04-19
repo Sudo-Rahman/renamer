@@ -7,7 +7,7 @@
     import {t} from "$lib/translations";
     import AccordionFormatter from "$lib/components/formatterComponents/AccordionFormatter.svelte";
 
-    let {formatter, dragDisabled = $bindable()}: { formatter: RegexFormatter, dragDisabled: boolean } = $props();
+    let {formatter, dragDisabled = $bindable()}: { formatter: RegexFormatter, dragDisabled: {element : string | null, value : boolean} } = $props();
 
 
     let regex = $state(formatter.regex);

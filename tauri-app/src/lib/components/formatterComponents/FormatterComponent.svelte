@@ -23,7 +23,7 @@
     import RegexFormatterComponent from "$lib/components/formatterComponents/RegexFormatterComponent.svelte";
     import SizeFormatterComponent from "$lib/components/formatterComponents/SizeFormatterComponent.svelte";
 
-    let {formatter, dragDisabled = $bindable()}: { formatter: Formatter, dragDisabled: boolean } = $props();
+    let {formatter, dragDisabled = $bindable()}: { formatter: Formatter, dragDisabled: {element : string | null, value : boolean} } = $props();
 
     const formatterComponents = {
         [NumberFormatter.name]: NumberFormatterComponent,
