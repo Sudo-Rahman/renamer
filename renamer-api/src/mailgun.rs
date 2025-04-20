@@ -1,5 +1,7 @@
 use reqwest::{Client, Response};
 use std::collections::HashMap;
+use std::sync::OnceLock;
+use std::env::var;
 use axum::http::StatusCode;
 use chrono::Utc;
 use mongodb::bson::{bson, Bson};
@@ -32,7 +34,11 @@ struct SendEmailData {
     pub html: String,
 }
 
+static API_KEY: OnceLock<String> = OnceLock::new();
+
+
 impl MailgunEmail {
+    
     pub async fn send_order_confirmation(&self, data: OrderConfirmationData) -> Result<(), Log> {
         let html = include_str!("templates/order_confirmation.html")
             .replace("{{payment_intent}}", &data.payment_intent)
@@ -68,7 +74,7 @@ impl MailgunEmail {
             .unwrap();
         let url = format!("https://api.eu.mailgun.net/{}/messages", MailgunEmail::get_domain());
 
-        let api_key = self.get_api_key().expect("Failed to get API key");
+        let api_key = API_KEY.get().unwrap().clone();
 
         let form = multipart::Form::new()
             .text("from", data.from)
@@ -104,16 +110,17 @@ impl MailgunEmail {
     }
 
     #[cfg(debug_assertions)]
-    fn get_api_key(&self) -> Result<String, String> {
-        std::env::var("MAILGUN_API_KEY_DEV").map_err(|_| "MAILGUN_API_KEY environment variable not found".to_string())
+    pub fn init() {
+        let api_key = var("MAILGUN_API_KEY_DEV").expect("MAILGUN_API_KEY environment variable not found");
+        API_KEY.set(api_key.to_string()).expect("Failed to set API key");
     }
 
     #[cfg(not(debug_assertions))]
-    fn get_api_key(&self) -> Result<String, String> {
-        std::env::var("MAILGUN_API_KEY").or_else(|_| {
-            Err("MAILGUN_API_KEY environment variable not found".to_string())
-        })
+    pub fn init() {
+        let api_key = var("MAILGUN_API_KEY").expect("MAILGUN_API_KEY environment variable not found");
+        API_KEY.set(api_key.to_string()).expect("Failed to set API key");
     }
+    
 
     pub(crate) const fn get_domain() -> &'static str {
         "renamer.pro"

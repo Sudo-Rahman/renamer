@@ -33,10 +33,14 @@ where
 
 #[tauri::command]
 pub async fn download_and_install_update(app: AppHandle) -> tauri_plugin_updater::Result<()> {
-    create_update_window(app.clone());
+    #[cfg(any(target_os = "macos", target_os = "linux"))]
+    { 
+        create_update_window(app.clone());
+        let mut downloaded = 0;
+    }
 
-    let mut downloaded = 0;
     if let Some(update) = app.updater()?.check().await? {
+        #[cfg(any(target_os = "macos", target_os = "linux"))]
         update
             .download_and_install(
                 |chunk_length, content_length| {
@@ -58,7 +62,10 @@ pub async fn download_and_install_update(app: AppHandle) -> tauri_plugin_updater
                             })),
                     ).expect("failed to emit install progress");
                 },
-            ).await?
+            ).await?;
+        #[cfg(any(target_os = "windows"))]
+        update.download_and_install(|_,_|{},||{}).await?;
+
     }
     Ok(())
 }

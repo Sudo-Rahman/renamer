@@ -1,4 +1,3 @@
-import {writable, type Writable} from "svelte/store";
 import type {Component} from "svelte";
 import FileItemCheckbox from "./fileItemUi/FileItemCheckbox.svelte";
 import HeaderCheckbox from "$lib/components/list/HeaderCheckbox.svelte";
@@ -7,6 +6,7 @@ import FileItemName from "./fileItemUi/FileItemName.svelte";
 import FileItemNewName from "./fileItemUi/FileItemNewName.svelte";
 import FileItemSize from "./fileItemUi/FileItemSize.svelte";
 import FileItemModDate from "$lib/components/list/fileItemUi/FileItemModDate.svelte";
+import {type Writable, writable} from "svelte/store";
 
 export interface Column {
     name: string;
@@ -17,6 +17,7 @@ export interface Column {
     resizable?: boolean;
     visible?: boolean;
     defaultSize?: number;
+    onCheck?: () => void;
     customComponent: Component;
     headerComponent?: Component;
 }

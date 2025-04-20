@@ -5,8 +5,7 @@
     import MixerHorizontal from "svelte-radix/MixerHorizontal.svelte";
     import {Button} from "$lib/components/ui/button";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
-    import { buttonVariants } from "$lib/components/ui/button/index.js";
-    import {type Column, columns} from "$lib/components/list/store";
+    import {type Column, columns} from "$lib/components/list/store.svelte";
 
     type Props = {
         files : RenamerFile[];
@@ -59,7 +58,7 @@
             <DropdownMenu.Separator/>
             {#each cols as col}
                 <DropdownMenu.CheckboxItem
-                        bind:checked={col.visible}
+                        checked={col.visible}
                         onclick={() =>onToggleCollumn(col)}>
                     {$t(col.name)}
                 </DropdownMenu.CheckboxItem>

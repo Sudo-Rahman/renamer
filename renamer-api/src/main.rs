@@ -18,7 +18,7 @@ use reqwest::multipart;
 use tower_http::cors::{Any, CorsLayer};
 use crate::controllers::*;
 use crate::db::*;
-use crate::mailgun::MailgunEmail;
+use crate::mailgun::{MailgunEmail};
 use crate::models::ServerConfig;
 use crate::api_rate::*;
 
@@ -33,7 +33,9 @@ async fn main() {
         eprintln!("AUTH_TOKEN environment variable not set");
         exit(1);
     });
-
+    
+    MailgunEmail::init();
+    
 
     let config = ServerConfig { db, token };
 

@@ -2,7 +2,7 @@
     import {RenamerFile} from "$models";
     import {Checkbox} from "$lib/components/ui/checkbox";
     import {formatters} from "$models";
-    import {columns} from "$lib/components/list/store";
+    import {columns} from "$lib/components/list/store.svelte";
     import {onMount} from "svelte";
 
     let {file, index, hover = $bindable()}: { file: RenamerFile, index: number, hover: boolean } = $props();

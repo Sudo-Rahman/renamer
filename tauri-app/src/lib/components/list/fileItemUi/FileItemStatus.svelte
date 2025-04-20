@@ -1,6 +1,6 @@
 <script lang="ts">
     import {Check, X, Minus} from "lucide-svelte";
-    import {RenamerFile, type Status} from "$models";
+    import {RenamerFile} from "$models";
     import {Button} from "$lib/components/ui/button";
     import {t} from "$lib/translations";
     import * as Popover from "$lib/components/ui/popover";

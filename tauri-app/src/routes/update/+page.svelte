@@ -49,7 +49,7 @@
 
 </script>
 
-<div class="cursor-default select-none bg-card gap-10 flex flex-col justify-center items-center w-full h-full mac:rounded-sm linux:rounded-sm p-10"
+<div class="cursor-default select-none bg-card gap-10 flex flex-col justify-center items-center w-full h-full mac:rounded-sm linux:rounded-xl p-10"
      data-tauri-drag-region>
 
     <div class="flex flex-col items-center">

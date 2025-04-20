@@ -1,6 +1,6 @@
 <script lang="ts">
     import {RenamerFile} from "$models";
-    import {type Column, columns} from "$lib/components/list/store";
+    import {type Column, columns} from "$lib/components/list/store.svelte";
     import {Button} from "$lib/components/ui/button";
     import ArrowUpDown from "lucide-svelte/icons/arrow-up-down";
     import {onMount} from "svelte";
@@ -24,6 +24,7 @@
     let visibleCols = $derived($columns.filter(c => c.visible || c.visible === undefined));
     let resizableCols = $derived(visibleCols.filter(c => c.resizable));
     let notResizableCols = $derived(visibleCols.filter(c => !c.resizable));
+    let loaded = $state(false);
 
     // Références aux éléments DOM des colonnes
     let divs: HTMLDivElement[] = $state([]);
@@ -72,24 +73,6 @@
             }
         });
 
-        store.get('listColumns').then((cols) => {
-            if (cols) {
-                (cols as Column[]).forEach(
-                    (col) => {
-                        const colum = $columns.find(c => c.accessor === col.accessor);
-                        if (colum) {
-                            colum.visible = col.visible;
-                        }
-                    }
-                );
-            }
-        });
-
-        columns.subscribe((cols) => {
-            store.set('listColumns', cols);
-            store.save();
-        });
-
         // Mesurer les colonnes non redimensionnables
         notResizableCols.forEach((col, i) => {
             const div = divs[i];
@@ -103,9 +86,34 @@
             }
         });
 
-        // Mesurer les colonnes redimensionnables
-        resizeColumns();
+
+        store.get('listColumns').then((cols) => {
+            if (cols) {
+                (cols as { accessor : string, visible : boolean }[]).forEach(
+                    (col) => {
+                        const colum = $columns.find(c => c.accessor === col.accessor);
+                        if (colum) {
+                            colum.visible = col.visible;
+                        }
+                    }
+                );
+            }
+            loaded = true;
+            resizeColumns();
+        });
+
     });
+
+    $effect(()=>{
+        if (!loaded) return;
+        store.set('listColumns', $columns.map(col => {
+            return {
+                accessor: col.accessor,
+                visible: col.visible
+            }
+        }));
+        store.save();
+    })
 
 
     function resizeColumns() {

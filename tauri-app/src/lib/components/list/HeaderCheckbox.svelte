@@ -2,8 +2,8 @@
     import {RenamerFile} from "$models";
     import {Checkbox} from "$lib/components/ui/checkbox";
     import {formatters} from "$models";
-    import {createEventDispatcher, onMount} from "svelte";
-    import type {Column} from "$lib/components/list/store";
+    import {onMount} from "svelte";
+    import {type Column} from "$lib/components/list/store.svelte";
 
     type Props = {
         files: RenamerFile[],

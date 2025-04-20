@@ -21,7 +21,7 @@ pub struct User {
     pub key: Uuid,
     pub plan: u8,
     pub machines: Vec<Machine>,
-    pub presets: String,
+    pub presets: Value,
 }
 
 pub fn user_to_user_machine(user: User, machine: Machine) -> UserMachine {

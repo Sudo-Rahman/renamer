@@ -6,6 +6,7 @@ use crate::store::{AppStore};
 use reqwest::{Client, StatusCode};
 use serde_json::{json, Value};
 use std::str::FromStr;
+use mid::print;
 use whoami;
 
 use renamer_shared::UserMachine;
@@ -18,7 +19,7 @@ pub const API_URL: &str = "http://localhost:3000";
 #[cfg(not(debug_assertions))]
 pub const API_URL: &str = "https://api.renamer.pro";
 
-pub async fn fetch_user_machine(mut user: &UserMachine) -> Result<(), String> {
+pub async fn fetch_user_machine(mut user: &UserMachine) -> Result<(UserMachine), String> {
     let client = Client::new();
 
     let res = client
@@ -31,8 +32,9 @@ pub async fn fetch_user_machine(mut user: &UserMachine) -> Result<(), String> {
 
     if res.status().is_success() {
         let text = res.text().await.map_err(|e| e.to_string())?;
-        let tmp = &serde_json::from_str::<UserMachine>(text.as_str()).map_err(|e| e.to_string())?;
-        Ok(())
+        let user =  serde_json::from_str::<UserMachine>(text.as_str())
+            .map_err(|e| e.to_string())?;
+        Ok(user)
     } else {
         let error_text = res.text().await.map_err(|e| e.to_string())?;
         Err(error_text)
@@ -51,6 +53,7 @@ pub async fn get_license() -> Result<UserMachine, String> {
 #[tauri::command]
 pub async fn save_license(user: UserMachine) -> bool {
     AppStore::write("license", json!(user));
+    AppStore::write("presets", user.presets);
     true
 }
 
@@ -64,7 +67,7 @@ pub async fn is_license_ok(app: tauri::AppHandle) -> Result<u8, i8> {
                 let res = fetch_user_machine(&license).await;
                 match res {
                     Ok(res) => {
-                        AppStore::write("presets", json!(license.presets));
+                        save_license(res).await;
                         application.lock().await.set_license(license.plan);
                         Ok(license.plan)
                     }
@@ -149,7 +152,7 @@ pub async fn remove_license(app: tauri::AppHandle) -> Result<bool, i8> {
 
 #[tauri::command]
 pub async fn save_presets(app: tauri::AppHandle) -> Result<(), u8> {
-    let presets = AppStore::read::<String>("presets").unwrap_or("".to_string());
+    let presets = AppStore::read::<Value>("presets").unwrap();
 
     let user_machine = get_license().await;
     if user_machine.is_err() {
@@ -159,7 +162,7 @@ pub async fn save_presets(app: tauri::AppHandle) -> Result<(), u8> {
 
     let json = json!({
         "key" : user_machine.key,
-        "presets" : serde_json::from_str::<Value>(presets.as_str()).unwrap()
+        "presets" : presets,
     });
 
     let client = Client::new();

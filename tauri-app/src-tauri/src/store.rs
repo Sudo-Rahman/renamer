@@ -24,26 +24,11 @@ impl AppStore {
         }
 
         let binding = value.unwrap();
-        match binding.clone().as_str() {
-            Some(v) => {
-                match serde_json::from_str::<T>(v) {
-                    Ok(v) => Some(v),
-                    Err(e) => {
-                        Self::clear();
-                        println!("error reading store{:?}", e);
-                        None
-                    }
-                }
-            }
-            None => {
-                match serde_json::from_value::<T>(binding) {
-                    Ok(v) => Some(v),
-                    Err(e) => {
-                        Self::clear();
-                        println!("error reading store{:?}", e);
-                        None
-                    }
-                }
+        match serde_json::from_value::<T>(binding) {
+            Ok(v) => Some(v),
+            Err(e) => {
+                println!("error reading store {:?} error : {:?}",key, e);
+                None
             }
         }
     }
@@ -51,7 +36,7 @@ impl AppStore {
     pub fn write(key: &str, value: Value) -> bool
     {
         let app_store = APPSTORE.get().expect("AppStore not initialized");
-        app_store.store.set(key, value.to_string());
+        app_store.store.set(key, value);
         app_store.store.save().expect("Failed to save store");
         true
     }

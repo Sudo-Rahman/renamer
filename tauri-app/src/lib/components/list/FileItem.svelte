@@ -2,7 +2,7 @@
 <script lang="ts">
     import {RenamerFile} from "$models";
     import * as ContextMenu from "$lib/components/ui/context-menu";
-    import {columns} from "./store";
+    import {columns} from "$lib/components/list/store.svelte";
     import {t} from "$lib/translations";
 
     type Props = {

@@ -3,6 +3,7 @@ import {Formatter} from "$models/Formatter";
 import {store} from "$models/store";
 import {invoke} from "@tauri-apps/api/core";
 import {error, json} from "@sveltejs/kit";
+import pre = $effect.pre;
 
 export class Preset {
     constructor(name: string = "", formatters: Formatter[] = []) {
@@ -88,8 +89,8 @@ export async function deletePreset(presetId: string): Promise<boolean> {
 
 export async function getPresetList(): Promise<Preset[]> {
     let presets: any[] | null | undefined = await store.get("presets");
-    if (typeof presets === "string") {
-        presets = JSON.parse(presets);
+    while (typeof presets === "string") {
+        presets = JSON.parse(presets)
     }
     if (presets) {
         try {
@@ -100,6 +101,7 @@ export async function getPresetList(): Promise<Preset[]> {
                 return preset;
             });
         } catch (e) {
+            console.log(e)
             return [];
         }
     } else {

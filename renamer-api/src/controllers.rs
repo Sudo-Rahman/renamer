@@ -97,7 +97,7 @@ pub async fn create_user(
                 plan,
                 key: Uuid::from_bytes(*uuid::Uuid::now_v7().as_bytes()),
                 machines: vec![],
-                presets: "".to_string(),
+                presets: json!([]),
             };
             match config.db.insert_user(&user).await {
                 Ok(_) => {
@@ -327,7 +327,7 @@ pub async fn save_presets(
 
     match user {
         Some(mut user) => {
-            user.presets = serde_json::to_string(&presets).unwrap();
+            user.presets = presets;
             match config.db.modify_user(&user).await {
                 Ok(_) => Ok((StatusCode::OK, "Preset saved".to_string())),
                 Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to save preset".to_string()))
