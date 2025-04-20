@@ -27,45 +27,44 @@ where
             return Ok(());
         }
         download_and_install_update(app).await?;
-    }else { main_window(); }
+    } else { main_window(); }
     Ok(())
 }
 
 #[tauri::command]
 pub async fn download_and_install_update(app: AppHandle) -> tauri_plugin_updater::Result<()> {
     #[cfg(any(target_os = "macos", target_os = "linux"))]
-    { 
-        create_update_window(app.clone());
-        let mut downloaded = 0;
-    }
+    create_update_window(app.clone());
 
     if let Some(update) = app.updater()?.check().await? {
         #[cfg(any(target_os = "macos", target_os = "linux"))]
-        update
-            .download_and_install(
-                |chunk_length, content_length| {
-                    downloaded += chunk_length;
-                    app.emit(
-                        "update_progress",
-                        Some(json!({
+        {
+            let mut downloaded = 0;
+            update
+                .download_and_install(
+                    |chunk_length, content_length| {
+                        downloaded += chunk_length;
+                        app.emit(
+                            "update_progress",
+                            Some(json!({
                                 "type": "download",
                                 "downloaded": downloaded,
                                 "total": content_length
                             })),
-                    ).expect("failed to emit download progress");
-                },
-                || {
-                    app.emit(
-                        "update_progress",
-                        Some(json!({
+                        ).expect("failed to emit download progress");
+                    },
+                    || {
+                        app.emit(
+                            "update_progress",
+                            Some(json!({
                                 "type": "finish"
                             })),
-                    ).expect("failed to emit install progress");
-                },
-            ).await?;
+                        ).expect("failed to emit install progress");
+                    },
+                ).await?;
+        }
         #[cfg(any(target_os = "windows"))]
-        update.download_and_install(|_,_|{},||{}).await?;
-
+        update.download_and_install(|_, _| {}, || {}).await?;
     }
     Ok(())
 }

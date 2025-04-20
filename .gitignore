@@ -18,3 +18,4 @@ latest.json
 */.svelte
 
 */build/*
+tauri-app/src-tauri/Cargo.lock
