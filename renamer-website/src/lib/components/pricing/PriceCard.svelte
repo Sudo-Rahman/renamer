@@ -7,59 +7,43 @@
     import {checkout} from "$lib/components/pricing/utils";
     import {redirect} from "@sveltejs/kit";
     import {goto} from "$app/navigation";
+    import CircularProgress from "$lib/components/CircularProgress.svelte";
 
     type Props = {
         title: string,
         description: string,
-        priceId?: string | null,
+        price: Promise<Stripe.Price> | null,
         features: string[],
         btnText: string
     }
 
-    let {title, description, priceId, features, btnText}: Props = $props();
+    let {title, description, price : pricePromise, features, btnText}: Props = $props();
 
-    let fetchOk = $state(false);
 
-    let price: number | string = $state("Loading...");
+    let priceString: string | null = $state(!pricePromise ? "Gratuit" : null);
 
-    let product: Stripe.Price | null = $state(null);
+    let price: Stripe.Price | null = $state(null);
 
-    onMount(() => {
-        if (!priceId) {
-            price = "Free";
-            fetchOk = true;
+    async function getPrice(){
+        if (!pricePromise) {
             return;
         }
-        fetch("/api/price", {
-            method: "POST",
-            body: JSON.stringify([priceId]),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }).then(res => {
-            if (res.ok) {
-                res.json().then(
-                    body => {
-                        product = body[0];
-                        if (!product) return;
-                        price =  new Intl.NumberFormat( navigator.language, { style: "currency", currency: product.currency }).format(
-                            product.unit_amount! /100,
-                        );
-                        fetchOk = true;
-                    }
-                );
-            }
-        }).catch(err => {
-            console.error(err);
-            fetchOk = false;
-        });
-    });
+        price = await pricePromise;
+        if (!price) {
+            return;
+        }
+        priceString =  new Intl.NumberFormat( navigator.language, { style: "currency", currency: price.currency }).format(
+            price.unit_amount! /100,
+        );
+        return price;
+    }
+
 
     function handleClick() {
-        if (product) {
-            checkout(product);
+        if (price) {
+            checkout(price);
         } else {
-            goto("/download");
+            goto("/");
         }
     }
 
@@ -72,10 +56,10 @@
                 {title}
             </Card.Title>
             <Card.Description class="py-2 text-center text-lg">
-                {description}
+                {@html description}
             </Card.Description>
             <div class="text-5xl font-extrabold flex justify-center py-5">
-                <span class="text-accent-foreground">{price}</span>
+                <span class="text-accent-foreground">{priceString}</span>
             </div>
         </Card.Header>
         <Card.Content class="h-full">
@@ -95,9 +79,19 @@
             </ul>
         </Card.Content>
         <Card.Footer class="flex items-end">
-            <Button class="w-full" disabled={!fetchOk} onclick={handleClick}>
-                {btnText}
-            </Button>
+            {#await getPrice()}
+                <Button class="w-full" disabled={true}>
+                    <CircularProgress circleColor="secondary" class="w-5 h-5"/>
+                </Button>
+            {:then price}
+                <Button class="w-full" onclick={handleClick}>
+                    {btnText}
+                </Button>
+            {:catch error}
+                <Button class="w-full" disabled={true}>
+                    Erreur
+                </Button>
+            {/await}
         </Card.Footer>
     </Card.Root>
 </div>

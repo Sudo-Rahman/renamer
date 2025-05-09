@@ -1,53 +1,60 @@
 <script lang="ts">
     import PriceCard from "./PriceCard.svelte";
+    import Stripe from "stripe";
+
+    let {prices} : {prices : Promise<Stripe.Price>[]} = $props();
 
     let data = [
         {
-            title: "Free",
-            priceId: null,
-            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            title: "Gratuit",
+            price: null,
+            description: "Idéal pour les utilisateurs occasionnels qui souhaitent essayer l'application avant de s'engager.",
             features: [
-                "import only 5 files",
+                "Importation limitée à 5 fichiers",
             ],
-            btnText: "Download"
+            btnText: "Télécharger"
         },
         {
             title: "Pro",
-            priceId: "price_1Q3AuxJBiJaqiURvm4Of2TiE",
-            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            price: prices[0],
+            description: "Accédez à toutes les fonctionnalités avancées pour gérer efficacement vos renommages de fichiers en masse.",
             features: [
-                "Import unlimited files",
-                "1 machine",
-                "lifetime updates",
-                "Presets save",
-                "Additional themes",
+                "Importation illimitée de fichiers",
+                "Utilisation sur 1 appareil",
+                "Mises à jour à vie",
+                "Sauvegarde de préréglages",
             ],
-            btnText: "Buy"
+            btnText: "Acheter"
         },
         {
-            title: "Team",
-            priceId: "price_1Q6YFlJBiJaqiURv6bM3S7EL",
-            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            title: "Équipe",
+            price: prices[1],
+            description: "Accédez à toutes les fonctionnalités avancées pour gérer efficacement vos renommages de fichiers en masse sur <span class='text-card-foreground font-semibold'>plusieurs appareils.</span>",
             features: [
-                "Import unlimited files",
-                "5 machines",
-                "lifetime updates",
-                "Presets save",
-                "Additional themes",
+                "Importation illimitée de fichiers",
+                "Utilisation sur 5 appareils",
+                "Mises à jour à vie",
+                "Sauvegarde de préréglages",
             ],
-            btnText: "Buy"
+            btnText: "Acheter"
         }
     ]
 </script>
 
-<section class="flex justify-center">
+<div class="flex w-full justify-center">
+    <div class="flex flex-col justify-center w-fit">
+        <h1 class="text-3xl font-extrabold text-left pb-16 pl-10">Tarification</h1>
+        <section class="flex justify-center">
 
-    <div class="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0">
+            <div class="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0">
 
-        {#each data as {title, priceId, features, description, btnText}}
-            <PriceCard title={title} priceId={priceId} features={features} description={description} btnText={btnText}/>
-        {/each}
+                {#each data as {title, price, features, description, btnText}}
+                    <PriceCard title={title} price={price} features={features} description={description} btnText={btnText}/>
+                {/each}
 
+            </div>
+
+        </section>
     </div>
+</div>
 
-</section>

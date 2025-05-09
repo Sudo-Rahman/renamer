@@ -2,14 +2,14 @@
 
     import {resetMode, setMode} from "mode-watcher";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
-    import {Button} from "$lib/components/ui/button/index.js";
     import {Sun, Moon} from "lucide-svelte";
     import { buttonVariants } from "$lib/components/ui/button/index.js";
+    import {goto} from "$app/navigation";
 
-    function handleAnchorClick(event) {
+    async function handleDownloadClick(event : MouseEvent) {
         event.preventDefault()
-        const link = event.currentTarget
-        const anchorId = new URL(link.href).hash.replace('#', '')
+        await goto('/');
+        const anchorId = 'anchor-download';
         const anchor = document.getElementById(anchorId)
         window.scrollTo({
             top: anchor?.offsetTop,
@@ -30,27 +30,23 @@
             </a>
         </div>
 
-        <div class="flex-grow"/>
+        <div class="flex-grow"></div>
 
         <div class="flex items-center h-full">
-            <a class="px-5" href="#anchor-download" on:click={handleAnchorClick}>Download</a>
+            <a class="px-5" href="/docs">Docs</a>
+        </div>
+
+        <div class="flex items-center h-full">
+            <a class="px-5" href="/" on:click={handleDownloadClick}>Download</a>
         </div>
 
         <DropdownMenu.Root>
-            <DropdownMenu.Trigger
-                    class={buttonVariants({ variant: "outline", size: "icon" })}
-            >
-                <Sun
-                        class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
-                />
-                <Moon
-                        class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
-                />
-                <span class="sr-only">Toggle theme</span>
+            <DropdownMenu.Trigger class={buttonVariants({ variant: "outline", size: "icon" })}>
+                <Sun class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"/>
+                <Moon class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"/>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content align="end" class="rounded-2xl">
-                <DropdownMenu.Item onclick={() => setMode("light")}>Light</DropdownMenu.Item
-                >
+                <DropdownMenu.Item onclick={() => setMode("light")}>Light</DropdownMenu.Item>
                 <DropdownMenu.Item onclick={() => setMode("dark")}>Dark</DropdownMenu.Item>
                 <DropdownMenu.Item onclick={() => resetMode()}>System</DropdownMenu.Item>
             </DropdownMenu.Content>

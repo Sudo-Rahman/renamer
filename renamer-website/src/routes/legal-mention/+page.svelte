@@ -15,7 +15,7 @@
         <div>
             <h2 class="text-2xl font-semibold">1. Présentation du Site</h2>
             <p class="mt-2">
-                Ce site est édité par <strong>[Nom de l'entreprise]</strong>, société immatriculée au Registre du
+                Ce site est édité par <strong>Rahman Yilmaz</strong>, société immatriculée au Registre du
                 Commerce et des Sociétés sous le numéro <strong>[Numéro RCS]</strong>. Le siège social est situé au
                 <strong>[Adresse complète]</strong>.
             </p>
