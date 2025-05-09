@@ -1,5 +1,5 @@
 import {v4 as uuidv4} from 'uuid';
-import {Preset, type RenamerFile} from "$models";
+import {information, Preset, type RenamerFile} from "$models";
 import dateFormat from "dateformat";
 import {Signal} from "$models/Signal";
 import {invoke} from "@tauri-apps/api/core";
@@ -43,6 +43,9 @@ export abstract class Formatter {
             case 'BasicTextFormatter':
                 formatter = new BasicTextFormatter();
                 break;
+            case 'SizeFormatter':
+                formatter = new SizeFormatter();
+                break;
             default:
                 throw new Error(`Unknown formatter type: ${obj.type}`);
         }
@@ -58,25 +61,12 @@ export abstract class Formatter {
 
 }
 
-function createWritableWithUpdate(value: any) {
-    const {subscribe, set, update} = writable(value);
-
-    return {
-        subscribe,
-        set: (newValue: any) => {
-            // Toujours déclencher la mise à jour même si la valeur est la même
-            set(value);
-            setTimeout(() => set(newValue), 0);
-        },
-        update
-    };
-}
 
 export class FormatterList {
     public onFormattedSignal = new Signal<RenamerFile[]>();
     public onListChangedSignal = new Signal<Formatter[]>();
     readonly renamable = writable<boolean>(false);
-    readonly errors = createWritableWithUpdate(0);
+    readonly errors = writable({count: 0});
     private _timer: any;
 
     constructor(files: RenamerFile[]) {
@@ -241,9 +231,9 @@ export class FormatterList {
                 if (files.length === 0) {
                     this.renamable.set(false);
                 } else this.renamable.set((res as any[]).length === 0);
-                this.errors.set((res as any[]).length);
+                this.errors.set({count : (res as any[]).length})
             }
-        });
+        })
     }
 }
 

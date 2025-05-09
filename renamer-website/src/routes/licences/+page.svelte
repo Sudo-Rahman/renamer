@@ -28,6 +28,11 @@
             name: "Lucide Icons",
             description: "Collection d'icônes open source pour des interfaces élégantes. Licence MIT.",
             url: "https://lucide.dev/"
+        },
+        {
+            name: "Tauri",
+            description: "Framework pour créer des applications de bureau avec des technologies web. Licence MIT.",
+            url: "https://tauri.app/"
         }
     ];
 </script>
@@ -58,7 +63,7 @@
             <div>
                 <h2 class="text-2xl font-semibold">Attribution d'icône</h2>
                 <p class="mt-2">
-                    L'icône utilisée sur ce site provient de
+                    L'icône utilisée sur ce site, ainsi que sur le logiciel Renamer provient de
                     <a class="text-blue-600 hover:underline" href="https://www.freepik.com/" rel="noopener noreferrer"
                        target="_blank">
                         Freepik

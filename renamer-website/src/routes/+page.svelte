@@ -11,7 +11,9 @@
 
 <div class="flex flex-col space-y-32">
 
-    <PricingSection/>
+    <div class="px-5">
+        <PricingSection/>
+    </div>
 
 
     <div class="bg-card" id="anchor-download">

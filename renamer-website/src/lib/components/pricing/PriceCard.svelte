@@ -42,7 +42,9 @@
                     body => {
                         product = body[0];
                         if (!product) return;
-                        price = (product.unit_amount! / 100).toFixed(2);
+                        price =  new Intl.NumberFormat( navigator.language, { style: "currency", currency: product.currency }).format(
+                            product.unit_amount! /100,
+                        );
                         fetchOk = true;
                     }
                 );

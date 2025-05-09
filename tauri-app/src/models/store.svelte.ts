@@ -20,11 +20,7 @@ preset.subscribe((value) => {
     }
 });
 
-export const options = writable({
-    spaceBetweenFormatters: false,
-});
-
 // info component for bottom of the page
-export const information: Writable<string> = writable("");
+export const information: {callback: (text? : string) => void, html: string} = $state({callback : () =>{}, html : ""});
 
 export const store = new LazyStore('renamer_store.json');

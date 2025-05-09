@@ -7,7 +7,6 @@
     import {Label} from "$lib/components/ui/label";
     import * as Resizable from "$lib/components/ui/resizable";
     import AddFormatterButton from "$lib/components/formatterComponents/AddFormatterButton.svelte";
-    import {Button} from "$lib/components/ui/button";
     import ListView from "$lib/components/list/ListView.svelte";
     import {get} from "svelte/store";
 
@@ -16,14 +15,16 @@
         showInfoMessage();
     });
 
-    files.subscribe(value => {
-        showInfoMessage();
-    });
-
-    function showInfoMessage() {
-        let seletedFiles = $files.filter(file => file.selected).length;
-        $information = `<span>${formatString($t('bottom_info.files_infos'), seletedFiles, get($formatters.errors))}</span>`;
-
+    information.callback = (text) => {
+        showInfoMessage(text);
+    }
+    function showInfoMessage(html? : string) {
+        if(html) {
+            information.html = html;
+        } else {
+            let seletedFiles = $files.filter(file => file.selected).length;
+            information.html = `<span>${formatString($t('bottom_info.files_infos'), seletedFiles, get($formatters.errors).count)}</span>`;
+        }
     }
 
 
@@ -63,8 +64,8 @@
         <span class="px-2 font-medium">{$preset ? `Preset : ${$preset?.name}` : ''}</span>
 
         <div class="flex items-center">
-            {#key $information}
-                <span class="px-2">{@html $information}</span>
+            {#key information.html}
+                <span class="px-2">{@html information.html}</span>
             {/key}
         </div>
 

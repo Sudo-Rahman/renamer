@@ -10,7 +10,7 @@
         column: Column,
     };
 
-    let {files, column}: Props = $props();
+    let {files = $bindable(), column}: Props = $props();
 
     let selected = $state(files.every(f => f.selected));  // Check if all are selected
 

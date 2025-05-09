@@ -145,7 +145,7 @@
             {@const Component = col.headerComponent}
             <div class="w-fit px-2" bind:this={divs[i]}>
                 {#if col.headerComponent !== undefined}
-                    <Component column={col} files={files}/>
+                    <Component column={col} bind:files={files}/>
                 {:else}
                     <Button variant="ghost" onclick={() => sortToggle(col)}>
                         {$t(col.name)}
@@ -164,7 +164,7 @@
                                     defaultSize={col.minSize ?? 10}>
                         <div class="px-2 font-medium text-sm" bind:this={divs2[i]}>
                             {#if col.headerComponent !== undefined}
-                                <Component files={files}/>
+                                <Component bind:files={files}/>
                             {:else}
                                 {#if col.sort}
                                     <Button variant="ghost" class="p-2" onclick={() => sortToggle(col)}>

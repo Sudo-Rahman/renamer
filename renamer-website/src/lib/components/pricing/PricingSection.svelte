@@ -7,7 +7,7 @@
             priceId: null,
             description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
             features: [
-                "import only 10 files",
+                "import only 5 files",
             ],
             btnText: "Download"
         },
@@ -17,8 +17,10 @@
             description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
             features: [
                 "Import unlimited files",
-                "1 license",
+                "1 machine",
                 "lifetime updates",
+                "Presets save",
+                "Additional themes",
             ],
             btnText: "Buy"
         },
@@ -28,8 +30,10 @@
             description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
             features: [
                 "Import unlimited files",
-                "5 licenses",
+                "5 machines",
                 "lifetime updates",
+                "Presets save",
+                "Additional themes",
             ],
             btnText: "Buy"
         }

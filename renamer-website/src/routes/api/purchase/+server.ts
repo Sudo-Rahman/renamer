@@ -24,7 +24,7 @@ export const POST: RequestHandler = async ({url, request}) => {
             },
             mode: 'payment',
             success_url: `${url.origin}/api/webhook/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${url.origin}/api/webhook/cancel`,
+            cancel_url: `${url.origin}`,
         });
 
         // Renvoie la session ID pour le front-end

@@ -5,13 +5,13 @@
     import {Play} from 'lucide-svelte';
     import {Button} from '$lib/components/ui/button';
     import {toast} from "svelte-sonner";
-    import {Label} from "$lib/components/ui/label";
-    import {Checkbox} from "$lib/components/ui/checkbox";
     import {t} from "$lib/translations";
     import CreatePreset from "$lib/components/SavePresetDialog.svelte";
     import PresetListDialog from "$lib/components/PresetListDialog.svelte";
     import {goto} from "$app/navigation";
     import {message} from "@tauri-apps/plugin-dialog";
+    import CircularProgress from "$lib/components/CircularProgress.svelte";
+    import {isMacOS} from "$lib/os";
 
     type Props = {
         class?: string;
@@ -19,6 +19,8 @@
     };
 
     let {class: className, files = $bindable()}: Props = $props();
+
+    let renameState = $state(false);
 
     onMount(() => {
         const handleKeyDown = async (event: KeyboardEvent) => {
@@ -85,9 +87,11 @@
     }
 
     async function onRenameFiles() {
+        renameState = true;
         $formatters.renameFiles().then(
             () => {
                 toast.success($t('toast.rename_files.success'));
+                renameState = false;
             },
             (error) => {
                 if (error as number === 1) {
@@ -103,6 +107,7 @@
                     toast.error($t('toast.rename_files.error'));
                 }
                 console.error(error);
+                renameState = false;
             }
         );
     }
@@ -158,7 +163,13 @@
                     <Menubar.Separator/>
                     <Menubar.Item onclick={getFiles}>
                         {$t('menu_bar.file.import_files')}
-                        <Menubar.Shortcut>⌘N</Menubar.Shortcut>
+                        <Menubar.Shortcut>
+                            {#if isMacOS}
+                                ⌘N
+                            {:else}
+                                Ctrl+N
+                            {/if}
+                        </Menubar.Shortcut>
                     </Menubar.Item>
                     <Menubar.Item onclick={getFolder}>
                         {$t('menu_bar.file.import_files_from_dir')}
@@ -168,18 +179,36 @@
             </Menubar.Menu>
             <Menubar.Menu>
                 <Menubar.Trigger>{$t('menu_bar.preset.title')}</Menubar.Trigger>
-                <Menubar.Content>
+                <Menubar.Content class="w-fit">
                     <Menubar.Item disabled={saveDisable()} onclick={onSavePreset}>
                         {$t('menu_bar.preset.save')}
-                        <Menubar.Shortcut>⌘S</Menubar.Shortcut>
+                        <Menubar.Shortcut>
+                            {#if isMacOS}
+                                ⌘S
+                            {:else}
+                                Ctrl+S
+                            {/if}
+                        </Menubar.Shortcut>
                     </Menubar.Item>
                     <Menubar.Item disabled={$formatters.formatters.length === 0} onclick={onSaveAsPreset}>
                         {$t('menu_bar.preset.save_as')}
-                        <Menubar.Shortcut>⌘⇧S</Menubar.Shortcut>
+                        <Menubar.Shortcut class="pl-5">
+                            {#if isMacOS}
+                                ⌘⇧S
+                            {:else}
+                                Ctrl+Shift+S
+                            {/if}
+                        </Menubar.Shortcut>
                     </Menubar.Item>
                     <Menubar.Item onclick={onLoadPreset}>
                         {$t('menu_bar.preset.show')}
-                        <Menubar.Shortcut>⌘O</Menubar.Shortcut>
+                        <Menubar.Shortcut>
+                            {#if isMacOS}
+                                ⌘O
+                            {:else}
+                                Ctrl+O
+                            {/if}
+                        </Menubar.Shortcut>
                     </Menubar.Item>
                 </Menubar.Content>
             </Menubar.Menu>
@@ -188,11 +217,15 @@
 
         <div class="flex w-full justify-end">
             <Button class="h-9 w-10 active:bg-primary"
-                    disabled={!($renamable)}
+                    disabled={!($renamable) || renameState}
                     onclick={onRenameFiles}
                     size="icon"
                     variant="outline">
-                <Play/>
+                {#if renameState}
+                    <CircularProgress/>
+                {:else}
+                    <Play/>
+                {/if}
             </Button>
         </div>
     </div>

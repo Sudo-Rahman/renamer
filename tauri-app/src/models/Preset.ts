@@ -1,9 +1,7 @@
 import {v4 as uuidv4} from "uuid";
 import {Formatter} from "$models/Formatter";
-import {store} from "$models/store";
+import {store} from "$models/index";
 import {invoke} from "@tauri-apps/api/core";
-import {error, json} from "@sveltejs/kit";
-import pre = $effect.pre;
 
 export class Preset {
     constructor(name: string = "", formatters: Formatter[] = []) {
