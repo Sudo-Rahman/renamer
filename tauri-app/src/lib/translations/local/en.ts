@@ -53,9 +53,9 @@ export const en = {
         }
     },
     formatter: {
-        add_btn: "Add Formatter",
+        add_btn: "Add Rules",
         panel: {
-            title: "Formatters",
+            title: "Rules",
         },
         number: {
             title: "Number",
@@ -187,7 +187,7 @@ export const en = {
         save_as_preset: {
             success: "Preset %s saved successfully",
             error: "Error saving preset %s",
-            error_license_free : "You need a license to save presets",
+            error_license_free: "You need a license to save presets",
         },
         load_preset: {
             success: "Preset %s loaded successfully",

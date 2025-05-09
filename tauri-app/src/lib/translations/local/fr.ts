@@ -53,9 +53,9 @@ export const fr = {
         }
     },
     formatter: {
-        add_btn: "Ajouter un formateur",
+        add_btn: "Ajouter une règle",
         panel: {
-            title: "Formateurs",
+            title: "Règles",
         },
         number: {
             title: "Nombre",
@@ -187,7 +187,7 @@ export const fr = {
         save_as_preset: {
             success: "Préréglage %s enregistré avec succès",
             error: "Erreur lors de l'enregistrement du préréglage %s",
-            error_license_free : "Vous devez disposer d'une licence pour enregistrer des préréglages",
+            error_license_free: "Vous devez disposer d'une licence pour enregistrer des préréglages",
         },
         load_preset: {
             success: "Préréglage %s chargé avec succès",

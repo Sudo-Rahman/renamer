@@ -7,7 +7,7 @@
     import {toast} from "svelte-sonner";
     import {t} from "$lib/translations";
 
-    let {open = $bindable(false)} = $props();
+    let {open = $bindable(false)}: { open: boolean } = $props();
     let name = $state('');
     let disableBtn = $derived(name.length < 3);
     let showWarning = $derived(false);// Afficher l'avertissement si la longueur est < 3
@@ -18,11 +18,11 @@
             if (value) {
                 toast.success($t('toast.save_as_preset.success').replace("%s", name));
             }
-        }).catch((e)=>{
+        }).catch((e) => {
             console.error(e);
-            if(e === 1){
+            if (e === 1) {
                 toast.error($t('toast.save_as_preset.error_license_free'));
-            }else{
+            } else {
                 toast.error($t('toast.save_as_preset.error').replace('%s', name));
             }
         });
@@ -31,16 +31,17 @@
 </script>
 
 <Dialog.Root bind:open={open}>
-    <Dialog.Content>
+    <Dialog.Content class="max-w-md">
         <Dialog.Header>
             <Dialog.Title class="text-center">{$t('menu_bar.preset.save_as_dialog.title')}</Dialog.Title>
         </Dialog.Header>
 
-        <div class="flex justify-center flex-col space-y-6 pt-5">
+        <div class="flex justify-center w-full flex-col space-y-6 pt-5">
 
-            <div class="grid w-full max-w-sm items-center gap-1.5">
+            <div class="grid w-full items-center gap-2">
                 <Label>{$t('menu_bar.preset.save_as_dialog.input')}</Label>
-                <Input bind:value={name} placeholder={$t('menu_bar.preset.save_as_dialog.placeholder')}
+                <Input bind:value={name} class="w-full"
+                       placeholder={$t('menu_bar.preset.save_as_dialog.placeholder')}
                        type="text"/>
                 {#if showWarning}
                     <p class="text-red-500 text-sm">{$t('menu_bar.preset.save_as_dialog.warning')}</p>

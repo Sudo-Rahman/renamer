@@ -1,6 +1,5 @@
 import type {RequestHandler} from "@sveltejs/kit";
 import {stripe} from "$lib/server/Stripe";
-import {env} from '$env/dynamic/private';
 
 export const POST: RequestHandler = async ({url, request}) => {
     try {

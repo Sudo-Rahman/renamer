@@ -3,7 +3,7 @@
     import {onMount} from "svelte";
     import {relaunch} from "@tauri-apps/plugin-process";
     import {Button} from "$lib/components/ui/button";
-    import {listen} from "@tauri-apps/api/event";
+    import {emit, listen} from "@tauri-apps/api/event";
     import {ProgressBarStatus} from "@tauri-apps/api/window";
     import {t} from "$lib/translations";
 
@@ -34,6 +34,8 @@
                 tauriWindow.getCurrentWindow().setProgressBar({status: ProgressBarStatus.None});
             }
         });
+
+        await emit("updatable");
     });
 
     async function relaunchApp() {

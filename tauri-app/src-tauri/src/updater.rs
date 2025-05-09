@@ -1,5 +1,5 @@
 use serde_json::json;
-use tauri::{AppHandle, Emitter};
+use tauri::{AppHandle, Emitter, Listener};
 use tauri_plugin_dialog::{DialogExt, MessageDialogButtons};
 use tauri_plugin_updater::UpdaterExt;
 use crate::app::APPLICATION;
@@ -33,36 +33,40 @@ where
 
 #[tauri::command]
 pub async fn download_and_install_update(app: AppHandle) -> tauri_plugin_updater::Result<()> {
-    #[cfg(any(target_os = "macos", target_os = "linux"))]
-    create_update_window(app.clone());
-
-    if let Some(update) = app.updater()?.check().await? {
+    if let Some(update) = app.clone().updater()?.check().await? {
         #[cfg(any(target_os = "macos", target_os = "linux"))]
         {
-            let mut downloaded = 0;
-            update
-                .download_and_install(
-                    |chunk_length, content_length| {
-                        downloaded += chunk_length;
-                        app.emit(
-                            "update_progress",
-                            Some(json!({
-                                "type": "download",
-                                "downloaded": downloaded,
-                                "total": content_length
-                            })),
-                        ).expect("failed to emit download progress");
-                    },
-                    || {
-                        app.emit(
-                            "update_progress",
-                            Some(json!({
-                                "type": "finish"
-                            })),
-                        ).expect("failed to emit install progress");
-                    },
-                ).await?;
+            let app_clone = app.clone(); // Create clone for closure
+            app.clone().once("updatable", move |_| {
+                tokio::spawn(async move {  // Spawn async task inside sync closure
+                    let mut downloaded = 0;
+                    update
+                        .download_and_install(
+                            |chunk_length, content_length| {
+                                downloaded += chunk_length;
+                                app_clone.emit(
+                                    "update_progress",
+                                    Some(json!({
+                                    "type": "download",
+                                    "downloaded": downloaded,
+                                    "total": content_length
+                                })),
+                                ).expect("failed to emit download progress");
+                            },
+                            || {
+                                app_clone.emit(
+                                    "update_progress",
+                                    Some(json!({
+                                    "type": "finish"
+                                })),
+                                ).expect("failed to emit install progress");
+                            },
+                        ).await;
+                });
+            });
         }
+        #[cfg(any(target_os = "macos", target_os = "linux"))]
+        create_update_window(app);
         #[cfg(any(target_os = "windows"))]
         update.download_and_install(|_, _| {}, || {}).await?;
     }

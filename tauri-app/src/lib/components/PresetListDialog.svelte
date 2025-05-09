@@ -8,7 +8,7 @@
     import {ask} from "@tauri-apps/plugin-dialog";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 
-    let {open = $bindable(false)} = $props();
+    let {open = $bindable(false)}: { open: boolean } = $props();
 
     let presets: Preset[] = $state([]);
 
@@ -52,12 +52,13 @@
 
 
 <Dialog.Root bind:open={open}>
-    <Dialog.Content class="h-[60vh] transition-all duration-300 ease-in-out flex flex-col">
+    <Dialog.Content class="h-[60vh] p-1 transition-all duration-300 ease-in-out flex flex-col">
         <Dialog.Header>
-            <Dialog.Title class="flex w-full justify-center">{$t('menu_bar.preset.list_dialog.title')}</Dialog.Title>
+            <Dialog.Title
+                    class="flex w-full pt-4 pb-2 justify-center">{$t('menu_bar.preset.list_dialog.title')}</Dialog.Title>
         </Dialog.Header>
 
-        <ScrollArea class="h-full w-full p-1" orientation="vertical">
+        <ScrollArea class="h-full w-full px-5" orientation="vertical">
 
             {#each presets as preset}
                 <div class="w-full h-fit flex space-x-5 items-center rounded-md hover:bg-primary">
