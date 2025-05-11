@@ -1,6 +1,7 @@
 <script lang="ts">
 
     import {quintOut} from "svelte/easing";
+    import {t} from "$lib/translations";
 
     let email = $state("");
     let licenseKey = $state("");
@@ -85,15 +86,15 @@
                 throw new Error('Failed to reset license');
             }
 
-            toast.success("Machine removed", {
-                description: "The machine has been removed from your license"
+            toast.success($t('remove.success.title'), {
+                description: $t('remove.success.title', {device: machine.device_name})
             });
 
             user!.machines = user!.machines.filter(m => m.id !== machine.id);
             posts = posts.filter(p => p !== machine.id);
         } catch (error) {
             machine.post = "error";
-            toast.error("Failed to reset license");
+            toast.error($t('remove.error.message'));
         }
     }
 
@@ -104,18 +105,18 @@
 
         <Card>
             <div class="h-full w-full flex flex-col space-y-5">
-                <h2 class="text-2xl font-semibold text-center">Remove Machine</h2>
+                <h2 class="text-2xl font-semibold text-center">{$t('remove.title')}</h2>
                 <p class="text-sm text-accent-foreground/60 text-center">
-                    Enter your email and license key, then click on the button to remove a machine from your license.
+                    {$t('remove.description')}
                 </p>
                 <div class="flex flex-col space-y-2">
                     <!-- Email Input -->
                     <div class="flex flex-col gap-1 mb-3">
-                        <Label>Email</Label>
+                        <Label>{$t('remove.input.email.label')}</Label>
                         <Input
                                 bind:value={email}
                                 class="w-full transition-all duration-300 ease-in-out"
-                                placeholder="Enter your email"
+                                placeholder={$t('remove.input.email.placeholder')}
                                 type="email"
                         />
 
@@ -124,7 +125,7 @@
 
                     <!-- License Key Input -->
                     <div class="flex flex-col gap-1 mb-4">
-                        <Label>License Key</Label>
+                        <Label>{$t('remove.input.key.label')}</Label>
                         <Input
                                 bind:value={licenseKey}
                                 class="w-full transition-all duration-300 ease-in-out"
@@ -144,7 +145,7 @@
                     {#if getPosts}
                         <CircularProgress circleColor="secondary" class="w-5 h-5"/>
                     {:else}
-                        Find machines
+                        {$t('remove.find_btn')}
                     {/if}
                 </Button>
             </div>
@@ -161,7 +162,7 @@
                                     {#if posts.find(p => p === machine.id)}
                                         <CircularProgress circleColor="secondary" class="w-5 h-5"/>
                                     {:else}
-                                        Remove machine
+                                        {$t('remove.remove_btn')}
                                     {/if}
                                 </Button>
                             </div>

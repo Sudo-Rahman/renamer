@@ -5,6 +5,7 @@
     import {Sun, Moon} from "lucide-svelte";
     import { buttonVariants } from "$lib/components/ui/button/index.js";
     import {goto} from "$app/navigation";
+    import {t} from "$lib/translations";
 
     async function handleDownloadClick(event : MouseEvent) {
         event.preventDefault()
@@ -20,7 +21,7 @@
 </script>
 
 
-<div class="w-full flex justify-center sticky top-5 z-50">
+<div class="w-full flex justify-center sticky top-5 z-50 pb-20">
     <nav class="backdrop-blur bg-card/50 rounded-2xl mx-5 lg:w-3/5 h-14 items-center sm:w-3/4 w-[90%] flex p-1 px-3 border border-foreground border-opacity-10">
 
         <div class="flex items-center justify-start h-full">
@@ -33,11 +34,11 @@
         <div class="flex-grow"></div>
 
         <div class="flex items-center h-full">
-            <a class="px-5" href="/docs">Docs</a>
+            <a class="px-5" href="/docs">{$t('nav.docs')}</a>
         </div>
 
         <div class="flex items-center h-full">
-            <a class="px-5" href="/" on:click={handleDownloadClick}>Download</a>
+            <a class="px-5" href="/" on:click={handleDownloadClick}>{$t('nav.download')}</a>
         </div>
 
         <DropdownMenu.Root>
@@ -45,10 +46,10 @@
                 <Sun class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"/>
                 <Moon class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"/>
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content align="end" class="rounded-2xl">
-                <DropdownMenu.Item onclick={() => setMode("light")}>Light</DropdownMenu.Item>
-                <DropdownMenu.Item onclick={() => setMode("dark")}>Dark</DropdownMenu.Item>
-                <DropdownMenu.Item onclick={() => resetMode()}>System</DropdownMenu.Item>
+            <DropdownMenu.Content align="end">
+                <DropdownMenu.Item onclick={() => setMode("light")}>{$t('nav.theme.light')}</DropdownMenu.Item>
+                <DropdownMenu.Item onclick={() => setMode("dark")}>{$t('nav.theme.dark')}</DropdownMenu.Item>
+                <DropdownMenu.Item onclick={() => resetMode()}>{$t('nav.theme.system')}</DropdownMenu.Item>
             </DropdownMenu.Content>
         </DropdownMenu.Root>
     </nav>

@@ -1,49 +1,38 @@
 <script lang="ts">
     import PriceCard from "./PriceCard.svelte";
     import Stripe from "stripe";
+    import {t} from "$lib/translations";
 
     let {prices} : {prices : Promise<Stripe.Price>[]} = $props();
 
     let data = [
         {
-            title: "Gratuit",
-            price: null,
-            description: "Idéal pour les utilisateurs occasionnels qui souhaitent essayer l'application avant de s'engager.",
-            features: [
-                "Importation limitée à 5 fichiers",
-            ],
-            btnText: "Télécharger"
+            title: $t('pricing.plan.0.title'),
+            price: $t('pricing.plan.0.price'),
+            description: $t('pricing.plan.0.description'),
+            features: $t('pricing.plan.0.features'),
+            btnText: $t('pricing.plan.0.btnText')
         },
         {
-            title: "Pro",
+            title: $t('pricing.plan.1.title'),
             price: prices[0],
-            description: "Accédez à toutes les fonctionnalités avancées pour gérer efficacement vos renommages de fichiers en masse.",
-            features: [
-                "Importation illimitée de fichiers",
-                "Utilisation sur 1 appareil",
-                "Mises à jour à vie",
-                "Sauvegarde de préréglages",
-            ],
-            btnText: "Acheter"
+            description: $t('pricing.plan.1.description'),
+            features: $t('pricing.plan.1.features'),
+            btnText: $t('pricing.plan.1.btnText')
         },
         {
-            title: "Équipe",
+            title: $t('pricing.plan.2.title'),
             price: prices[1],
-            description: "Accédez à toutes les fonctionnalités avancées pour gérer efficacement vos renommages de fichiers en masse sur <span class='text-card-foreground font-semibold'>plusieurs appareils.</span>",
-            features: [
-                "Importation illimitée de fichiers",
-                "Utilisation sur 5 appareils",
-                "Mises à jour à vie",
-                "Sauvegarde de préréglages",
-            ],
-            btnText: "Acheter"
+            description: $t('pricing.plan.2.description'),
+            features: $t('pricing.plan.2.features'),
+            btnText: $t('pricing.plan.2.btnText')
         }
     ]
 </script>
 
 <div class="flex w-full justify-center">
     <div class="flex flex-col justify-center w-fit">
-        <h1 class="text-3xl font-extrabold text-left pb-16 pl-10">Tarification</h1>
+        <h1 class="text-xl md:text-2xl font-extrabold text-left pb-16 pl-10">{$t('pricing.title')}</h1>
         <section class="flex justify-center">
 
             <div class="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0">

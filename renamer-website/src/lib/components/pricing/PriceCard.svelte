@@ -3,30 +3,32 @@
     import * as Card from "$lib/components/ui/card/index.js";
     import {onMount} from "svelte";
     import Stripe from "stripe";
-    import {createEventDispatcher} from "svelte";
     import {checkout} from "$lib/components/pricing/utils";
-    import {redirect} from "@sveltejs/kit";
     import {goto} from "$app/navigation";
     import CircularProgress from "$lib/components/CircularProgress.svelte";
+    import Download from "$lib/components/download/Download.svelte";
+    import DownloadButton from "$lib/components/download/DownloadButton.svelte";
 
     type Props = {
         title: string,
         description: string,
-        price: Promise<Stripe.Price> | null,
+        price: Promise<Stripe.Price> | string,
         features: string[],
         btnText: string
     }
 
     let {title, description, price : pricePromise, features, btnText}: Props = $props();
 
-
-    let priceString: string | null = $state(!pricePromise ? "Gratuit" : null);
+    let priceString: string = $state(typeof pricePromise === "string" ? pricePromise : "");
 
     let price: Stripe.Price | null = $state(null);
 
     async function getPrice(){
         if (!pricePromise) {
             return;
+        }
+        if (typeof pricePromise === "string") {
+            return pricePromise;
         }
         price = await pricePromise;
         if (!price) {
@@ -79,19 +81,23 @@
             </ul>
         </Card.Content>
         <Card.Footer class="flex items-end">
-            {#await getPrice()}
-                <Button class="w-full" disabled={true}>
-                    <CircularProgress circleColor="secondary" class="w-5 h-5"/>
-                </Button>
-            {:then price}
-                <Button class="w-full" onclick={handleClick}>
-                    {btnText}
-                </Button>
-            {:catch error}
-                <Button class="w-full" disabled={true}>
-                    Erreur
-                </Button>
-            {/await}
+            {#if (typeof pricePromise === 'string')}
+            <DownloadButton/>
+            {:else}
+                {#await getPrice()}
+                    <Button class="w-full" disabled={true}>
+                        <CircularProgress circleColor="secondary" class="w-5 h-5"/>
+                    </Button>
+                {:then price}
+                    <Button class="w-full" onclick={handleClick}>
+                        {btnText}
+                    </Button>
+                {:catch error}
+                    <Button class="w-full" disabled={true}>
+                        Error
+                    </Button>
+                {/await}
+            {/if}
         </Card.Footer>
     </Card.Root>
 </div>

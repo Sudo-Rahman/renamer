@@ -1,37 +1,42 @@
 <script>
+    import { t } from "$lib/translations";
     // Date de dernière mise à jour affichée dynamiquement
-    const currentDate = new Date().toLocaleDateString('fr-FR');
+    const currentDate = new Date().toLocaleDateString(navigator.language, {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
 
     // Liste des outils et leurs informations
     const tools = [
         {
             name: "SvelteKit",
-            description: "Framework moderne pour le développement d'applications web. Licence MIT.",
+            description: $t("licenses.sveltekit"),
             url: "https://kit.svelte.dev/"
         },
         {
             name: "shadcn-svelte",
-            description: "Ensemble de composants inspirés du design shadcn, adaptés pour Svelte. Licence MIT.",
+            description: $t("licenses.shadcn"),
             url: "https://next.shadcn-svelte.com/"
         },
         {
             name: "TailwindCSS",
-            description: "Framework CSS utilitaire pour un design moderne et réactif. Licence MIT.",
+            description: $t("licenses.tailwindcss"),
             url: "https://tailwindcss.com/"
         },
         {
             name: "Node.js",
-            description: "Environnement d'exécution JavaScript côté serveur. Licence MIT.",
+            description: $t("licenses.nodejs"),
             url: "https://nodejs.org/"
         },
         {
             name: "Lucide Icons",
-            description: "Collection d'icônes open source pour des interfaces élégantes. Licence MIT.",
+            description: $t("licenses.lucide"),
             url: "https://lucide.dev/"
         },
         {
             name: "Tauri",
-            description: "Framework pour créer des applications de bureau avec des technologies web. Licence MIT.",
+            description: $t("licenses.tauri"),
             url: "https://tauri.app/"
         }
     ];
@@ -39,9 +44,9 @@
 
 <div class="container mx-auto px-4">
     <header class="mb-8 text-center">
-        <h1 class="text-5xl font-bold mb-4">Licences et Outils Utilisés</h1>
+        <h1 class="text-5xl font-bold mb-4">{$t('licenses.title')}</h1>
         <p class="text-lg text-gray-600">
-            Découvrez les technologies qui ont permis de développer ce site.
+            {$t('licenses.subtitle')}
         </p>
     </header>
 
@@ -61,9 +66,9 @@
         <!-- Section attribution icône -->
         <section>
             <div>
-                <h2 class="text-2xl font-semibold">Attribution d'icône</h2>
+                <h2 class="text-2xl font-semibold">  {$t('licenses.icon.label')}</h2>
                 <p class="mt-2">
-                    L'icône utilisée sur ce site, ainsi que sur le logiciel Renamer provient de
+                    {$t('licenses.icon.author')}
                     <a class="text-blue-600 hover:underline" href="https://www.freepik.com/" rel="noopener noreferrer"
                        target="_blank">
                         Freepik
@@ -74,7 +79,7 @@
 
         <footer class="mt-8 text-right">
             <p class="text-sm text-gray-600">
-                Dernière mise à jour : {currentDate}
+                {$t('licenses.last_update', {date : currentDate})}
             </p>
         </footer>
     </section>

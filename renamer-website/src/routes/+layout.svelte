@@ -16,7 +16,7 @@
 <div class="h-screen">
     <NavBar/>
     <ModeWatcher/>
-    <div class="py-20">
+    <div>
         {@render children()}
     </div>
     <div class="sticky top-[100vh]">

@@ -1,9 +1,5 @@
 <script lang="ts">
     import PricingSection from "$lib/components/pricing/PricingSection.svelte";
-    import * as Tabs from "$lib/components/ui/tabs/index.js";
-    import WindowsDownload from "$lib/components/download/WindowsDownload.svelte";
-    import MacOsDownload from "$lib/components/download/MacOsDownload.svelte";
-    import LinuxDownload from "$lib/components/download/LinuxDownload.svelte";
     import {Label} from "$lib/components/ui/label";
     import type { PageServerData } from './$types';
     import {
@@ -12,6 +8,10 @@
         scale
     } from 'svelte/transition';
     import {onMount} from "svelte";
+    import {t} from "$lib/translations";
+    import Download from "$lib/components/download/Download.svelte";
+
+
     let {data} : {data : PageServerData} = $props();
 
     let visible = $state(false);
@@ -26,60 +26,42 @@
 <div class="flex flex-col space-y-32">
 
 
-    <div class="text-center py-12">
+    <div class="text-center py-12 px-5">
         {#if visible}
-            <h1 class="text-4xl md:text-5xl font-bold mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold mb-6">
       <span in:fly={{ y: -20, duration: 800, delay: 200 }} class="inline-block">
-        Renommez
+        {$t('home.title')[0]}
       </span>
                 <span in:fly={{ y: -20, duration: 800, delay: 400 }} class="inline-block">
-        des centaines
+       {$t('home.title')[1]}
       </span>
                 <span in:fly={{ y: -20, duration: 800, delay: 600 }} class="inline-block">
-        de fichiers
+       {$t('home.title')[2]}
       </span>
                 <span in:scale={{ start: 0.8, duration: 1000, delay: 600 }} class="inline-block text-primary">
-        en quelques clics
+      {$t('home.title')[3]}
       </span>
             </h1>
-            <p in:fade={{ duration: 1000, delay: 1000 }} class="text-xl text-gray-600 max-w-2xl mx-auto">
-                Gagnez du temps avec notre outil puissant de renommage par lots
+            <p in:fade={{ duration: 1000, delay: 1000 }} class="text-sm md:text-xl text-gray-600 max-w-2xl mx-auto">
+                {$t('home.subtitle')}
             </p>
         {/if}
     </div>
 
     <div class="w-full flex justify-center bg-card py-20">
         <video muted class="lg:w-[70%] xl:w-[50%] w-[95%] md:w-[80%] rounded-lg xl:rounded-xl"  autoplay src="/video.mp4"></video>
-
     </div>
 
     <div class="px-5">
         <PricingSection prices={data.prices}/>
     </div>
 
-    <div class="bg-card" id="anchor-download">
-        <div class="flex p-4 justify-center items-center space-y-4 flex-col">
+    <div class="bg-card flex p-4 py-20 justify-center items-center" id="anchor-download">
+        <div class="flex flex-col space-y-4">
 
-            <Label class="text-2xl font-semibold text-center">Download Renamer</Label>
+            <Label class="text-2xl font-semibold">{$t('download.title')}</Label>
 
-            <div class="flex p-10 justify-center bg-background/10 border max-w-fit w-full  items-center rounded-2xl">
-                <Tabs.Root class="space-y-10 " value="windows">
-                    <Tabs.List>
-                        <Tabs.Trigger value="windows">Windows</Tabs.Trigger>
-                        <Tabs.Trigger value="macos">Macos</Tabs.Trigger>
-                        <Tabs.Trigger value="linux">Linux</Tabs.Trigger>
-                    </Tabs.List>
-                    <Tabs.Content value="windows">
-                        <WindowsDownload/>
-                    </Tabs.Content>
-                    <Tabs.Content value="macos">
-                        <MacOsDownload/>
-                    </Tabs.Content>
-                    <Tabs.Content value="linux">
-                        <LinuxDownload/>
-                    </Tabs.Content>
-                </Tabs.Root>
-            </div>
+            <Download/>
 
         </div>
     </div>

@@ -1,6 +1,6 @@
 <script lang="ts">
     import "../app.css";
-    import {ModeWatcher} from "mode-watcher";
+    import {ModeWatcher, setMode} from "mode-watcher";
     import {osType} from "$lib/os";
 
     let {children} = $props();
@@ -19,7 +19,7 @@
             document.documentElement.classList.add("unknown")
     }
 
-
+    setMode('light')
 </script>
 
 <ModeWatcher/>
