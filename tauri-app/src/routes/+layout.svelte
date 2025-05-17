@@ -2,8 +2,9 @@
     import "../app.css";
     import {ModeWatcher, setMode} from "mode-watcher";
     import {osType} from "$lib/os";
+    import {fade,fly, crossfade} from "svelte/transition";
 
-    let {children} = $props();
+    let {data, children} = $props();
 
     switch (osType) {
         case "macos":
@@ -19,7 +20,6 @@
             document.documentElement.classList.add("unknown")
     }
 
-    setMode('light')
 </script>
 
 <ModeWatcher/>

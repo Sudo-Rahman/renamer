@@ -19,7 +19,7 @@ use crate::utils::*;
 use crate::updater::*;
 
 use rust_i18n::i18n;
-use crate::window::create_main_window;
+use crate::window::{create_main_window, create_terms_window};
 
 i18n!("locales");
 
@@ -63,11 +63,17 @@ fn setup<'a>(app: &'a mut tauri::App) -> Result<(), Box<dyn std::error::Error>> 
     tauri::async_runtime::spawn(async move {
         APPLICATION.lock().await.init_values(handle_clone1.clone()).await;
         rust_i18n::set_locale(&get_system_language().await);
-        check_update(handle_clone1.clone(), || {
-            create_main_window(handle_clone1.clone());
-        }).await.inspect_err(|_| {
-            create_main_window(handle_clone1.clone());
-        }).expect("error checking update");
+
+        if AppStore::read::<bool>("terms_accepted").unwrap_or(false) == false {
+            let clone_handle = handle_clone1.clone();
+            create_terms_window(clone_handle.clone());
+        } else {
+            check_update(handle_clone1.clone(), || {
+                create_main_window(handle_clone1.clone());
+            }).await.inspect_err(|_| {
+                create_main_window(handle_clone1.clone());
+            }).expect("error checking update");
+        }
     });
 
 

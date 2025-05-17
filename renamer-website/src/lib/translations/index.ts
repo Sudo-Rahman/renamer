@@ -33,13 +33,3 @@ function translate(key: string, vars: any) {
         return key;
     }
 }
-
-
-export const available_locales = {
-    en: {
-        name: 'English',
-    },
-    fr: {
-        name: 'Français',
-    }
-};

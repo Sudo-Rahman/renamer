@@ -1,12 +1,13 @@
-import i18n from 'sveltekit-i18n';
+import i18n, { type Config } from 'sveltekit-i18n';
 import translations from './translations';
 import {invoke} from "@tauri-apps/api/core";
 import {derived, get} from "svelte/store";
 
 
-const config = {
-    initLocale: 'fr',
+const config: Config = {
+    initLocale:  navigator.language.split('-')[0] || 'en',
     translations,
+    preprocess : "preserveArrays"
 };
 
 export const {t: translation, l, locales, locale} = new i18n(config);
@@ -38,11 +39,9 @@ function translate(key: string, vars: any) {
 export const available_locales = {
     en: {
         name: 'English',
-        icon: '🇬🇧'
     },
     fr: {
         name: 'Français',
-        icon: '🇫🇷'
     }
 };
 

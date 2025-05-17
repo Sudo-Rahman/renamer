@@ -1,5 +1,9 @@
+use serde_json::Value;
+use tauri::{Listener, Manager};
+use crate::store::AppStore;
+use crate::updater::check_update;
+
 pub fn create_main_window(app: tauri::AppHandle) {
-    std::thread::spawn(move || {
         let mut builder = tauri::WebviewWindowBuilder::new
             (&app, "main", tauri::WebviewUrl::App("app".into()))
             .title("Renamer")
@@ -30,12 +34,10 @@ pub fn create_main_window(app: tauri::AppHandle) {
 
 
         builder.build().unwrap();
-    });
 }
 
 
 pub fn create_update_window(app: tauri::AppHandle) {
-    std::thread::spawn(move || {
         tauri::WebviewWindowBuilder::new(&app, "update", tauri::WebviewUrl::App("update".into()))
             .title("")
             .shadow(true)
@@ -46,5 +48,31 @@ pub fn create_update_window(app: tauri::AppHandle) {
             .center()
             .build()
             .unwrap();
+}
+pub fn create_terms_window(app: tauri::AppHandle){
+    
+    let handle_for_update = app.clone();
+    app.clone().once("terms_accepted", move |_| {
+        tauri::async_runtime::spawn(async move {
+            // Code directement incorporé au lieu d'une closure
+            check_update(handle_for_update.clone(), || {
+                create_main_window(handle_for_update.clone());
+            }).await.inspect_err(|_| {
+                create_main_window(handle_for_update.clone());
+            }).expect("error checking update");
+            handle_for_update.get_webview_window("terms").unwrap().close().unwrap();
+            AppStore::write("terms_accepted", Value::Bool(true));
+        });
+ 
     });
+
+        tauri::WebviewWindowBuilder::new(&app, "terms", tauri::WebviewUrl::App("terms".into()))
+            .title("Terms")
+            .shadow(true)
+            .decorations(false)
+            .transparent(true)
+            .inner_size(800.0, 600.0)
+            .center()
+            .build()
+            .unwrap();
 }

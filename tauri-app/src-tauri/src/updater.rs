@@ -1,9 +1,7 @@
-use serde_json::json;
-use tauri::{AppHandle, Emitter, Listener};
+use tauri::{AppHandle};
 use tauri_plugin_dialog::{DialogExt, MessageDialogButtons};
 use tauri_plugin_updater::UpdaterExt;
 use crate::app::APPLICATION;
-use crate::window::{create_update_window};
 
 pub async fn check_update<F>(app: tauri::AppHandle, main_window: F) -> tauri_plugin_updater::Result<()>
 where
