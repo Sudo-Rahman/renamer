@@ -3,9 +3,9 @@
     import Stripe from "stripe";
     import {t} from "$lib/translations";
 
-    let {prices} : {prices : Promise<Stripe.Price>[]} = $props();
+    let {prices}: { prices: Promise<Stripe.Price>[] } = $props();
 
-    let data = [
+    let data = $derived([
         {
             title: $t('pricing.plan.0.title'),
             price: $t('pricing.plan.0.price'),
@@ -27,7 +27,9 @@
             features: $t('pricing.plan.2.features'),
             btnText: $t('pricing.plan.2.btnText')
         }
-    ]
+    ]);
+
+    $inspect(data)
 </script>
 
 <div class="flex w-full justify-center">
@@ -38,7 +40,8 @@
             <div class="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0">
 
                 {#each data as {title, price, features, description, btnText}}
-                    <PriceCard title={title} price={price} features={features} description={description} btnText={btnText}/>
+                    <PriceCard title={title} price={price} features={features} description={description}
+                               btnText={btnText}/>
                 {/each}
 
             </div>

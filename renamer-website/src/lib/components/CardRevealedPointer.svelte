@@ -1,6 +1,7 @@
 <script>
     import {Motion, useMotionValue, useMotionTemplate} from "svelte-motion";
     import {onMount} from "svelte";
+    import {mode} from "mode-watcher";
 
     let {children} = $props();
 
@@ -10,10 +11,22 @@
     let background = $state(useMotionTemplate`
                         radial-gradient(200px circle at ${mouseX}px ${mouseY}px, rgba(38, 38, 38, 0.1), transparent 80%)`);
 
-    onMount(()=>{
-        const theme = localStorage.getItem("mode-watcher-mode") || "dark";
+    onMount(() => {
+        gradient();
+    })
+
+    function gradient() {
+        let motionValue = useMotionValue(0.1);
+        if ($mode === "dark") {
+            motionValue = useMotionValue(0.4);
+        }
         background = useMotionTemplate`
-						radial-gradient(200px circle at ${mouseX}px ${mouseY}px, rgba(38, 38, 38, ${ theme === 'light' ? useMotionValue(0.1) : useMotionValue(0.4)}), transparent 80%)`;
+                        radial-gradient(200px circle at ${mouseX}px ${mouseY}px, rgba(38, 38, 38, ${motionValue}), transparent 80%)`;
+
+    }
+
+    $effect(() => {
+        gradient();
     })
 
 </script>

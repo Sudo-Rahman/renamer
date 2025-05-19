@@ -1,67 +1,67 @@
 import lang from './lang.json';
 
 
-export const en = {
+export default {
     lang,
-    nav : {
-        download : "Download",
-        docs : "Documentation",
-        theme : {
-            light : "Light",
-            dark : "Dark",
-            system : "System"
+    nav: {
+        download: "Download",
+        docs: "Documentation",
+        theme: {
+            light: "Light",
+            dark: "Dark",
+            system: "System"
         }
     },
-    footer : {
-        privacy : "Privacy Policy",
-        legal : "Legal Notice",
-        licences : "Licenses and Tools Used",
-        all : "All rights reserved."
+    footer: {
+        privacy: "Privacy Policy",
+        legal: "Legal Notice",
+        licences: "Licenses and Tools Used",
+        all: "All rights reserved."
     },
-    home : {
-        title : [
+    home: {
+        title: [
             "Rename",
             "hundreds",
             "of files",
             "in one click."
         ],
-        subtitle : "Save time with our powerful batch renaming tool"
+        subtitle: "Save time with our powerful batch renaming tool"
     },
-   remove : {
-        title : "Remove a device",
-        description : "Enter your email and license key, then click on the button to remove a device from your license.",
-        input : {
-              email : {
-                label : "Email",
-                placeholder : "Enter your email"
-              },
-              key : {
-                label : "License Key",
-              }
+    remove: {
+        title: "Remove a device",
+        description: "Enter your email and license key, then click on the button to remove a device from your license.",
+        input: {
+            email: {
+                label: "Email",
+                placeholder: "Enter your email"
+            },
+            key: {
+                label: "License Key",
+            }
         },
-       find_btn : "Find devices",
-       remove_btn : "Remove device",
-       error : {
-          message : "An error occurred while removing the device.",
-       },
-       success : {
+        find_btn: "Find devices",
+        remove_btn: "Remove device",
+        error: {
+            message: "An error occurred while removing the device.",
+        },
+        success: {
             title: "Device removed",
-           message : "{{device}} has been removed from your license.",
-       }
-   },
-    pricing : {
-        title : "Pricing",
-        plan : {
-            0 : {
-                title : "Trial",
-                price : "Free",
-                description : "Ideal for users who want to try the app before committing.",
+            message: "{{device}} has been removed from your license.",
+        }
+    },
+    pricing: {
+        title: "Pricing",
+        plan: {
+            0: {
+                title: "Trial",
+                price: "Free",
+                description: "Ideal for users who want to try the app before committing.",
                 features: [
                     "Import limited to 5 files",
                 ],
                 btnText: "Download"
             },
-            1 : {
+            1: {
                 title: "Pro",
                 description: "Access all advanced features to effectively manage your bulk file renames.",
                 features: [
@@ -72,7 +72,7 @@ export const en = {
                 ],
                 btnText: "Get Pro"
             },
-            2 : {
+            2: {
                 title: "Team",
                 description: "Access all advanced features to effectively manage your bulk file renames on <span class='text-card-foreground font-semibold'>multiple devices.</span>",
                 features: [
@@ -85,25 +85,25 @@ export const en = {
             }
         }
     },
-    download : {
-        title : "Download Renamer",
-        description : "Select your cpu architecture below to download the Renamer installer.",
-        btn : "Download",
+    download: {
+        title: "Download Renamer",
+        description: "Select your cpu architecture below to download the Renamer installer.",
+        btn: "Download",
     },
-    licenses : {
-        title : "Licenses and Tools Used",
-        subtitle : "Renamer is built using the following tools and libraries.",
-        sveltekit : "Framework for building web applications. License MIT.",
-        shadcn : "UI component library for Svelte. License MIT.",
-        tailwindcss : "Utility-first CSS framework. License MIT.",
-        lucide : "SVG icon library for Svelte. License MIT.",
-        nodejs : "JavaScript runtime built on Chrome's V8 engine. License MIT.",
-        tauri : "Framework for building desktop applications with Rust. License MIT.",
-        icon : {
-            label : "Icon attribution",
-            author : "The icon used on this site, as well as in the Renamer software comes from",
+    licenses: {
+        title: "Licenses and Tools Used",
+        subtitle: "Renamer is built using the following tools and libraries.",
+        sveltekit: "Framework for building web applications. License MIT.",
+        shadcn: "UI component library for Svelte. License MIT.",
+        tailwindcss: "Utility-first CSS framework. License MIT.",
+        lucide: "SVG icon library for Svelte. License MIT.",
+        nodejs: "JavaScript runtime built on Chrome's V8 engine. License MIT.",
+        tauri: "Framework for building desktop applications with Rust. License MIT.",
+        icon: {
+            label: "Icon attribution",
+            author: "The icon used on this site, as well as in the Renamer software comes from",
         },
-        last_update : "Last update on {date}",
+        last_update: "Last update on {date}",
     },
     legal: {
         title: "Legal Notice",

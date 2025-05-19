@@ -1,15 +1,51 @@
-import i18n, { type Config } from 'sveltekit-i18n';
-import translations from './translations';
+import i18n, {type Config} from 'sveltekit-i18n';
 import {derived, get} from "svelte/store";
+import lang from './local/lang.json';
 
 
-const config : Config = {
-    initLocale: navigator.language.split('-')[0] || 'en',
-    translations,
-    preprocess : "preserveArrays"
+const LOCALES: string[] = ['en', 'fr'];
+
+export const defaultLocal = 'en';
+const config: Config = {
+    translations: {
+        en: {lang},
+        fr: {lang},
+    },
+    loaders: [
+        {
+            locale: 'en',
+            key: '',
+            routes: ['/', '/remove', '/pricing'],
+            loader: async () => {
+                const {default: translations} = await import('$lib/translations/local/en');
+                return translations;
+            },
+        },
+        {
+            locale: 'fr',
+            key: '',
+            routes: ['/', '/remove', '/pricing'],
+            loader: async () => {
+                const {default: translations} = await import('$lib/translations/local/fr');
+                return translations;
+            },
+        },
+    ],
+    preprocess: "preserveArrays"
 };
 
-export const {t: translation, l, locales, locale} = new i18n(config);
+export const {
+    t: translation,
+    loading,
+    locales,
+    locale,
+    translations,
+    loadTranslations,
+    addTranslations,
+    setLocale,
+    setRoute
+} = new i18n(config);
+
 
 export const t = derived(translation, () => (key: string, vars = {}) =>
     translate(key, vars)

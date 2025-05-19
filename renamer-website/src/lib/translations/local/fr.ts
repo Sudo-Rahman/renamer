@@ -1,67 +1,67 @@
 import lang from './lang.json';
 
 
-export const fr = {
+export default {
     lang,
-    nav : {
-        download : "Télécharger",
-        docs : "Documentation",
-        theme : {
-            light : "Clair",
-            dark : "Sombre",
-            system : "Système"
+    nav: {
+        download: "Télécharger",
+        docs: "Documentation",
+        theme: {
+            light: "Clair",
+            dark: "Sombre",
+            system: "Système"
         }
     },
-    footer : {
-        privacy : "Politique de confidentialité",
-        legal : "Mentions légales",
-        licences : "Licences et Outils Utilisés",
-        all : "Tous droits réservés."
+    footer: {
+        privacy: "Politique de confidentialité",
+        legal: "Mentions légales",
+        licences: "Licences et Outils Utilisés",
+        all: "Tous droits réservés."
     },
-    home : {
-        title : [
+    home: {
+        title: [
             "Renommez",
             "des centaines",
             "de fichiers",
             "en un clic."
         ],
-        subtitle : "Gagnez du temps avec notre outil puissant de renommage par lots"
+        subtitle: "Gagnez du temps avec notre outil puissant de renommage par lots"
     },
-    remove : {
-        title : "Supprimer un appareil",
-        description : "Entrez votre adresse e-mail et votre clé de licence, puis cliquez sur le bouton pour supprimer un appareil de votre licence.",
-        input : {
-            email : {
-                label : "Email",
-                placeholder : "Entrez votre adresse e-mail"
+    remove: {
+        title: "Supprimer un appareil",
+        description: "Entrez votre adresse e-mail et votre clé de licence, puis cliquez sur le bouton pour supprimer un appareil de votre licence.",
+        input: {
+            email: {
+                label: "Email",
+                placeholder: "Entrez votre adresse e-mail"
             },
-            key : {
-                label : "Clé de licence",
+            key: {
+                label: "Clé de licence",
             }
         },
-        find_btn : "Chercher des appareils",
-        remove_btn : "Supprimer l'appareil",
-        error : {
-            message : "Une erreur est survenue lors de la suppression de l'appareil.",
+        find_btn: "Chercher des appareils",
+        remove_btn: "Supprimer l'appareil",
+        error: {
+            message: "Une erreur est survenue lors de la suppression de l'appareil.",
         },
-        success : {
+        success: {
             title: "Appareil supprimé",
-            message : "{{device}} a été supprimé de votre licence.",
+            message: "{{device}} a été supprimé de votre licence.",
         }
     },
-    pricing : {
-        title : "Tarification",
-        plan : {
-            0 : {
-                title : "Essai",
-                price : "Gratuit",
-                description : "Idéal pour les utilisateurs qui souhaitent essayer l'application avant de s'engager.",
+    pricing: {
+        title: "Tarification",
+        plan: {
+            0: {
+                title: "Essai",
+                price: "Gratuit",
+                description: "Idéal pour les utilisateurs qui souhaitent essayer l'application avant de s'engager.",
                 features: [
                     "Importation limitée à 5 fichiers",
                 ],
                 btnText: "Télécharger"
             },
-            1 : {
+            1: {
                 title: "Pro",
                 description: "Accédez à toutes les fonctionnalités avancées pour gérer efficacement vos renommages de fichiers en masse.",
                 features: [
@@ -72,7 +72,7 @@ export const fr = {
                 ],
                 btnText: "Acheter Pro"
             },
-            2 : {
+            2: {
                 title: "Team",
                 description: "Accédez à toutes les fonctionnalités avancées pour gérer efficacement vos renommages de fichiers en masse sur <span class='text-card-foreground font-semibold'>plusieurs appareils.</span>",
                 features: [
@@ -85,25 +85,25 @@ export const fr = {
             }
         },
     },
-    download : {
-        title : "Télécharger Renamer",
-        description : "Sélectionnez l'architecture de votre appareil avant de télécharger l'installateur de Renamer.",
-        btn : "Télécharger"
+    download: {
+        title: "Télécharger Renamer",
+        description: "Sélectionnez l'architecture de votre appareil avant de télécharger l'installateur de Renamer.",
+        btn: "Télécharger"
     },
-    licenses : {
-        title : "Licences et outils utilisés",
-        subtitle : "Découvrez les technologies qui ont permis de développer ce site.",
-        sveltekit : "Framework moderne pour le développement d'applications web. Licence MIT.",
-        shadcn : "Bibliothèque de composants UI pour Svelte. Licence MIT.",
-        tailwindcss : "Cadre CSS utilitaire pour la création d'interfaces utilisateur. Licence MIT.",
-        lucide : "Bibliothèque d'icônes SVG pour Svelte. Licence MIT.",
-        nodejs : "Environnement d'exécution JavaScript côté serveur. Licence MIT.",
-        tauri : "Framework pour créer des applications de bureau avec Rust. Licence MIT.",
-        icon : {
-            label : "Attribution de l'icône",
-            author : "L'icône utilisée sur ce site, ainsi que sur le logiciel Renamer provient de",
+    licenses: {
+        title: "Licences et outils utilisés",
+        subtitle: "Découvrez les technologies qui ont permis de développer ce site.",
+        sveltekit: "Framework moderne pour le développement d'applications web. Licence MIT.",
+        shadcn: "Bibliothèque de composants UI pour Svelte. Licence MIT.",
+        tailwindcss: "Cadre CSS utilitaire pour la création d'interfaces utilisateur. Licence MIT.",
+        lucide: "Bibliothèque d'icônes SVG pour Svelte. Licence MIT.",
+        nodejs: "Environnement d'exécution JavaScript côté serveur. Licence MIT.",
+        tauri: "Framework pour créer des applications de bureau avec Rust. Licence MIT.",
+        icon: {
+            label: "Attribution de l'icône",
+            author: "L'icône utilisée sur ce site, ainsi que sur le logiciel Renamer provient de",
         },
-        last_update : "Dernière mise à jour le {date}",
+        last_update: "Dernière mise à jour le {date}",
     },
     legal: {
         title: "Mentions légales",

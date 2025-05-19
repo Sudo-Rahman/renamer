@@ -1,13 +1,15 @@
-import i18n, { type Config } from 'sveltekit-i18n';
+import i18n, {type Config} from 'sveltekit-i18n';
 import translations from './translations';
 import {invoke} from "@tauri-apps/api/core";
 import {derived, get} from "svelte/store";
 
+const LOCALES: string[] = ['en', 'fr'];
 
+const navLang = navigator.language.split('-')[0];
 const config: Config = {
-    initLocale:  navigator.language.split('-')[0] || 'en',
+    initLocale: LOCALES.includes(navLang) ? navLang : 'en',
     translations,
-    preprocess : "preserveArrays"
+    preprocess: "preserveArrays"
 };
 
 export const {t: translation, l, locales, locale} = new i18n(config);
@@ -48,8 +50,10 @@ export const available_locales = {
 
 invoke('get_system_language').then((l) => {
     locale.set(l as string);
+    console.log('System language set to:', l as string);
 
     locale.subscribe((value) => {
+        console.log('Language changed to:', value);
         invoke('set_system_language', {lang: value});
     });
 });

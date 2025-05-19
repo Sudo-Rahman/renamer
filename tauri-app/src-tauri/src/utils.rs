@@ -8,7 +8,7 @@ use tauri_plugin_dialog::{DialogExt, MessageDialogKind};
 
 
 #[tauri::command]
-pub async fn list_files_in_directory(app: tauri::AppHandle,dir: String) -> Result<Value, String> {
+pub async fn list_files_in_directory(app: tauri::AppHandle, dir: String) -> Result<Value, String> {
     let path = Path::new(&dir);
 
     if path.is_dir() {
@@ -180,13 +180,19 @@ pub async fn check_files_names(files: Vec<FileRenameInfo>) -> Result<Vec<FileSta
     Ok(files_vec)
 }
 
+pub const LOCALES: [&str; 2] = ["en", "fr"];
 const LOCAL: fn() -> String = || {
-    return get_locale()
+    let local = get_locale()
         .unwrap_or_else(|| String::from("en-US"))
         .split('-')
         .next()
         .unwrap()
         .to_string();
+    if LOCALES.contains(&local.as_str()) {
+        local
+    } else {
+        LOCALES[0].to_string()
+    }
 };
 #[tauri::command]
 pub async fn get_system_language() -> String {

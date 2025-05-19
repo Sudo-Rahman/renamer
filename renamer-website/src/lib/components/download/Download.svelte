@@ -9,27 +9,29 @@
     import {getOs} from './utils'
 
     // get os type
-    const os : 'linux' | 'macos' | 'windows' = getOs();
+    const os: 'linux' | 'macos' | 'windows' = getOs();
 
-    const windows : Component = WindowsDownload;
-    const mac : Component = MacOsDownload;
-    const linux : Component = LinuxDownload;
+    const windows: Component = WindowsDownload;
+    const mac: Component = MacOsDownload;
+    const linux: Component = LinuxDownload;
 
 
     type OSData = {
         url: string;
         val: string;
     };
-    let osData :OSData[] = $state([
-        { url: '', val: 'windows-value' },
-        { url: '', val: 'macos-value' },
-        { url: '', val: 'linux-value' }
+    let osData: OSData[] = $state([
+        {url: '', val: 'windows-value'},
+        {url: '', val: 'macos-value'},
+        {url: '', val: 'linux-value'}
     ]);
+
+    $inspect(os);
 
 
 </script>
 
-{#snippet download(Component : Component, data : OSData)}
+{#snippet download(Component: Component, data: OSData)}
     <div class="flex flex-col space-y-10">
         <p>{$t('download.description')}</p>
         <div class="flex md:space-x-10 gap-6 md:gap-0 flex-col md:flex-row justify-center items-center">
