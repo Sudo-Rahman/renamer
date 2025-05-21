@@ -13,7 +13,7 @@ export abstract class Formatter {
 
     protected constructor() {
         this.id = uuidv4();
-        this.type = this.constructor.name;
+        this.type = (this.constructor as any).type;
     }
 
     static fromObject(obj: any): Formatter {
@@ -238,6 +238,7 @@ export class FormatterList {
 }
 
 export class NumberFormatter extends Formatter {
+    static readonly type = "NumberFormatter";
     private _startTmp: number;
 
     constructor() {
@@ -313,6 +314,7 @@ export class NumberFormatter extends Formatter {
 }
 
 export class ExtensionFormatter extends Formatter {
+    static readonly type = "ExtensionFormatter";
     constructor() {
         super();
         this._customeExt = false;
@@ -352,6 +354,7 @@ export class ExtensionFormatter extends Formatter {
 }
 
 export class CreationDateFormatter extends Formatter {
+    static readonly type = "CreationDateFormatter";
     public static readonly Format = [
         // "yyyy-mm-dd",
         // "dd-mm-yyyy",
@@ -385,7 +388,7 @@ export class CreationDateFormatter extends Formatter {
 }
 
 export class CasesFormatter extends Formatter {
-
+    static readonly type = "CasesFormatter";
     public static readonly Cases: string[] = [
         "lowercase",
         "uppercase",
@@ -508,7 +511,7 @@ export class CasesFormatter extends Formatter {
 
 
 export class RemoveFormatter extends Formatter {
-
+    static readonly type = "RemoveFormatter";
     private _texts: string[];
 
     constructor() {
@@ -535,6 +538,7 @@ export class RemoveFormatter extends Formatter {
 
 
 export class OriginalFileNameFormatter extends Formatter {
+    static readonly type = "OriginalFileNameFormatter";
     constructor() {
         super();
         this._withExtension = true;
@@ -557,6 +561,7 @@ export class OriginalFileNameFormatter extends Formatter {
 
 
 export class RegexFormatter extends Formatter {
+    static readonly type = "RegexFormatter";
     constructor() {
         super();
         this._regex = "";
@@ -644,6 +649,7 @@ export class RegexFormatter extends Formatter {
 }
 
 export class BasicTextFormatter extends Formatter {
+    static readonly type = "BasicTextFormatter";
     constructor() {
         super();
         this._text = "";
@@ -665,6 +671,7 @@ export class BasicTextFormatter extends Formatter {
 }
 
 export class SizeFormatter extends Formatter {
+    static readonly type = "SizeFormatter";
     static readonly units = ["Byte", "KB", "MB", "GB"];
 
     constructor() {
