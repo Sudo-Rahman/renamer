@@ -27,7 +27,7 @@ export default {
         ],
         subtitle: "Gagnez du temps avec notre outil puissant de renommage par lots"
     },
-    remove: {
+    manage_machines: {
         title: "Supprimer un appareil",
         description: "Entrez votre adresse e-mail et votre clé de licence, puis cliquez sur le bouton pour supprimer un appareil de votre licence.",
         input: {
@@ -37,7 +37,8 @@ export default {
             },
             key: {
                 label: "Clé de licence",
-            }
+            },
+            fill_all: "Veuillez remplir tous les champs.",
         },
         find_btn: "Chercher des appareils",
         remove_btn: "Supprimer l'appareil",

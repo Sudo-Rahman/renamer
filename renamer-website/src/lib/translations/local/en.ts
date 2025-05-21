@@ -27,7 +27,7 @@ export default {
         ],
         subtitle: "Save time with our powerful batch renaming tool"
     },
-    remove: {
+    manage_machines: {
         title: "Remove a device",
         description: "Enter your email and license key, then click on the button to remove a device from your license.",
         input: {
@@ -37,7 +37,8 @@ export default {
             },
             key: {
                 label: "License Key",
-            }
+            },
+            fill_all: "Please fill in all fields.",
         },
         find_btn: "Find devices",
         remove_btn: "Remove device",

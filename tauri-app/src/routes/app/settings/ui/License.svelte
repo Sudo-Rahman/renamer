@@ -9,6 +9,7 @@
     import {onMount} from "svelte";
     import {toast} from "svelte-sonner";
     import {t} from "$lib/translations";
+    import {websiteUrl} from "$models";
 
 
     let key: string = $state('');
@@ -79,7 +80,23 @@
         )
     }
 
+    function openLink() {
+        invoke("open_browser_url", {
+            url: `${websiteUrl}/manage-machines`
+        })
+    }
+
 </script>
+
+{#snippet manageMachines()}
+    <div class="flex w-full justify-end my-5 pr-5">
+        <p>
+            {$t('settings.license.manage_machines')}
+            <Button class="text-accent-foreground p-0" onclick={openLink}
+                    variant="link">{$t('settings.license.manage_machines_link')}</Button>
+        </p>
+    </div>
+{/snippet}
 
 {#if valide === null}
 
@@ -105,6 +122,7 @@
                 </Button>
             </div>
         </SettingsItemCard>
+        {@render manageMachines()}
     </div>
 {:else}
     <SettingsItemCard>
@@ -114,4 +132,6 @@
                     onclick={remove_license}>{$t('settings.license.valid.desactivate_btn')}</Button>
         </div>
     </SettingsItemCard>
+    {@render manageMachines()}
 {/if}
+

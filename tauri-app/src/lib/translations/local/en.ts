@@ -172,7 +172,9 @@ export const en = {
             valid: {
                 message: "Active License",
                 desactivate_btn: "Deactivate on this computer",
-            }
+            },
+            manage_machines: "To manage and deactivate your license on other devices, ",
+            manage_machines_link: "click here",
         },
         about: {
             title: "About",
@@ -253,7 +255,7 @@ export const en = {
     bottom_info: {
         files_infos: "{0} file(s) selected - {1} error(s)",
     },
-    terms : {
+    terms: {
         title: "Terms of Use - Renamer",
         subtitle: "Please read the following terms carefully before using the software",
         last_update: "Last update : {date}",

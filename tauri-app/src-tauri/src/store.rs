@@ -49,7 +49,6 @@ impl AppStore {
 
     pub fn init(app: tauri::AppHandle) {
         APPSTORE.get_or_init(|| {
-            println!("{:?}", app.clone().path().app_data_dir());
             AppStore {
                 app: app.clone(),
                 store: app.clone().store("renamer_store.json").unwrap(),

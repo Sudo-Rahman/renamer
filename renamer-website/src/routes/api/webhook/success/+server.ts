@@ -51,7 +51,7 @@ export const POST: RequestHandler = async ({request}) => {
                         email: session.customer_details.email,
                         plan: plan,
                         token: env.AUTHENTICATION_KEY,
-                        payment_intent_id: session.payment_intent.id,
+                        payment_intent: session.payment_intent,
                         invoice_url: invoice.hosted_invoice_url,
                     }),
                 }

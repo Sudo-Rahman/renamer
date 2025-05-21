@@ -98,6 +98,7 @@ pub async fn create_user(
                 key: Uuid::from_bytes(*uuid::Uuid::now_v7().as_bytes()),
                 machines: vec![],
                 presets: json!([]),
+                created_at: bson::DateTime::now(),
             };
             match config.db.insert_user(&user).await {
                 Ok(_) => {
@@ -105,6 +106,8 @@ pub async fn create_user(
                         from: format!("noreply@{domain}", domain = MailgunEmail::get_domain()),
                         to: email.to_string(),
                     };
+
+                    println!("User created: {:?}", body);
 
                     let data =
                         OrderConfirmationData {
@@ -305,6 +308,32 @@ pub async fn get_user(
                 Ok((StatusCode::OK, json!(user_to_user_machine(user, machine)).to_string()))
             } else {
                 Err((StatusCode::UNAUTHORIZED, "Machine not found".to_string()))
+            }
+        }
+        None => Err((StatusCode::NOT_FOUND, "User not found".to_string()))
+    }
+}
+
+pub(crate) async fn get_user_machine(
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    State(config): State<ServerConfig>,
+    Json(body): Json<Value>)
+    -> Result<(StatusCode, String), (StatusCode, String)> {
+    let email = extract_field::<String>(&body, "email")?;
+    let key = extract_field::<String>(&body, "key")?;
+    let user = config.db.find_user(
+        &bson::doc! {
+            "email": email.clone(),
+            "key": Uuid::parse_str(key.clone()).unwrap(),
+        }
+    ).await.unwrap();
+
+    match user {
+        Some(user) => {
+            if user.key.to_string() == key.clone() {
+                Ok((StatusCode::OK, serde_json::to_string(&user).unwrap()))
+            } else {
+                Err((StatusCode::UNAUTHORIZED, "Invalid key".to_string()))
             }
         }
         None => Err((StatusCode::NOT_FOUND, "User not found".to_string()))

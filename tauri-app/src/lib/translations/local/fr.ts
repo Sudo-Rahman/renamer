@@ -172,7 +172,9 @@ export const fr = {
             valid: {
                 message: "Licence active",
                 desactivate_btn: "Désactiver sur cet ordinateur",
-            }
+            },
+            manage_machines: "Pour gérer et désactiver votre licence sur d'autres appareils, ",
+            manage_machines_link: "cliquer ici",
         },
         about: {
             title: "À propos",
@@ -253,7 +255,7 @@ export const fr = {
     bottom_info: {
         files_infos: "{0} fichier(s) sélectionné(s) - {1} erreur(s)",
     },
-    terms : {
+    terms: {
         title: "Conditions d'Utilisation - Renamer",
         subtitle: "Veuillez lire attentivement les conditions suivantes avant d'utiliser le logiciel",
         last_update: "Dernière mise à jour : {date}",

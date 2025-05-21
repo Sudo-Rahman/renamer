@@ -31,11 +31,11 @@
 
     function getUser() {
         if (email === "" || licenseKey === "") {
-            toast.error("Please fill all fields");
+            toast.error($t('manage_machines.input.fill_all'));
             return;
         }
         getPosts = true;
-        fetch(env.PUBLIC_API_URL + "/get_user", {
+        fetch(env.PUBLIC_API_URL + "/get_user_machine", {
             method: 'POST',
             headers: {'Content-Type': 'application/json'}, // Pas besoin de mode no-cors
             body: JSON.stringify({
@@ -86,37 +86,37 @@
                 throw new Error('Failed to reset license');
             }
 
-            toast.success($t('remove.success.title'), {
-                description: $t('remove.success.title', {device: machine.device_name})
+            toast.success($t('manage_machines.success.title'), {
+                description: $t('manage_machines.success.title', {device: machine.device_name})
             });
 
             user!.machines = user!.machines.filter(m => m.id !== machine.id);
             posts = posts.filter(p => p !== machine.id);
         } catch (error) {
             machine.post = "error";
-            toast.error($t('remove.error.message'));
+            toast.error($t('manage_machines.error.message'));
         }
     }
 
 </script>
 
 <div class="h-full w-full">
-    <div class="max-w-5xl mx-auto flex flex-col space-y-12 p-4">
+    <div class="max-w-4xl mx-auto flex flex-col space-y-12 p-4">
 
         <Card>
             <div class="h-full w-full flex flex-col space-y-5">
-                <h2 class="text-2xl font-semibold text-center">{$t('remove.title')}</h2>
+                <h2 class="text-2xl font-semibold text-center">{$t('manage_machines.title')}</h2>
                 <p class="text-sm text-accent-foreground/60 text-center">
-                    {$t('remove.description')}
+                    {$t('manage_machines.description')}
                 </p>
                 <div class="flex flex-col space-y-2">
                     <!-- Email Input -->
-                    <div class="flex flex-col gap-1 mb-3">
-                        <Label>{$t('remove.input.email.label')}</Label>
+                    <div class="flex flex-col gap-1.5 mb-3">
+                        <Label>{$t('manage_machines.input.email.label')}</Label>
                         <Input
                                 bind:value={email}
                                 class="w-full transition-all duration-300 ease-in-out"
-                                placeholder={$t('remove.input.email.placeholder')}
+                                placeholder={$t('manage_machines.input.email.placeholder')}
                                 type="email"
                         />
 
@@ -124,8 +124,8 @@
 
 
                     <!-- License Key Input -->
-                    <div class="flex flex-col gap-1 mb-4">
-                        <Label>{$t('remove.input.key.label')}</Label>
+                    <div class="flex flex-col gap-1.5 mb-4">
+                        <Label>{$t('manage_machines.input.key.label')}</Label>
                         <Input
                                 bind:value={licenseKey}
                                 class="w-full transition-all duration-300 ease-in-out"
@@ -145,7 +145,7 @@
                     {#if getPosts}
                         <CircularProgress circleColor="secondary" class="w-5 h-5"/>
                     {:else}
-                        {$t('remove.find_btn')}
+                        {$t('manage_machines.find_btn')}
                     {/if}
                 </Button>
             </div>
@@ -162,7 +162,7 @@
                                     {#if posts.find(p => p === machine.id)}
                                         <CircularProgress circleColor="secondary" class="w-5 h-5"/>
                                     {:else}
-                                        {$t('remove.remove_btn')}
+                                        {$t('manage_machines.remove_btn')}
                                     {/if}
                                 </Button>
                             </div>

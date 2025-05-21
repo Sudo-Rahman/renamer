@@ -33,19 +33,23 @@ async fn main() {
         eprintln!("AUTH_TOKEN environment variable not set");
         exit(1);
     });
-    
+
     MailgunEmail::init();
-    
+
 
     let config = ServerConfig { db, token };
 
     let mut app = Router::new()
+        // website
+        .route("/create", post(create_user))
+        .route("/logs", get(get_all_logs))
         .route("/license", post(get_license))
+        .route("/get_user_machine", post(get_user_machine))
+
+        //application
         .route("/get_user", post(get_user))
         .route("/activate_license", post(activate_licence))
         .route("/remove_machine", post(remove_machine))
-        .route("/create", post(create_user))
-        .route("/logs", get(get_all_logs))
         .route("/save_presets", post(save_presets))
         .route("/ping", get(|| async { return StatusCode::OK; }));
 

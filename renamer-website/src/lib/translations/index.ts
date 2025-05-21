@@ -15,7 +15,6 @@ const config: Config = {
         {
             locale: 'en',
             key: '',
-            routes: ['/', '/remove', '/pricing'],
             loader: async () => {
                 const {default: translations} = await import('$lib/translations/local/en');
                 return translations;
@@ -24,7 +23,6 @@ const config: Config = {
         {
             locale: 'fr',
             key: '',
-            routes: ['/', '/remove', '/pricing'],
             loader: async () => {
                 const {default: translations} = await import('$lib/translations/local/fr');
                 return translations;

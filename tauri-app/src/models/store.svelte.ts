@@ -4,6 +4,9 @@ import {FormatterList} from "$models/Formatter";
 import {Preset} from "$models/Preset";
 import {LazyStore} from "@tauri-apps/plugin-store";
 
+// export const websiteUrl = "https://renamer.pro";
+export const websiteUrl = "http://localhost:5173";
+
 export const files: Writable<RenamerFile[]> = writable([]);
 
 export const formatters = writable(new FormatterList([]));
@@ -21,6 +24,9 @@ preset.subscribe((value) => {
 });
 
 // info component for bottom of the page
-export const information: {callback: (text? : string) => void, html: string} = $state({callback : () =>{}, html : ""});
+export const information: { callback: (text?: string) => void, html: string } = $state({
+    callback: () => {
+    }, html: ""
+});
 
 export const store = new LazyStore('renamer_store.json');

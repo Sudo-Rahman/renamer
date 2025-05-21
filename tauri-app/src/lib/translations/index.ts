@@ -50,10 +50,8 @@ export const available_locales = {
 
 invoke('get_system_language').then((l) => {
     locale.set(l as string);
-    console.log('System language set to:', l as string);
 
     locale.subscribe((value) => {
-        console.log('Language changed to:', value);
         invoke('set_system_language', {lang: value});
     });
 });

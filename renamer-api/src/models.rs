@@ -22,6 +22,7 @@ pub struct User {
     pub plan: u8,
     pub machines: Vec<Machine>,
     pub presets: Value,
+    pub created_at: DateTime,
 }
 
 pub fn user_to_user_machine(user: User, machine: Machine) -> UserMachine {
