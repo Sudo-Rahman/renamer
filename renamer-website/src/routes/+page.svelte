@@ -1,7 +1,7 @@
 <script lang="ts">
     import PricingSection from "$lib/components/pricing/PricingSection.svelte";
     import {Label} from "$lib/components/ui/label";
-    import type { PageServerData } from './$types';
+    import type {PageServerData} from './$types';
     import {
         fade,
         fly,
@@ -12,7 +12,7 @@
     import Download from "$lib/components/download/Download.svelte";
 
 
-    let {data} : {data : PageServerData} = $props();
+    let {data}: { data: PageServerData } = $props();
 
     let visible = $state(false);
 
@@ -49,7 +49,8 @@
     </div>
 
     <div class="w-full flex justify-center bg-card py-20">
-        <video muted class="lg:w-[70%] xl:w-[50%] w-[95%] md:w-[80%] rounded-lg xl:rounded-xl"  autoplay src="/video.mp4"></video>
+        <video autoplay class="lg:w-[70%] xl:w-[50%] w-[95%] md:w-[80%] rounded-lg xl:rounded-xl" loop muted
+               src="/video.mp4"></video>
     </div>
 
     <div class="px-5">

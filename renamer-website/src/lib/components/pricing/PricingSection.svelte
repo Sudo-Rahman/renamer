@@ -29,7 +29,6 @@
         }
     ]);
 
-    $inspect(data)
 </script>
 
 <div class="flex w-full justify-center">

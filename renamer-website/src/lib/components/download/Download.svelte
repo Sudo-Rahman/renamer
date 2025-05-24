@@ -5,11 +5,16 @@
     import LinuxDownload from "$lib/components/download/LinuxDownload.svelte";
     import MacOsDownload from "$lib/components/download/MacOsDownload.svelte";
     import * as Tabs from "$lib/components/ui/tabs/index";
-    import type {Component} from "svelte";
+    import {type Component, onMount} from "svelte";
     import {getOs} from './utils'
 
     // get os type
-    const os: 'linux' | 'macos' | 'windows' = getOs();
+    let os: 'linux' | 'macos' | 'windows' = $state("windows");
+
+    onMount(() => {
+        // update os type on mount
+        os = getOs();
+    });
 
     const windows: Component = WindowsDownload;
     const mac: Component = MacOsDownload;
@@ -25,8 +30,6 @@
         {url: '', val: 'macos-value'},
         {url: '', val: 'linux-value'}
     ]);
-
-    $inspect(os);
 
 
 </script>
