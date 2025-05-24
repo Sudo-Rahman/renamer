@@ -1,10 +1,12 @@
 #![allow(unused)]
+
 mod db;
 mod models;
 mod controllers;
 mod mailgun;
 mod utils;
 mod api_rate;
+mod orm; // Ajout du module ORM
 
 use std::net::{IpAddr, SocketAddr};
 use tower::{buffer::BufferLayer, limit::RateLimitLayer, BoxError, ServiceBuilder};
@@ -36,8 +38,11 @@ async fn main() {
 
     MailgunEmail::init();
 
-
-    let config = ServerConfig { db, token };
+    // Utilise maintenant l'ORM Database
+    let config = ServerConfig {
+        db: db.get_orm_db().clone(),  // Accès à l'ORM Database
+        token
+    };
 
     let mut app = Router::new()
         // website
@@ -45,7 +50,6 @@ async fn main() {
         .route("/logs", get(get_all_logs))
         .route("/license", post(get_license))
         .route("/get_user_machine", post(get_user_machine))
-
         //application
         .route("/get_user", post(get_user))
         .route("/activate_license", post(activate_licence))
@@ -55,10 +59,9 @@ async fn main() {
 
     if cfg!(debug_assertions) {
         app = app.layer(CorsLayer::new()
-                            .allow_origin(Any) // Autorise toutes les origines
-                            .allow_methods(Any) // Autorise toutes les méthodes HTTP
-                            .allow_headers([http::header::CONTENT_TYPE]) // Autorise l'en-tête Content-Type
-        )
+            .allow_origin(Any)
+            .allow_methods(Any)
+            .allow_headers([http::header::CONTENT_TYPE]));
     }
 
     let rate_limiter = Arc::new(RateLimiter::new(32, Duration::from_secs(60)));
@@ -80,9 +83,20 @@ async fn main() {
         );
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
-
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>())
         .await
         .unwrap();
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use axum::http::Request;
+    use tower::ServiceExt;
+
+    #[tokio::test]
+    async fn test_ping() {
+        // Test basique existant
+    }
 }

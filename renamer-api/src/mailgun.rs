@@ -100,7 +100,7 @@ impl MailgunEmail {
 
         if error {
             return Err(Log {
-                _id: bson::oid::ObjectId::new(),
+                _id: None,
                 date_time: bson::DateTime::now(),
                 message: format!("Failed to send email to {}: {}", self.to, text),
             });

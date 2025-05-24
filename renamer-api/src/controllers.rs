@@ -1,8 +1,8 @@
 #![allow(unused)]
 
-use crate::db::Mongo;
-use crate::mailgun::{MailgunEmail, OrderConfirmationData, RemoveMachineData};
 use crate::models::{user_to_user_machine, Log, ServerConfig, User};
+use crate::mailgun::{MailgunEmail, OrderConfirmationData, RemoveMachineData};
+use crate::orm::{Model, Collection};
 use axum::extract::{ConnectInfo, State};
 use axum::http::StatusCode;
 use axum::Json;
@@ -36,45 +36,51 @@ where
 
 fn body_user_to_document(body: &Value) -> bson::Document {
     bson::doc! {
-            "email": body["email"].as_str().unwrap(),
-            "key": Uuid::parse_str(body["key"].as_str().unwrap()).unwrap(),
-        }
+        "email": body["email"].as_str().unwrap(),
+        "key": Uuid::parse_str(body["key"].as_str().unwrap()).unwrap(),
+    }
 }
 
 pub async fn get_license(
     State(config): State<ServerConfig>,
     Json(body): Json<Value>,
 ) -> Result<(StatusCode, String), (StatusCode, String)> {
-    let user = config.db.find_user(&body_user_to_document(&body)).await;
+    // Conversion du document vers les champs individuels pour l'ORM
+    let email = body["email"].as_str().ok_or((StatusCode::BAD_REQUEST, "Missing email".to_string()))?;
+    let key_str = body["key"].as_str().ok_or((StatusCode::BAD_REQUEST, "Missing key".to_string()))?;
+    let key_uuid = Uuid::parse_str(key_str).map_err(|_| (StatusCode::BAD_REQUEST, "Invalid key format".to_string()))?;
+
     let user_machine = match serde_json::from_value::<UserMachine>(body.clone()) {
         Ok(machine) => machine,
         Err(e) => return Err((StatusCode::BAD_REQUEST, format!("Failed to deserialize machine: {}", e))),
     };
-    // Vérifier si l'utilisateur existe
-    match user {
-        Ok(user) => {
-            if user.is_none() {
-                Err((StatusCode::NOT_FOUND, "User not found".to_string()))
-            } else if user.clone().unwrap().machines.iter().any(|m| m.id == user_machine.machine.id) {
-                Ok((StatusCode::OK, json!(user_to_user_machine(user.unwrap(), user_machine.machine)).to_string()))
+
+    // Utilise l'ORM pour trouver l'utilisateur
+    match User::find_by_email_and_key(&config.db, email, &key_uuid).await {
+        Ok(Some(user)) => {
+            if user.machines.iter().any(|m| m.id == user_machine.machine.id) {
+                Ok((StatusCode::OK, json!(user_to_user_machine(user, user_machine.machine)).to_string()))
             } else {
                 Err((StatusCode::UNAUTHORIZED, "Machine not found".to_string()))
             }
         }
+        Ok(None) => Err((StatusCode::NOT_FOUND, "User not found".to_string())),
         Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to find user".to_string()))
     }
 }
 
 pub async fn get_all_users(State(config): State<ServerConfig>) -> Result<(StatusCode, String), (StatusCode, String)> {
-    match config.db.find_all_users().await {
+    match User::find_all(&config.db).await {
         Ok(users) => Ok((StatusCode::OK, serde_json::to_string(&users).unwrap())),
         Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to find users".to_string()))
     }
 }
 
-async fn user_exists(email: &str, db: &Mongo) -> bool {
-    let user = db.find_user_by_email(email).await.unwrap();
-    user.is_some()
+async fn user_exists(email: &str, config: &ServerConfig) -> bool {
+    match User::find_by_email(&config.db, email).await {
+        Ok(user) => user.is_some(),
+        Err(_) => false
+    }
 }
 
 pub async fn create_user(
@@ -91,45 +97,34 @@ pub async fn create_user(
             let email = extract_field::<String>(&body, "email")?;
             let plan = extract_field::<u8>(&body, "plan")?;
 
-            let user = User {
-                _id: bson::oid::ObjectId::new(),
-                email: email.to_string(),
-                plan,
-                key: Uuid::from_bytes(*uuid::Uuid::now_v7().as_bytes()),
-                machines: vec![],
-                presets: json!([]),
-                created_at: bson::DateTime::now(),
-            };
-            match config.db.insert_user(&user).await {
+            let mut user = User::new(email.clone(), plan);
+
+            match user.save(&config.db).await {
                 Ok(_) => {
-                    let email = MailgunEmail {
+                    let email_sender = MailgunEmail {
                         from: format!("noreply@{domain}", domain = MailgunEmail::get_domain()),
                         to: email.to_string(),
                     };
 
                     println!("User created: {:?}", body);
+                    let data = OrderConfirmationData {
+                        payment_intent: body["payment_intent"].as_str().unwrap().to_string(),
+                        invoice_url: body["invoice_url"].as_str().unwrap().to_string(),
+                        license_key: user.key.to_string(),
+                    };
 
-                    let data =
-                        OrderConfirmationData {
-                            payment_intent: body["payment_intent"].as_str().unwrap().to_string(),
-                            invoice_url: body["invoice_url"].as_str().unwrap().to_string(),
-                            license_key: user.key.to_string(),
-                        };
-
-                    match email.send_order_confirmation(data).await {
+                    match email_sender.send_order_confirmation(data).await {
                         Ok(()) => {}
-                        Err(log) => {
-                            config.db.insert_log(log).await;
+                        Err(mut log) => {
+                            log.save(&config.db).await.ok();
                         }
                     }
+
                     Ok((StatusCode::CREATED, json!(user).to_string()))
                 }
                 Err(_) => {
-                    config.db.insert_log(Log {
-                        _id: bson::oid::ObjectId::new(),
-                        date_time: bson::DateTime::now(),
-                        message: format!("Failed to create user: {}", email),
-                    }).await;
+                    let mut log = Log::new(format!("Failed to create user: {}", email));
+                    log.save(&config.db).await.ok();
                     Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to create user".to_string()))
                 }
             }
@@ -147,10 +142,11 @@ fn activate_licence_plan(
 ) -> Result<(), (StatusCode, String)> {
     // Closure qui modifie user.machines
     let push = |user: &mut User, Json(body): Json<Value>| {
-        user.machines.push(Machine {
+        let machine = Machine {
             id: body["machine"].as_object().unwrap()["id"].as_str().unwrap().to_string(),
             device_name: body["machine"].as_object().unwrap()["device_name"].as_str().unwrap().to_string(),
-        });
+        };
+        user.add_machine(machine).unwrap();
     };
 
     match plan {
@@ -170,9 +166,8 @@ fn activate_licence_plan(
                 Err((StatusCode::BAD_REQUEST, "User already has 5 machines".to_string()))
             } else {
                 // Vérification si l'ID de la machine existe déjà
-                let machine_exists = user.machines.iter().any(|m| m.id == body["machine"].as_object().unwrap()["id"].as_str().unwrap());
-
-                if !machine_exists {
+                let machine_id = body["machine"].as_object().unwrap()["id"].as_str().unwrap();
+                if !user.has_machine(machine_id) {
                     // Emprunt mutable seulement après les vérifications immuables
                     push(user, Json(body));
                 }
@@ -182,7 +177,6 @@ fn activate_licence_plan(
         _ => Err((StatusCode::BAD_REQUEST, "Invalid plan".to_string())),
     }
 }
-
 
 pub async fn activate_licence(
     State(config): State<ServerConfig>,
@@ -196,18 +190,15 @@ pub async fn activate_licence(
         Err(e) => return Err((StatusCode::BAD_REQUEST, format!("Failed to deserialize machine: {}", e))),
     };
 
-    let user = config.db.find_user(
-        &bson::doc! {
-            "key": Uuid::parse_str(key.clone()).unwrap(),
-        }
-    ).await.unwrap();
+    let key_uuid = Uuid::parse_str(&key).map_err(|_| (StatusCode::BAD_REQUEST, "Invalid key format".to_string()))?;
 
-    match user {
-        Some(user) => {
-            if user.key.to_string() == key.clone() {
+    match User::find_by_key(&config.db, &key_uuid).await {
+        Ok(Some(user)) => {
+            if user.key.to_string() == key {
                 let mut updated_user = user.clone();
                 activate_licence_plan(&mut updated_user, user.plan, Json(body))?;
-                match config.db.activate_licence(&updated_user).await {
+
+                match updated_user.save(&config.db).await {
                     Ok(()) => Ok((StatusCode::OK, json!(
                         user_to_user_machine(updated_user, machine)
                     ).to_string())),
@@ -217,7 +208,8 @@ pub async fn activate_licence(
                 Err((StatusCode::UNAUTHORIZED, "Invalid key or machine_id".to_string()))
             }
         }
-        None => Err((StatusCode::NOT_FOUND, "User not found".to_string()))
+        Ok(None) => Err((StatusCode::NOT_FOUND, "User not found".to_string())),
+        Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Database error".to_string()))
     }
 }
 
@@ -238,37 +230,41 @@ pub async fn remove_machine(
         Err(_) => return Err((StatusCode::BAD_REQUEST, "Invalid license key".to_string())),
     };
 
-    let doc = &bson::doc! {
-            "email": email.clone(),
-            "key": parsed_key,
-        };
-
-    let mut machines = config.db.find_user(doc).await.unwrap().ok_or_else(|| {
-        (StatusCode::NOT_FOUND, "User not found".to_string())
-    })?.machines;
-    if !machines.iter().any(|m| m.id == machine.id) {
-        return Err((StatusCode::BAD_REQUEST, "Machine not found".to_string()));
-    }
-    machines.retain(|m| m.id != machine.id);
-
-    match config.db.update_machines(
-        doc,
-        &machines,
-    ).await {
-        Ok(()) => {
-            let email = MailgunEmail {
-                from: format!("noreply@{domain}", domain = MailgunEmail::get_domain()),
-                to: email.to_string(),
-            };
-            match email.send_remove_machine(RemoveMachineData { machine_name: machine.device_name, license_key: key }).await {
-                Ok(()) => {}
-                Err(log) => {
-                    config.db.insert_log(log).await;
-                }
+    match User::find_by_email_and_key(&config.db, &email, &parsed_key).await {
+        Ok(Some(mut user)) => {
+            if !user.has_machine(&machine.id) {
+                return Err((StatusCode::BAD_REQUEST, "Machine not found".to_string()));
             }
-            Ok((StatusCode::OK, "Machine removed".to_string()))
+
+            match user.remove_machine(&machine.id) {
+                Ok(_) => {
+                    match user.save(&config.db).await {
+                        Ok(_) => {
+                            let email_sender = MailgunEmail {
+                                from: format!("noreply@{domain}", domain = MailgunEmail::get_domain()),
+                                to: email.to_string(),
+                            };
+
+                            match email_sender.send_remove_machine(RemoveMachineData {
+                                machine_name: machine.device_name,
+                                license_key: key
+                            }).await {
+                                Ok(()) => {}
+                                Err(mut log) => {
+                                    log.save(&config.db).await.ok();
+                                }
+                            }
+
+                            Ok((StatusCode::OK, "Machine removed".to_string()))
+                        }
+                        Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to reset license".to_string()))
+                    }
+                }
+                Err(e) => Err((StatusCode::BAD_REQUEST, e))
+            }
         }
-        Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to reset license".to_string()))
+        Ok(None) => Err((StatusCode::NOT_FOUND, "User not found".to_string())),
+        Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Database error".to_string()))
     }
 }
 
@@ -277,7 +273,7 @@ pub async fn get_all_logs(
     State(config): State<ServerConfig>,
 ) -> Result<(StatusCode, String), (StatusCode, String)> {
     if (addr.ip().is_loopback()) {
-        match config.db.get_all_logs().await {
+        match Log::find_all(&config.db).await {
             Ok(logs) => Ok((StatusCode::OK, serde_json::to_string(&logs).unwrap())),
             Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to get logs".to_string()))
         }
@@ -288,58 +284,50 @@ pub async fn get_all_logs(
 
 pub async fn get_user(
     State(config): State<ServerConfig>,
-    Json(body): Json<Value>)
-    -> Result<(StatusCode, String), (StatusCode, String)> {
+    Json(body): Json<Value>
+) -> Result<(StatusCode, String), (StatusCode, String)> {
     let email = extract_field::<String>(&body, "email")?;
     let key = extract_field::<String>(&body, "key")?;
-    let user = config.db.find_user(
-        &bson::doc! {
-            "email": email.clone(),
-            "key": Uuid::parse_str(key.clone()).unwrap(),
-        }
-    ).await.unwrap();
+    let machine = extract_field::<Machine>(&body, "machine")?;
 
-    match user {
-        Some(user) => {
-            let machine = extract_field::<Machine>(&body, "machine")?;
+    let key_uuid = Uuid::parse_str(&key).map_err(|_| (StatusCode::BAD_REQUEST, "Invalid key format".to_string()))?;
 
+    match User::find_by_email_and_key(&config.db, &email, &key_uuid).await {
+        Ok(Some(user)) => {
             // Vérifier si l'utilisateur existe
-            if user.machines.iter().any(|m| m.id == machine.id) {
+            if user.has_machine(&machine.id) {
                 Ok((StatusCode::OK, json!(user_to_user_machine(user, machine)).to_string()))
             } else {
                 Err((StatusCode::UNAUTHORIZED, "Machine not found".to_string()))
             }
         }
-        None => Err((StatusCode::NOT_FOUND, "User not found".to_string()))
+        Ok(None) => Err((StatusCode::NOT_FOUND, "User not found".to_string())),
+        Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Database error".to_string()))
     }
 }
 
 pub(crate) async fn get_user_machine(
     ConnectInfo(addr): ConnectInfo<SocketAddr>,
     State(config): State<ServerConfig>,
-    Json(body): Json<Value>)
-    -> Result<(StatusCode, String), (StatusCode, String)> {
+    Json(body): Json<Value>
+) -> Result<(StatusCode, String), (StatusCode, String)> {
     let email = extract_field::<String>(&body, "email")?;
     let key = extract_field::<String>(&body, "key")?;
-    let user = config.db.find_user(
-        &bson::doc! {
-            "email": email.clone(),
-            "key": Uuid::parse_str(key.clone()).unwrap(),
-        }
-    ).await.unwrap();
 
-    match user {
-        Some(user) => {
-            if user.key.to_string() == key.clone() {
+    let key_uuid = Uuid::parse_str(&key).map_err(|_| (StatusCode::BAD_REQUEST, "Invalid key format".to_string()))?;
+
+    match User::find_by_email_and_key(&config.db, &email, &key_uuid).await {
+        Ok(Some(user)) => {
+            if user.key.to_string() == key {
                 Ok((StatusCode::OK, serde_json::to_string(&user).unwrap()))
             } else {
                 Err((StatusCode::UNAUTHORIZED, "Invalid key".to_string()))
             }
         }
-        None => Err((StatusCode::NOT_FOUND, "User not found".to_string()))
+        Ok(None) => Err((StatusCode::NOT_FOUND, "User not found".to_string())),
+        Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Database error".to_string()))
     }
 }
-
 
 pub async fn save_presets(
     State(config): State<ServerConfig>,
@@ -348,20 +336,17 @@ pub async fn save_presets(
     let key = extract_field::<String>(&body, "key")?;
     let presets = extract_field::<Value>(&body, "presets")?;
 
-    let user = config.db.find_user(
-        &bson::doc! {
-            "key": Uuid::parse_str(key.clone()).unwrap(),
-        }
-    ).await.unwrap();
+    let key_uuid = Uuid::parse_str(&key).map_err(|_| (StatusCode::BAD_REQUEST, "Invalid key format".to_string()))?;
 
-    match user {
-        Some(mut user) => {
-            user.presets = presets;
-            match config.db.modify_user(&user).await {
+    match User::find_by_key(&config.db, &key_uuid).await {
+        Ok(Some(mut user)) => {
+            user.update_presets(presets);
+            match user.save(&config.db).await {
                 Ok(_) => Ok((StatusCode::OK, "Preset saved".to_string())),
                 Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to save preset".to_string()))
             }
         }
-        None => Err((StatusCode::NOT_FOUND, "User not found".to_string()))
+        Ok(None) => Err((StatusCode::NOT_FOUND, "User not found".to_string())),
+        Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, "Database error".to_string()))
     }
 }
