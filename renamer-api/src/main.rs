@@ -38,11 +38,7 @@ async fn main() {
     });
 
     let orm = db.get_orm_db().clone();
-
-    match User::find_all(&orm).await {
-        Ok(count) => println!("Nombre d'utilisateurs en base: {:?}", count),
-        Err(e) => eprintln!("Erreur lors du comptage des utilisateurs: {}", e),
-    }
+    
     MailgunEmail::init();
 
     // Utilise maintenant l'ORM Database
