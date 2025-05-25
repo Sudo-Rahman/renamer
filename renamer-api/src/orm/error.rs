@@ -39,4 +39,15 @@ impl From<mongodb::bson::de::Error> for OrmError {
     }
 }
 
+impl std::error::Error for OrmError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            OrmError::Database(err) => Some(err),
+            _ => None,
+        }
+    }
+}
+
+
 pub type Result<T> = std::result::Result<T, OrmError>;
+

@@ -1,6 +1,7 @@
 use tokio::fs::OpenOptions;
 use tokio::io::AsyncWriteExt;
 use crate::models::Log;
+use crate::orm::Model;
 
 pub async fn insert_log(log: Log) {
     //     write in the log file
@@ -9,6 +10,6 @@ pub async fn insert_log(log: Log) {
         .write(true)
         .append(true)
         .open("log.txt").await.unwrap();
-    let log = format!("{}: {}", log.date_time, log.message);
+    let log = format!("{}: {}", log.created_at(), log.message);
     file.write_all(log.as_bytes()).await.unwrap();
 }

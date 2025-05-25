@@ -1,14 +1,9 @@
-use reqwest::{Client, Response};
-use std::collections::HashMap;
+use reqwest::{Client};
 use std::sync::OnceLock;
 use std::env::var;
 use axum::http::StatusCode;
 use chrono::Utc;
-use mongodb::bson::{bson, Bson};
 use reqwest::multipart;
-use tokio::fs::OpenOptions;
-use mongodb::bson;
-use tokio::io::AsyncWriteExt;
 use crate::models::Log;
 
 pub struct MailgunEmail {
@@ -72,7 +67,6 @@ impl MailgunEmail {
             .redirect(reqwest::redirect::Policy::none())
             .build()
             .unwrap();
-        let url = format!("https://api.eu.mailgun.net/{}/messages", MailgunEmail::get_domain());
 
         let api_key = API_KEY.get().unwrap().clone();
 
@@ -100,8 +94,7 @@ impl MailgunEmail {
 
         if error {
             return Err(Log {
-                _id: None,
-                date_time: bson::DateTime::now(),
+                base: Default::default(),
                 message: format!("Failed to send email to {}: {}", self.to, text),
             });
         }

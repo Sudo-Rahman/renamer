@@ -2,6 +2,11 @@
 name = "renamer-api"
 version = "0.1.0"
 edition = "2021"
+default-run = "renamer-api"
+
+[[bin]]
+name = "migrate"
+path = "src/bin/migrate.rs"
 
 [dependencies]
 axum = "0"

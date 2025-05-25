@@ -21,8 +21,9 @@ use tower_http::cors::{Any, CorsLayer};
 use crate::controllers::*;
 use crate::db::*;
 use crate::mailgun::{MailgunEmail};
-use crate::models::ServerConfig;
+use crate::models::{ServerConfig, User};
 use crate::api_rate::*;
+use crate::orm::Collection;
 
 #[tokio::main]
 async fn main() {
@@ -36,6 +37,12 @@ async fn main() {
         exit(1);
     });
 
+    let orm = db.get_orm_db().clone();
+
+    match User::find_all(&orm).await {
+        Ok(count) => println!("Nombre d'utilisateurs en base: {:?}", count),
+        Err(e) => eprintln!("Erreur lors du comptage des utilisateurs: {}", e),
+    }
     MailgunEmail::init();
 
     // Utilise maintenant l'ORM Database

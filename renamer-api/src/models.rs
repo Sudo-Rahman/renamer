@@ -1,14 +1,11 @@
-use crate::db::Mongo;
-use crate::orm::{Model, Collection, BaseModel, Database};
-use axum::Json;
-use chrono::Utc;
-use mongodb::bson::oid::ObjectId;
-use mongodb::bson::{bson, DateTime, Uuid};
+use std::collections::HashMap;
+use crate::orm::{Model, Collection, Database, BaseModel, HasBaseModel};
+use mongodb::bson::{DateTime, Uuid};
 use renamer_shared::{Machine, UserMachine};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use async_trait::async_trait;
-use bson::Bson;
+use bson::{doc, Bson};
 
 #[derive(Clone)]
 pub struct ServerConfig {
@@ -18,36 +15,38 @@ pub struct ServerConfig {
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct User {
-    #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
-    pub _id: Option<ObjectId>,
+    #[serde(flatten)]
+    pub base: BaseModel,
     pub email: String,
     pub key: Uuid,
     pub plan: u8,
     pub machines: Vec<Machine>,
     pub presets: Value,
-    pub created_at: DateTime,
-    pub updated_at: DateTime,
 }
+
+impl HasBaseModel for User {
+    fn base(&self) -> &BaseModel {
+        &self.base
+    }
+
+    fn base_mut(&mut self) -> &mut BaseModel {
+        &mut self.base
+    }
+}
+
 
 impl User {
     pub fn new(email: String, plan: u8) -> Self {
-        let now = DateTime::now();
         Self {
-            _id: None,
+            base: Default::default(),
             email,
             key: Uuid::new(),
             plan,
             machines: vec![],
             presets: json!([]),
-            created_at: now,
-            updated_at: now,
         }
     }
-
-    pub fn touch(&mut self) {
-        self.updated_at = DateTime::now();
-    }
-
+    
     // Méthodes spécifiques au modèle User
     pub async fn find_by_email(db: &Database, email: &str) -> crate::orm::Result<Option<User>> {
         use mongodb::bson::doc;
@@ -63,9 +62,9 @@ impl User {
 
     pub async fn find_by_email_and_key(db: &Database, email: &str, key: &Uuid) -> crate::orm::Result<Option<User>> {
         use mongodb::bson::doc;
-        let filter = doc! { 
+        let filter = doc! {
             "email": email,
-            "key": key 
+            "key": key
         };
         User::find_one_by_filter(db, filter).await
     }
@@ -119,13 +118,36 @@ impl Model for User {
     fn collection_name() -> &'static str {
         "users"
     }
+    
+    fn default_values() -> HashMap<String, Bson> {
+        let mut defaults = HashMap::new();
+        let now = DateTime::now();
 
-    fn id(&self) -> Option<&ObjectId> {
-        self._id.as_ref()
+        defaults.insert("created_at".to_string(), Bson::DateTime(now));
+        defaults.insert("updated_at".to_string(), Bson::DateTime(now));
+        defaults.insert("plan".to_string(), Bson::Int32(0));
+        defaults.insert("machines".to_string(), Bson::Array(vec![]));
+        defaults.insert("presets".to_string(), Bson::Document(doc! {}));
+        defaults.insert("key".to_string(), Bson::String(mongodb::bson::Uuid::new().to_string()));
+
+        defaults
     }
 
-    fn set_id(&mut self, id: ObjectId) {
-        self._id = Some(id);
+    fn array_field_defaults() -> HashMap<String, HashMap<String, Bson>> {
+        let mut defaults = HashMap::new();
+        defaults.insert("machines".to_string(), HashMap::new());
+        defaults
+    }
+
+    fn required_fields() -> Vec<String> {
+        vec![
+            "email".to_string(),
+            "key".to_string(),
+            "plan".to_string(),
+            "machines".to_string(),
+            "created_at".to_string(),
+            "updated_at".to_string()
+        ]
     }
 }
 
@@ -133,17 +155,25 @@ impl Collection<User> for User {}
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Log {
-    #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
-    pub _id: Option<ObjectId>,
-    pub date_time: DateTime,
+    #[serde(flatten)]
+    pub base: BaseModel,
     pub message: String,
+}
+
+impl HasBaseModel for Log {
+    fn base(&self) -> &BaseModel {
+        &self.base
+    }
+
+    fn base_mut(&mut self) -> &mut BaseModel {
+        &mut self.base
+    }
 }
 
 impl Log {
     pub fn new(message: String) -> Self {
         Self {
-            _id: None,
-            date_time: DateTime::now(),
+            base: Default::default(),
             message,
         }
     }
@@ -174,11 +204,11 @@ impl Log {
         end: DateTime
     ) -> crate::orm::Result<Vec<Log>> {
         use mongodb::bson::doc;
-        let filter = doc! { 
-            "date_time": { 
-                "$gte": start, 
-                "$lte": end 
-            } 
+        let filter = doc! {
+            "date_time": {
+                "$gte": start,
+                "$lte": end
+            }
         };
         Log::find_by_filter(db, filter).await
     }
@@ -189,13 +219,23 @@ impl Model for Log {
     fn collection_name() -> &'static str {
         "logs"
     }
+    
+    fn default_values() -> HashMap<String, Bson> {
+        let mut defaults = HashMap::new();
+        let now = DateTime::now();
 
-    fn id(&self) -> Option<&ObjectId> {
-        self._id.as_ref()
+        defaults.insert("date_time".to_string(), Bson::DateTime(now));
+        defaults.insert("created_at".to_string(), Bson::DateTime(now));
+        defaults.insert("updated_at".to_string(), Bson::DateTime(now));
+
+        defaults
     }
 
-    fn set_id(&mut self, id: ObjectId) {
-        self._id = Some(id);
+    fn required_fields() -> Vec<String> {
+        vec![
+            "message".to_string(),
+            "date_time".to_string()
+        ]
     }
 }
 

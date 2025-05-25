@@ -1,19 +1,15 @@
 use axum::{
     extract::Request,
     http::StatusCode,
-    middleware::{self, Next},
-    response::{IntoResponse, Response},
-    routing::get,
-    Json, Router,
+    middleware::{ Next},
+    response::{ Response},
 };
 use dashmap::DashMap;
 use std::{
-    net::SocketAddr,
     sync::Arc,
     time::{Duration, Instant},
 };
 use std::net::IpAddr;
-use tokio::sync::Mutex;
 
 // Structure pour stocker les informations de rate limiting
 #[derive(Clone)]
