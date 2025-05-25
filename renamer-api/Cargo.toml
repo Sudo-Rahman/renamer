@@ -26,3 +26,8 @@ async-trait = "0.1"
 
 mongodb = "3"
 bson = { version = "2.14.0", features = ["chrono-0_4"] }
+
+# if linux
+[target.'cfg(target_os = "linux")'.dependencies]
+openssl = { version = "0.10", features = ["vendored"] }
+
