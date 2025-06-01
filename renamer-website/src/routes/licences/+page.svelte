@@ -1,7 +1,7 @@
 <script>
-    import { t } from "$lib/translations";
+    import {t} from "$lib/translations";
     // Date de dernière mise à jour affichée dynamiquement
-    const currentDate = new Date().toLocaleDateString(navigator.language, {
+    const currentDate = new Date('2025/06/01').toLocaleDateString(navigator.language, {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit'
@@ -79,7 +79,7 @@
 
         <footer class="mt-8 text-right">
             <p class="text-sm text-gray-600">
-                {$t('licenses.last_update', {date : currentDate})}
+                {$t('licenses.last_update', {date: currentDate})}
             </p>
         </footer>
     </section>

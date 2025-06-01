@@ -113,11 +113,11 @@ export default {
         content: [
             {
                 title: "1. Présentation du Site",
-                text: "Ce site est édité par <strong>Rahman Yilmaz</strong>, société immatriculée au Registre du Commerce et des Sociétés sous le numéro <strong>[Numéro RCS]</strong>. Le siège social est situé au <strong>[Adresse complète]</strong>."
+                text: "Ce site est édité par <strong>Rahman Yilmaz</strong>, société immatriculée au Registre du Commerce et des Sociétés sous le numéro <strong>RCS Chalon-sur-Saône 943775767</strong>. Le siège social est situé au <strong>25 D RUE des Clairières 71880 Châtenoy-le-Royal FRANCE</strong>."
             },
             {
                 title: "2. Directeur de la publication",
-                text: "Le directeur de la publication est <strong>Rahman Yilmaz</strong>, en qualité de <strong>[Fonction]</strong>."
+                text: "Le directeur de la publication est <strong>Rahman Yilmaz</strong>, en qualité de <strong>Micro-entrepreneur</strong>."
             },
             {
                 title: "3. Hébergement",
@@ -125,7 +125,7 @@ export default {
             },
             {
                 title: "4. Propriété Intellectuelle",
-                text: "L'ensemble des éléments présents sur ce site (textes, images, graphismes, logos, icônes, etc.) est la propriété exclusive de <strong>[Nom de l'entreprise]</strong> ou de ses partenaires. Toute reproduction, totale ou partielle, sans autorisation préalable, est strictement interdite."
+                text: "L'ensemble des éléments présents sur ce site (textes, images, graphismes, logos, icônes, etc.) est la propriété exclusive de <strong>Rahman Yilmaz</strong> ou de ses partenaires. Toute reproduction, totale ou partielle, sans autorisation préalable, est strictement interdite."
             },
             {
                 title: "5. Conditions d'Utilisation",

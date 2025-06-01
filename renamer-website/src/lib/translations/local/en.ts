@@ -113,11 +113,11 @@ export default {
         content: [
             {
                 title: "1. Website Presentation",
-                text: "This website is published by <strong>Rahman Yilmaz</strong>, a company registered with the Trade and Companies Register under the number <strong>[RCS Number]</strong>. The registered office is located at <strong>[Complete Address]</strong>."
+                text: "This website is published by <strong>Rahman Yilmaz</strong>, a company registered with the Trade and Companies Register under the number <strong>RCS Chalon-sur-Saône 943775767</strong>. The registered office is located at <strong>25 D RUE des Clairières 71880 Châtenoy-le-Royal FRANCE</strong>."
             },
             {
                 title: "2. Publication Director",
-                text: "The publication director is <strong>Rahman Yilmaz</strong>, in the capacity of <strong>[Position]</strong>."
+                text: "The publication director is <strong>Rahman Yilmaz</strong>, in the capacity of <strong>Founder and CEO</strong> of the company."
             },
             {
                 title: "3. Hosting",
@@ -125,7 +125,7 @@ export default {
             },
             {
                 title: "4. Intellectual Property",
-                text: "All elements present on this website (texts, images, graphics, logos, icons, etc.) are the exclusive property of <strong>[Company Name]</strong> or its partners. Any reproduction, in whole or in part, without prior authorization, is strictly prohibited."
+                text: "All elements present on this website (texts, images, graphics, logos, icons, etc.) are the exclusive property of <strong>Rahman Yilmaz</strong> or its partners. Any reproduction, in whole or in part, without prior authorization, is strictly prohibited."
             },
             {
                 title: "5. Terms of Use",

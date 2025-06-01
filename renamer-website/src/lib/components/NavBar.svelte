@@ -3,11 +3,11 @@
     import {resetMode, setMode} from "mode-watcher";
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
     import {Sun, Moon} from "lucide-svelte";
-    import { buttonVariants } from "$lib/components/ui/button/index.js";
+    import {buttonVariants} from "$lib/components/ui/button/index.js";
     import {goto} from "$app/navigation";
     import {t} from "$lib/translations";
 
-    async function handleDownloadClick(event : MouseEvent) {
+    async function handleDownloadClick(event: MouseEvent) {
         event.preventDefault()
         await goto('/');
         const anchorId = 'anchor-download';
@@ -33,9 +33,9 @@
 
         <div class="flex-grow"></div>
 
-        <div class="flex items-center h-full">
-            <a class="px-5" href="/docs">{$t('nav.docs')}</a>
-        </div>
+        <!--        <div class="flex items-center h-full">-->
+        <!--            <a class="px-5" href="/docs">{$t('nav.docs')}</a>-->
+        <!--        </div>-->
 
         <div class="flex items-center h-full">
             <a class="px-5" href="/" on:click={handleDownloadClick}>{$t('nav.download')}</a>

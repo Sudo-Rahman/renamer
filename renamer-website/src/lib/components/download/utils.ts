@@ -1,10 +1,11 @@
 import {page} from "$app/state";
 
 export type OS = 'linux' | 'macos' | 'windows';
+
 export function getOs(): OS {
     const userAgent = navigator.userAgent.toLowerCase();
-    if(userAgent.includes('mobile')) return 'windows';
-    if (userAgent.includes('linux')) return 'linux';
+    if (userAgent.includes('mobile')) return 'windows';
+    if (userAgent.includes('linux')) return 'windows';
     if (userAgent.includes('mac')) return 'macos';
     if (userAgent.includes('windows')) return 'windows';
     return 'windows';
@@ -12,6 +13,7 @@ export function getOs(): OS {
 
 
 export type Arch = 'amd64' | 'arm64' | 'universal';
+
 export function getArch(): Arch {
     const userAgent = navigator.userAgent.toLowerCase();
     if (userAgent.includes('arm')) return 'arm64';
@@ -19,7 +21,7 @@ export function getArch(): Arch {
     return 'amd64';
 }
 
-export function getUrl(os : OS, arch : Arch = 'amd64'): string {
+export function getUrl(os: OS, arch: Arch = 'amd64'): string {
     if (os === 'macos') return `${page.url.origin}/downloads/Renamer_universal.dmg`;
     if (os === 'linux') {
         if (arch === 'amd64') return `${page.url.origin}/downloads/Renamer_amd64.AppImage`;

@@ -49,7 +49,7 @@
         <Tabs.List>
             <Tabs.Trigger value="windows">Windows</Tabs.Trigger>
             <Tabs.Trigger value="macos">Macos</Tabs.Trigger>
-            <Tabs.Trigger value="linux">Linux</Tabs.Trigger>
+            <!--            <Tabs.Trigger value="linux">Linux</Tabs.Trigger>-->
         </Tabs.List>
         <Tabs.Content value="windows">
             {@render download(windows, osData[0])}
@@ -57,9 +57,9 @@
         <Tabs.Content value="macos">
             {@render download(mac, osData[1])}
         </Tabs.Content>
-        <Tabs.Content value="linux">
-            {@render download(linux, osData[2])}
-        </Tabs.Content>
+        <!--        <Tabs.Content value="linux">-->
+        <!--            {@render download(linux, osData[2])}-->
+        <!--        </Tabs.Content>-->
     </Tabs.Root>
 </div>
 
