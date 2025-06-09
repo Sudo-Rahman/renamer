@@ -78,11 +78,6 @@ jobs:
         run: pnpm install
 
       - name: Build (Darwin Universal)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-          APPLE_SIGNING_IDENTITY: ${{ env.CERT_ID }}
         run: pnpm tauri build --target universal-apple-darwin
 
       - name: Upload macOS artifact
