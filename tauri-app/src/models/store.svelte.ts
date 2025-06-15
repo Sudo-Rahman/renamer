@@ -4,8 +4,7 @@ import {FormatterList} from "$models/Formatter";
 import {Preset} from "$models/Preset";
 import {LazyStore} from "@tauri-apps/plugin-store";
 
-// export const websiteUrl = "https://renamer.pro";
-export const websiteUrl = "http://localhost:5173";
+export const websiteUrl = import.meta.env.DEV ? "http://localhost:5173" : "https://renamer.pro";
 
 export const files: Writable<RenamerFile[]> = writable([]);
 

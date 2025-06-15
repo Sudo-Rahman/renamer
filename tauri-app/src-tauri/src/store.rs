@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 use serde_json::Value;
 use std::sync::{Arc, OnceLock};
-use tauri::{Manager, Wry};
+use tauri::{Wry};
 use tauri_plugin_store::{Store, StoreExt};
 
 pub struct AppStore {
