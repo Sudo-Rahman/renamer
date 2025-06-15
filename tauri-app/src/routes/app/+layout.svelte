@@ -11,7 +11,7 @@
     import {invoke} from "@tauri-apps/api/core";
     import {toast} from "svelte-sonner";
     import {goto} from "$app/navigation";
-    import { files } from "$models";
+    import {files} from "$models";
     import {t} from "$lib/translations";
 
 
@@ -28,7 +28,7 @@
                 const droppedFiles = event.payload.paths as string[];
                 let new_files: RenamerFile[] = [];
 
-                let response: { files: any[]} = await invoke('files_from_vec', {files: droppedFiles})
+                let response: { files: any[] } = await invoke('files_from_vec', {files: droppedFiles})
                 response.files.forEach(
                     (file) => {
                         new_files.push(new RenamerFile(file));
@@ -71,7 +71,7 @@
     <Toaster/>
     {#if isMacOS}
         {#if !isFullScreen}
-            <header class="w-full h-6" data-tauri-drag-region></header>
+            <header class="w-full h-7" data-tauri-drag-region></header>
             {#if id !== '/app'}
                 <Separator/>
             {/if}

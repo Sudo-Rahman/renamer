@@ -7,7 +7,7 @@
     import {invoke} from "@tauri-apps/api/core";
     import {t} from "$lib/translations";
     import {Switch} from "$lib/components/ui/switch";
-    import {store} from "$models";
+    import {store, websiteUrl} from "$models";
     import {getCurrentWindow} from "@tauri-apps/api/window";
 
 
@@ -27,7 +27,7 @@
     })
 
     async function onWebsiteClick() {
-        await invoke('open_browser_url', {url: 'https://renamer.pro'})
+        await invoke('open_browser_url', {url: websiteUrl})
     }
 
     $effect(() => {
@@ -38,7 +38,9 @@
 
     async function installAndDownload() {
         await invoke('download_and_install_update')
-            .then(() => {getCurrentWindow().close()})
+            .then(() => {
+                getCurrentWindow().close()
+            })
             .catch(console.error)
 
     }

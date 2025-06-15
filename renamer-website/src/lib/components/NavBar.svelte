@@ -49,8 +49,9 @@
 
         <div class="flex items-center h-full">
             <a class="px-4 hover:underline" href="/#pricing" on:click={handlePricingClick}>{$t('pricing.title')}</a>
-            <a class="px-4 hover:underline" href="/docs">{$t('nav.docs')}</a>
-            <a class="px-4 hover:underline" href="/#anchor-download" on:click={handleDownloadClick}>{$t('nav.download')}</a>
+            <!--            <a class="px-4 hover:underline" href="/docs">{$t('nav.docs')}</a>-->
+            <a class="px-4 hover:underline" href="/#anchor-download"
+               on:click={handleDownloadClick}>{$t('nav.download')}</a>
         </div>
 
         <DropdownMenu.Root>
