@@ -3,7 +3,12 @@ import lang from './lang.json';
 
 export default {
     lang,
+    meta: { // Keeping the first meta block, assuming it's the correct one
+        title: "Batch File Renamer | Rename Multiple Files Easily | Renamer App",
+        description: "Save time with Renamer App, the powerful batch file renamer. Rename multiple files in one click with our intuitive tool. Try it now!"
+    },
     nav: {
+        logo_alt: "Renamer App Logo",
         download: "Download",
         docs: "Documentation",
         theme: {
@@ -25,7 +30,8 @@ export default {
             "of files",
             "in one click."
         ],
-        subtitle: "Save time with our powerful batch renaming tool"
+        subtitle: "Save time with our powerful batch renaming software, the perfect tool for renaming multiple files at once.",
+        video_title: "Renamer App in Action: See How to Batch Rename Files"
     },
     manage_machines: {
         title: "Remove a device",

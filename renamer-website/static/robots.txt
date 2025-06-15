@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://renamer.pro/sitemap.xml

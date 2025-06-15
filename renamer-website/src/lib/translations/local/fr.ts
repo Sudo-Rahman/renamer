@@ -3,7 +3,12 @@ import lang from './lang.json';
 
 export default {
     lang,
+    meta: {
+        title: "Renommez des Fichiers par Lots | Renommer Plusieurs Fichiers Facilement | Renamer App",
+        description: "Gagnez du temps avec Renamer App, le puissant outil pour renommer des fichiers par lots. Renommez plusieurs fichiers en un clic grâce à notre outil intuitif. Essayez-le maintenant !"
+    },
     nav: {
+        logo_alt: "Logo de l'application Renamer",
         download: "Télécharger",
         docs: "Documentation",
         theme: {
@@ -25,7 +30,8 @@ export default {
             "de fichiers",
             "en un clic."
         ],
-        subtitle: "Gagnez du temps avec notre outil puissant de renommage par lots"
+        subtitle: "Gagnez du temps avec notre outil puissant de renommage par lots",
+        video_title: "Renamer App en Action : Voyez Comment Renommer des Fichiers par Lots"
     },
     manage_machines: {
         title: "Supprimer un appareil",

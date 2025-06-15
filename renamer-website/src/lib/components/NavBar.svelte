@@ -7,15 +7,29 @@
     import {goto} from "$app/navigation";
     import {t} from "$lib/translations";
 
-    async function handleDownloadClick(event: MouseEvent) {
-        event.preventDefault()
-        await goto('/');
-        const anchorId = 'anchor-download';
-        const anchor = document.getElementById(anchorId)
-        window.scrollTo({
-            top: anchor?.offsetTop,
-            behavior: 'smooth'
-        })
+    async function scrollToAnchor(event: MouseEvent, anchorId: string) {
+        event.preventDefault();
+        // Ensure we are on the homepage before trying to scroll to an anchor
+        if (window.location.pathname !== '/') {
+            await goto('/');
+            // Wait for the navigation and page to potentially rerender
+            await new Promise(resolve => setTimeout(resolve, 0));
+        }
+        const anchorElement = document.getElementById(anchorId);
+        if (anchorElement) {
+            window.scrollTo({
+                top: anchorElement.offsetTop,
+                behavior: 'smooth'
+            });
+        }
+    }
+
+    function handleDownloadClick(event: MouseEvent) {
+        scrollToAnchor(event, 'anchor-download');
+    }
+
+    function handlePricingClick(event: MouseEvent) {
+        scrollToAnchor(event, 'pricing');
     }
 
 </script>
@@ -26,19 +40,17 @@
 
         <div class="flex items-center justify-start h-full">
             <a class="h-full flex items-center" href="/">
-                <img alt="icon" class="h-full" src="/favicon.svg"/>
+                <img alt={$t('nav.logo_alt', {default: 'Renamer App Logo'})} class="h-full" src="/favicon.svg"/>
                 <h1 class="hidden sm:block text-accent-foreground text-lg font-semibold ml-2">Renamer</h1>
             </a>
         </div>
 
         <div class="flex-grow"></div>
 
-        <!--        <div class="flex items-center h-full">-->
-        <!--            <a class="px-5" href="/docs">{$t('nav.docs')}</a>-->
-        <!--        </div>-->
-
         <div class="flex items-center h-full">
-            <a class="px-5" href="/" on:click={handleDownloadClick}>{$t('nav.download')}</a>
+            <a class="px-4 hover:underline" href="/#pricing" on:click={handlePricingClick}>{$t('pricing.title')}</a>
+            <a class="px-4 hover:underline" href="/docs">{$t('nav.docs')}</a>
+            <a class="px-4 hover:underline" href="/#anchor-download" on:click={handleDownloadClick}>{$t('nav.download')}</a>
         </div>
 
         <DropdownMenu.Root>

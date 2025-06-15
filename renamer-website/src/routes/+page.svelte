@@ -10,6 +10,7 @@
     import {onMount} from "svelte";
     import {t} from "$lib/translations";
     import Download from "$lib/components/download/Download.svelte";
+    import { browser } from '$app/environment';
 
 
     let {data}: { data: PageServerData } = $props();
@@ -21,6 +22,13 @@
     });
 
 </script>
+
+<svelte:head>
+    {#if browser}
+        <title>{$t('meta.title')}</title>
+        <meta name="description" content={$t('meta.description')} />
+    {/if}
+</svelte:head>
 
 
 <div class="flex flex-col space-y-32">
@@ -48,19 +56,20 @@
         {/if}
     </div>
 
-    <div class="w-full flex justify-center bg-card py-20">
+    <div class="w-full flex flex-col items-center bg-card py-20">
+        <h2 class="sr-only">{$t('home.video_title', { default: 'Renamer App in Action' })}</h2>
         <video autoplay class="lg:w-[70%] xl:w-[50%] w-[95%] md:w-[80%] rounded-lg xl:rounded-xl" loop muted
                src="/video.mp4"></video>
     </div>
 
-    <div class="px-5">
+    <div class="px-5" id="pricing">
         <PricingSection prices={data.prices}/>
     </div>
 
     <div class="bg-card flex p-4 py-20 justify-center items-center" id="anchor-download">
-        <div class="flex flex-col space-y-4">
+        <div class="flex flex-col space-y-4 items-center">
 
-            <Label class="text-2xl font-semibold">{$t('download.title')}</Label>
+            <h2 class="text-2xl font-semibold text-center">{$t('download.title')}</h2>
 
             <Download/>
 
