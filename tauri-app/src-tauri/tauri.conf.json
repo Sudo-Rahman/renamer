@@ -26,7 +26,7 @@
       "icons/icon.ico"
     ],
     "macOS": {
-      "signingIdentity": "3rd Party Mac Developer Application: Rahman Yilmaz (LBPZB5S37F)"
+      "signingIdentity": "Developer ID Application: Rahman Yilmaz (LBPZB5S37F)"
     }
   },
   "plugins": {
