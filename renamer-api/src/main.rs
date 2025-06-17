@@ -7,6 +7,7 @@ mod mailgun;
 mod utils;
 mod api_rate;
 mod orm; // Ajout du module ORM
+mod log_layer;
 
 use std::net::{IpAddr, SocketAddr};
 use tower::{buffer::BufferLayer, limit::RateLimitLayer, BoxError, ServiceBuilder};
@@ -23,6 +24,7 @@ use crate::db::*;
 use crate::mailgun::{MailgunEmail};
 use crate::models::{ServerConfig, User};
 use crate::api_rate::*;
+use crate::log_layer::{log_request_response};
 use crate::orm::Collection;
 
 #[tokio::main]
@@ -38,14 +40,16 @@ async fn main() {
     });
 
     let orm = db.get_orm_db().clone();
-    
+
     MailgunEmail::init();
 
     // Utilise maintenant l'ORM Database
     let config = ServerConfig {
         db: db.get_orm_db().clone(),  // Accès à l'ORM Database
-        token
+        token,
     };
+
+    tracing_subscriber::fmt::init();
 
     let mut app = Router::new()
         // website
@@ -83,6 +87,7 @@ async fn main() {
                     let rate_limiter = Arc::clone(&rate_limiter);
                     rate_limit_middleware(req, next, rate_limiter)
                 }))
+                .layer(middleware::from_fn(log_request_response))
         );
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
@@ -94,10 +99,6 @@ async fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use axum::http::Request;
-    use tower::ServiceExt;
-
     #[tokio::test]
     async fn test_ping() {
         // Test basique existant
