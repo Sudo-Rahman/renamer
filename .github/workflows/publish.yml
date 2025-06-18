@@ -13,6 +13,9 @@ env:
 jobs:
   build-darwin:
     name: Build for macOS (Universal)
+    env:
+      APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+      APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
     runs-on: macos-latest
     defaults:
       run:
@@ -62,10 +65,8 @@ jobs:
           echo "Certificate imported."
 
 
-      - name: Notarize macOS app
+      - name: Import Apple API Key
         env:
-          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
-          APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
           APPLE_API_PRIVATE_KEY: ${{ secrets.APPLE_API_PRIVATE_KEY }}  # contenu base64 de la clé .p8
         run: |
           echo "$APPLE_API_PRIVATE_KEY" | base64 --decode > AuthKey.p8
