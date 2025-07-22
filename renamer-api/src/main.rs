@@ -69,6 +69,12 @@ async fn main() {
             .allow_origin(Any)
             .allow_methods(Any)
             .allow_headers([http::header::CONTENT_TYPE]));
+    } else {
+        app = app.layer(CorsLayer::new()
+            .allow_origin("https://renamer.pro".parse::<http::HeaderValue>().unwrap())
+            .allow_methods(Any)
+            .allow_headers([http::header::CONTENT_TYPE])
+            .allow_credentials(true));
     }
 
     let rate_limiter = Arc::new(RateLimiter::new(32, Duration::from_secs(60)));
