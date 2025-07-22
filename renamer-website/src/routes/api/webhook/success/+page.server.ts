@@ -1,4 +1,4 @@
-import {stripe} from "$lib/server/Stripe";
+import {getStripe} from "$lib/server/Stripe";
 import {error} from '@sveltejs/kit';
 import type {PageServerLoad} from './$types';
 import type {PurchaseInfo} from '$lib/types/stripe';
@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({url}) => {
 
     try {
         // Retrieve the checkout session from Stripe
-        const session: Stripe.Checkout.Session = await stripe.checkout.sessions.retrieve(sessionId, {
+        const session: Stripe.Checkout.Session = await getStripe().checkout.sessions.retrieve(sessionId, {
             expand: ['line_items', 'customer', 'payment_intent']
         });
 
@@ -29,7 +29,7 @@ export const load: PageServerLoad = async ({url}) => {
 
         let invoiceUrl = null;
         if (typeof session.invoice === "string") {
-            const invoice = await stripe.invoices.retrieve(session.invoice);
+            const invoice = await getStripe().invoices.retrieve(session.invoice);
             invoiceUrl = invoice.hosted_invoice_url;
         }
 
