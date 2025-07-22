@@ -1,9 +1,19 @@
-// Instanciez Stripe avec la clé secrète provenant des variables d'environnement
-import Stripe from "stripe";
-import {env} from "$env/dynamic/private";
+// lib/server/stripe.ts
+import Stripe from 'stripe';
+import {env} from '$env/dynamic/private';
 
-const STRIPE_KEY = env.STRIPE_KEY;
+let stripeInstance: Stripe | null = null;
 
-export const stripe = new Stripe(STRIPE_KEY, {
-    apiVersion: '2025-05-28.basil'
-});
+export function getStripe(): Stripe {
+    if (!env.STRIPE_KEY) {
+        throw new Error('Missing STRIPE_KEY in environment');
+    }
+
+    if (!stripeInstance) {
+        stripeInstance = new Stripe(env.STRIPE_KEY, {
+            apiVersion: '2025-05-28.basil'
+        });
+    }
+
+    return stripeInstance;
+}

@@ -1,5 +1,5 @@
 import type {RequestHandler} from "@sveltejs/kit";
-import {stripe} from "$lib/server/Stripe";
+import {getStripe} from "$lib/server/Stripe";
 
 export const POST: RequestHandler = async ({url, request}) => {
     try {
@@ -7,7 +7,7 @@ export const POST: RequestHandler = async ({url, request}) => {
         const data = await request.json();
 
         // Crée une session de paiement avec Stripe
-        const session = await stripe.checkout.sessions.create({
+        const session = await getStripe().checkout.sessions.create({
             payment_method_types: ['card', 'paypal'],
             metadata: {
                 product: data.product.product

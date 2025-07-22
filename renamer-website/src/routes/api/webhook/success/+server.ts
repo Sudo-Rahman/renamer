@@ -1,6 +1,6 @@
 import {env} from '$env/dynamic/private';
 import {type RequestHandler} from '@sveltejs/kit';
-import {stripe} from '$lib/server/Stripe';
+import {getStripe} from '$lib/server/Stripe';
 
 
 // Clé de signature du webhook à obtenir dans votre Dashboard Stripe
@@ -16,7 +16,7 @@ export const POST: RequestHandler = async ({request}) => {
         const body = await request.text();
 
         // Vérification de la signature du webhook avec le secret
-        event = stripe.webhooks.constructEvent(body, sig, endpointSecret);
+        event = getStripe().webhooks.constructEvent(body, sig, endpointSecret);
     } catch (err: any) {
         console.error(`⚠️  Erreur lors de la vérification du webhook: ${err.message}`);
         return new Response(`Webhook Error: ${err.message}`, {status: 400});
@@ -32,13 +32,13 @@ export const POST: RequestHandler = async ({request}) => {
         if (session.customer_details && session.customer_details.email) {
             let plan = 1;
             try {
-                const product = await stripe.products.retrieve(session.metadata.product);
+                const product = await getStripe().products.retrieve(session.metadata.product);
                 plan = +product.metadata.plan || 1;
             } catch (err: any) {
                 console.error(`⚠️  Erreur lors de la récupération du produit: ${err.message}`);
             }
 
-            const invoice = await stripe.invoices.retrieve(session.invoice);
+            const invoice = await getStripe().invoices.retrieve(session.invoice);
 
             await fetch(
                 env.API_URL + "/create",
