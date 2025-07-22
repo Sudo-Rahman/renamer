@@ -8,7 +8,7 @@ export const POST: RequestHandler = async ({url, request}) => {
 
         // Crée une session de paiement avec Stripe
         const session = await getStripe().checkout.sessions.create({
-            payment_method_types: ['card', 'paypal'],
+            // payment_method_types: ['card', 'paypal'],
             metadata: {
                 product: data.product.product
             },
