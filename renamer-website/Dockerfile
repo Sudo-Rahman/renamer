@@ -1,13 +1,14 @@
 FROM node:alpine
 LABEL authors="Rahman YILMAZ"
 
-RUN npm install -g pnpm
+RUN corepack enable
 
 WORKDIR /app
 
-COPY . .
-
+COPY package.json pnpm-lock.yaml ./
 RUN pnpm install
+
+COPY . .
 
 RUN pnpm run build
 
@@ -15,5 +16,4 @@ EXPOSE 3000
 
 ENV NODE_ENV=production
 
-# node -r dotenv/config build
 CMD ["node", "-r", "dotenv/config", "build"]
