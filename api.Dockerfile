@@ -17,9 +17,12 @@ FROM scratch AS final
 # Exposer le port 3000
 EXPOSE 3000
 
+# Copier les certificats CA depuis l'étape de construction
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY --from=builder /etc/ssl/certs/ /usr/local/ssl/certs/
+
 # Copier le binaire compilé depuis l'étape de construction
-COPY --from=builder /api/renamer-api/target/x86_64-unknown-linux-musl/release/renamer-api usr/local/bin/renamer-api
+COPY --from=builder /api/renamer-api/target/x86_64-unknown-linux-musl/release/renamer-api /usr/local/bin/renamer-api
 
 # Exécuter le binaire
-CMD ["renamer-api"]
-
+CMD ["/usr/local/bin/renamer-api"]
